@@ -560,6 +560,27 @@ body.dark .ab-wa i{color:#4ade80}
 td .acc{flex-wrap:nowrap}
 #tf td:first-child,#tf td:nth-child(5){white-space:nowrap}
 @media(max-width:768px){.ab{height:36px}.ab-ico{width:36px}}
+
+/* ── Color por grupo de módulos: Ventas morado, Live rosado, Clientes azul, Operación ámbar, Administración verde ── */
+.g-ventas{--gc:#6B3FA0;--gcl:#EDE7F6;--gcm:#9B72CF}
+.g-live{--gc:#E94560;--gcl:#FDE8EC;--gcm:#F06B82}
+.g-clientes{--gc:#185FA5;--gcl:#E6F1FB;--gcm:#4A8AD0}
+.g-oper{--gc:#B4690E;--gcl:#FAEEDA;--gcm:#D98B2B}
+.g-admin{--gc:#3B6D11;--gcl:#EAF3DE;--gcm:#5E9A2E}
+body.dark .g-ventas{--gc:#FE2C55;--gcl:#310D18;--gcm:#FF5E80}
+body.dark .g-live{--gc:#FF4F7B;--gcl:#33101C;--gcm:#FF7B9A}
+body.dark .g-clientes{--gc:#5BA3F0;--gcl:#14263D;--gcm:#7DB8F5}
+body.dark .g-oper{--gc:#EF9F27;--gcl:#2D2010;--gcm:#F5B65A;--gct:#1A1206}
+body.dark .g-admin{--gc:#4ADE80;--gcl:#0F2A1A;--gcm:#7AE8A0;--gct:#06200F}
+.nav[class*="g-"] i{color:var(--gc)}
+.nav[class*="g-"]:hover{background:var(--gcl)}
+.nav[class*="g-"].active{background:var(--gcl);color:var(--gc);font-weight:600}
+.main[class*="g-"] .topbar-title>i{color:var(--gc)!important}
+.main[class*="g-"] .topbar .btn.bp:not(.lv-accent),.main[class*="g-"] .page .btn.bp:not(.lv-accent),.main[class*="g-"] .page .ab-pri{background:var(--gc);border-color:var(--gc);color:var(--gct,#fff)}
+.main[class*="g-"] .topbar .btn.bp:not(.lv-accent):hover,.main[class*="g-"] .page .btn.bp:not(.lv-accent):hover,.main[class*="g-"] .page .ab-pri:hover{background:var(--gcm);border-color:var(--gcm)}
+.main[class*="g-"] .page .ab:not(.ab-pri):not(.ab-wa):not(.ab-ok):not(.ab-del):hover{border-color:var(--gc);color:var(--gc)}
+.main[class*="g-"] .desp-tab.on{background:var(--gc);border-color:var(--gc);color:var(--gct,#fff)}
+.main[class*="g-"] .fin-seg button.on{color:var(--gc)}
 </style>
 </head>
 <body>
@@ -611,21 +632,21 @@ td .acc{flex-wrap:nowrap}
   </div>
   <div class="nav-section">
     <div class="nav-label">Ventas</div>
-    <button class="nav active" onclick="go('nueva')" id="nav-nueva"><i class="ti ti-plus"></i><span>Nueva factura</span></button>
-    <button class="nav" onclick="go('live')" id="nav-live"><i class="ti ti-brand-tiktok"></i><span>Modo Live</span></button>
-    <button class="nav" onclick="go('facturas')" id="nav-facturas"><i class="ti ti-file-invoice"></i><span>Facturas</span></button>
-    <button class="nav" onclick="go('cartera')" id="nav-cartera" data-roles="dueno,admin"><i class="ti ti-report-money"></i><span>Cartera</span></button>
+    <button class="nav g-ventas active" onclick="go('nueva')" id="nav-nueva"><i class="ti ti-plus"></i><span>Nueva factura</span></button>
+    <button class="nav g-live" onclick="go('live')" id="nav-live"><i class="ti ti-brand-tiktok"></i><span>Modo Live</span></button>
+    <button class="nav g-ventas" onclick="go('facturas')" id="nav-facturas"><i class="ti ti-file-invoice"></i><span>Facturas</span></button>
+    <button class="nav g-ventas" onclick="go('cartera')" id="nav-cartera" data-roles="dueno,admin"><i class="ti ti-report-money"></i><span>Cartera</span></button>
     <div class="nav-label">Clientes</div>
-    <button class="nav" onclick="go('clientes')" id="nav-clientes" data-roles="dueno,admin" data-roles="dueno,admin,vendedor"><i class="ti ti-users"></i><span>Clientes</span></button>
+    <button class="nav g-clientes" onclick="go('clientes')" id="nav-clientes" data-roles="dueno,admin" data-roles="dueno,admin,vendedor"><i class="ti ti-users"></i><span>Clientes</span></button>
     <div class="nav-label">Operación</div>
-    <button class="nav" onclick="go('despachos')" id="nav-despachos" data-roles="dueno,admin,bodega"><i class="ti ti-truck-delivery"></i><span>Despachos</span></button>
-    <button class="nav" onclick="go('inventario')" id="nav-inventario" data-roles="dueno,admin"><i class="ti ti-box"></i><span>Inventario</span></button>
-    <button class="nav" onclick="go('bultos')" id="nav-bultos" data-roles="dueno,admin" style="display:none"><i class="ti ti-packages"></i><span>Bultos</span></button>
-    <button class="nav" onclick="go('catalogo')" id="nav-catalogo" style="display:none"><i class="ti ti-settings"></i><span>Catálogo</span></button>
-    <button class="nav" onclick="go('dashboard')" id="nav-dashboard" data-roles="dueno,admin"><i class="ti ti-chart-bar"></i><span>Dashboard</span></button>
+    <button class="nav g-oper" onclick="go('despachos')" id="nav-despachos" data-roles="dueno,admin,bodega"><i class="ti ti-truck-delivery"></i><span>Despachos</span></button>
+    <button class="nav g-oper" onclick="go('inventario')" id="nav-inventario" data-roles="dueno,admin"><i class="ti ti-box"></i><span>Inventario</span></button>
+    <button class="nav g-oper" onclick="go('bultos')" id="nav-bultos" data-roles="dueno,admin" style="display:none"><i class="ti ti-packages"></i><span>Bultos</span></button>
+    <button class="nav g-oper" onclick="go('catalogo')" id="nav-catalogo" style="display:none"><i class="ti ti-settings"></i><span>Catálogo</span></button>
+    <button class="nav g-oper" onclick="go('dashboard')" id="nav-dashboard" data-roles="dueno,admin"><i class="ti ti-chart-bar"></i><span>Dashboard</span></button>
     <div class="nav-label">Administración</div>
-    <button class="nav" onclick="go('admin')" id="nav-admin" data-roles="dueno,admin"><i class="ti ti-report-analytics"></i><span>Finanzas</span></button>
-    <button class="nav" onclick="go('usuarios')" id="nav-usuarios" data-roles="dueno"><i class="ti ti-building-store"></i><span>Mi tienda</span></button>
+    <button class="nav g-admin" onclick="go('admin')" id="nav-admin" data-roles="dueno,admin"><i class="ti ti-report-analytics"></i><span>Finanzas</span></button>
+    <button class="nav g-admin" onclick="go('usuarios')" id="nav-usuarios" data-roles="dueno"><i class="ti ti-building-store"></i><span>Mi tienda</span></button>
     <button class="nav nav-salir" onclick="cerrarSesion()"><i class="ti ti-logout"></i><span>Salir</span></button>
   </div>
   <div class="sidebar-footer" style="display:flex;flex-direction:column;gap:6px">
@@ -649,7 +670,7 @@ td .acc{flex-wrap:nowrap}
 </div>
 
 <!-- MAIN -->
-<div class="main">
+<div class="main g-ventas">
 
 <!-- NUEVA FACTURA -->
 <div class="topbar" id="tb-nueva" style="display:flex"><div class="topbar-title"><i class="ti ti-plus" style="color:var(--purple)"></i> Nueva factura</div></div>
@@ -1401,6 +1422,7 @@ function getGrupoColor(g){
   const idx = Object.keys(CATS).indexOf(g);
   return GCOL_PALETTE[idx % GCOL_PALETTE.length];
 }
+const GRUPO_PAG={"nueva": "ventas", "facturas": "ventas", "cartera": "ventas", "live": "live", "clientes": "clientes", "despachos": "oper", "inventario": "oper", "bultos": "oper", "catalogo": "oper", "dashboard": "oper", "admin": "admin", "usuarios": "admin"};
 const PAGES=["nueva","live","facturas","cartera","clientes","inventario","bultos","catalogo","despachos","dashboard","admin","usuarios"];
 
 // PERSISTENCIA localStorage
@@ -1759,6 +1781,7 @@ document.getElementById('reset-confirm-input')?.addEventListener('keydown', func
 
 
 function goInner(p){
+  const gm=document.querySelector('.main'); if(gm){ gm.className='main g-'+(GRUPO_PAG[p]||'ventas'); }
   PAGES.forEach(x=>{
     document.getElementById('page-'+x).classList.remove('on');
     const tb=document.getElementById('tb-'+x);if(tb)tb.style.display='none';
