@@ -379,6 +379,20 @@ button[style*="#25D366"]:hover{opacity:0.9;box-shadow:0 2px 12px rgba(37,211,102
 .bl-prow-h{font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px}
 .bl-sug{border:1px solid var(--border2);background:var(--bg2);color:var(--text);border-radius:14px;padding:3px 9px;font-size:12px;cursor:pointer}
 .bl-sug:hover{border-color:var(--purple);color:var(--purple)}
+
+/* ── Pagos con comprobante ── */
+.pago-ops{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.pago-op{border:1px solid var(--border2);background:var(--bg2);color:var(--text);border-radius:8px;padding:8px 11px;font-size:12.5px;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+.pago-op:hover{border-color:var(--purple)}
+.pago-op.on{background:var(--purple);border-color:var(--purple);color:#fff}
+.comp-drop{border:1.5px dashed var(--border2);border-radius:10px;padding:14px;text-align:center;background:var(--bg3)}
+.comp-drop.arrastre{border-color:var(--purple);background:var(--purple-light)}
+.comp-prev{align-items:center;gap:10px;border:1px solid var(--border);border-radius:10px;padding:8px}
+.comp-prev img{width:70px;height:90px;object-fit:cover;border-radius:6px;border:1px solid var(--border)}
+.comp-btn{padding:3px 8px;font-size:11px}
+.comp-falta{color:var(--amber);border-color:var(--amber-bg);background:var(--amber-bg)}
+.comp-info{font-size:12px;color:var(--text2);margin-bottom:10px}
+.comp-img{width:100%;max-height:70vh;object-fit:contain;border-radius:8px;border:1px solid var(--border);background:var(--bg3)}
 </style>
 </head>
 <body>
@@ -1146,6 +1160,18 @@ button[style*="#25D366"]:hover{opacity:0.9;box-shadow:0 2px 12px rgba(37,211,102
   </div>
 </div>
 
+<!-- MODAL COMPROBANTE -->
+<div class="modal-ov hidden" id="modal-comp" onclick="if(event.target===this)cerrarComprobante()">
+  <div class="modal-box" style="max-width:520px">
+    <div class="modal-head">
+      <div style="font-size:16px;font-weight:700;color:var(--purple);display:flex;align-items:center;gap:6px"><i class="ti ti-receipt"></i> Comprobante de pago</div>
+      <button class="btn bs" onclick="cerrarComprobante()"><i class="ti ti-x"></i> Cerrar</button>
+    </div>
+    <div id="comp-cont" style="padding:14px 18px 18px"></div>
+  </div>
+</div>
+<input type="file" id="comp-file-tardio" accept="image/*" onchange="comprobanteTardio(this)" style="display:none">
+
 <!-- MODAL RESET SISTEMA -->
 <div id="modal-reset" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:300;align-items:center;justify-content:center">
   <div style="background:var(--bg2);border-radius:16px;padding:28px;width:420px;max-width:92vw;box-shadow:0 8px 40px rgba(0,0,0,0.2)">
@@ -1803,23 +1829,7 @@ function rFacturas(){
 
 function pagada(id){
   const f=facturas.find(x=>x.id===id);
-  if(f){
-    const abonoMonto = f.saldo;
-    if (abonoMonto > 0) {
-      f.abonos.push({
-        fecha: today(),
-        valor: abonoMonto,
-        metodo: 'Efectivo/Otro',
-        nota: 'Liquidación rápida'
-      });
-    }
-    f.saldo = 0;
-    f.estado = 'pagada';
-    save();
-  }
-  rFacturas();
-  rCartera();
-  rDashboard();
+  if(f && f.saldo>0) abrirAbonar(id, true);
 }
 
 function delF(id){if(confirm('¿Eliminar esta factura?')){facturas=facturas.filter(f=>f.id!==id);save();rFacturas();}}
@@ -2515,15 +2525,17 @@ function verFactura(id){
                 <th style="padding:6px 10px">Método</th>
                 <th style="padding:6px 10px">Nota</th>
                 <th style="padding:6px 10px;text-align:right">Valor</th>
+                <th style="padding:6px 10px;text-align:center">Comprobante</th>
               </tr>
             </thead>
             <tbody>
-              ${f.abonos.map(ab=>`
+              ${f.abonos.map((ab,i)=>`
                 <tr>
                   <td style="padding:6px 10px">${ab.fecha}</td>
                   <td style="padding:6px 10px;font-size:11px"><span class="badge bb" style="padding:1px 6px">${ab.metodo}</span></td>
                   <td style="padding:6px 10px;color:var(--text2);font-size:11px">${ab.nota||'—'}</td>
                   <td style="padding:6px 10px;text-align:right;font-weight:600;color:var(--green)">${fmt(ab.valor)}</td>
+                  <td style="padding:4px 8px;text-align:center">${celdaComprobante(f,ab,i)}</td>
                 </tr>
               `).join('')}
             </tbody>
@@ -3193,8 +3205,8 @@ function guardarEditCliente(){
 }
 
 // ── FUNCIONES DE ABONOS ───────────────────────────────────────────
-function abrirAbonar(id) {
-  const f = facturas.find(x=>x.id===id);
+function abrirAbonar(id, liquidar) {
+  const f = facturas.find(x=>String(x.id)===String(id));
   if(!f) return;
   document.getElementById('abono-fid').value = id;
   document.getElementById('abono-txt-num').textContent = f.num;
@@ -3208,7 +3220,12 @@ function abrirAbonar(id) {
   
   document.getElementById('abono-fecha').value = today();
   document.getElementById('abono-nota').value = '';
-  document.getElementById('abono-metodo').selectedIndex = 0;
+  document.getElementById('abono-metodo').value = '';
+  document.getElementById('abono-titulo').textContent = liquidar ? 'Liquidar saldo' : 'Registrar Abono';
+  document.getElementById('abono-err').textContent = '';
+  abonoComprobante = null;
+  pintarMetodosAbono();
+  pintarComprobanteAbono();
   
   document.getElementById('modal-abono').classList.remove('hidden');
   setTimeout(()=>montoInput.select(), 100);
@@ -3219,8 +3236,8 @@ function cerrarAbono() {
 }
 
 function guardarAbono() {
-  const id = parseInt(document.getElementById('abono-fid').value);
-  const f = facturas.find(x=>x.id===id);
+  const id = document.getElementById('abono-fid').value;
+  const f = facturas.find(x=>String(x.id)===String(id));
   if(!f) return;
   
   const monto = parseFloat(document.getElementById('abono-monto').value || 0);
@@ -3235,14 +3252,15 @@ function guardarAbono() {
   }
   
   const metodo = document.getElementById('abono-metodo').value;
-  const nota = document.getElementById('abono-nota').value.trim() || 'Abono registrado';
-  
-  f.abonos.push({
-    fecha: document.getElementById('abono-fecha').value,
-    valor: monto,
-    metodo: metodo,
-    nota: nota
-  });
+  if (!metodo) { document.getElementById('abono-err').textContent = 'Elige cómo pagó: efectivo o la transferencia.'; return; }
+  const nota = document.getElementById('abono-nota').value.trim() || (monto >= f.saldo ? 'Pago del saldo' : 'Abono registrado');
+  const fechaPago = document.getElementById('abono-fecha').value;
+  const abono = { fecha: fechaPago, valor: monto, metodo: metodo, nota: nota };
+  if (abonoComprobante && !esEfectivo(metodo)) {
+    abono.comprobanteId = guardarComprobanteNube({img: abonoComprobante, facturaId: f.id, facturaNum: f.num, cliente: f.clienteNombre, valor: monto, metodo: metodo, fecha: fechaPago});
+  }
+  abonoComprobante = null;
+  f.abonos.push(abono);
   
   f.saldo = Math.max(0, f.saldo - monto);
   if (f.saldo === 0) {
@@ -3255,31 +3273,13 @@ function guardarAbono() {
   rCartera();
   rFacturas();
   rDashboard();
+  const det = document.getElementById('modal-det');
+  if (det && !det.classList.contains('hidden') && document.getElementById('modal-fid').dataset.id == id) verFactura(f.id);
 }
 
 function liquidarFactura(id) {
-  const f = facturas.find(x=>x.id===id);
-  if(!f) return;
-  if(confirm(`¿Liquidar la totalidad del saldo pendiente (${fmt(f.saldo)}) de la factura ${f.num}?`)) {
-    const abonoMonto = f.saldo;
-    f.abonos.push({
-      fecha: today(),
-      valor: abonoMonto,
-      metodo: 'Efectivo/Otro',
-      nota: 'Liquidación completa de saldo'
-    });
-    f.saldo = 0;
-    f.estado = 'pagada';
-    save();
-    rCartera();
-    rFacturas();
-    rDashboard();
-    
-    const modalFid = document.getElementById('modal-fid');
-    if (modalFid && modalFid.dataset.id == id && !document.getElementById('modal-det').classList.contains('hidden')) {
-      verFactura(id);
-    }
-  }
+  const f = facturas.find(x=>String(x.id)===String(id));
+  if(f && f.saldo>0) abrirAbonar(f.id, true);
 }
 
 // ── WHATSAPP INTEGRATION ──────────────────────────────────────────
@@ -4121,6 +4121,139 @@ function guardarModo(){
   if(msg){ msg.style.color='var(--green)'; msg.textContent = sel.value==='bultos' ? 'Guardado. Ya aparece "Bultos" en el menú.' : sel.value==='completo' ? 'Guardado. Ya aparece "Inventario" en el menú.' : 'Guardado. El inventario queda oculto.'; }
 }
 
+// ═══════════════════════════════════════════════════════════
+// PAGOS CON COMPROBANTE
+// Las capturas se comprimen y se guardan en tiendas/{t}/comprobantes/{id}.
+// El abono solo guarda el id, así las facturas siguen livianas.
+// ═══════════════════════════════════════════════════════════
+const METODOS_PAGO = ['Efectivo','Nequi','Bancolombia','Daviplata','Transferencia'];
+let abonoComprobante = null;   // dataURL de la captura lista para guardar
+
+function esEfectivo(m){ return /efectivo/i.test(String(m||'')); }
+
+function comprimirImagen(file, maxLado){
+  maxLado=maxLado||1280;
+  return new Promise((resolve,reject)=>{
+    if(!file || !/^image\//.test(file.type||'')){ reject(new Error('no-imagen')); return; }
+    const rd=new FileReader();
+    rd.onload=()=>{
+      const im=new Image();
+      im.onload=()=>{
+        const k=Math.min(1, maxLado/Math.max(im.width, im.height));
+        const w=Math.max(1,Math.round(im.width*k)), h=Math.max(1,Math.round(im.height*k));
+        const c=document.createElement('canvas'); c.width=w; c.height=h;
+        const x=c.getContext('2d'); x.fillStyle='#ffffff'; x.fillRect(0,0,w,h); x.drawImage(im,0,0,w,h);
+        let q=0.75, url=c.toDataURL('image/jpeg', q);
+        while(url.length>700000 && q>0.35){ q-=0.1; url=c.toDataURL('image/jpeg', q); }
+        resolve(url);
+      };
+      im.onerror=()=>reject(new Error('no-imagen'));
+      im.src=rd.result;
+    };
+    rd.onerror=()=>reject(new Error('lectura'));
+    rd.readAsDataURL(file);
+  });
+}
+
+function pintarMetodosAbono(){
+  const cont=document.getElementById('abono-metodos'); if(!cont) return;
+  const actual=document.getElementById('abono-metodo').value;
+  cont.innerHTML=METODOS_PAGO.map(m=>
+    '<button type="button" class="pago-op'+(m===actual?' on':'')+'" data-m="'+m+'" onclick="elegirMetodoAbono(this.dataset.m)">'
+    +'<i class="ti '+(esEfectivo(m)?'ti-cash':'ti-building-bank')+'"></i> '+(m==='Transferencia'?'Otra transferencia':m)+'</button>').join('');
+  const zona=document.getElementById('abono-comp-zona');
+  if(zona) zona.style.display = (actual && !esEfectivo(actual)) ? '' : 'none';
+}
+function elegirMetodoAbono(m){
+  document.getElementById('abono-metodo').value=m;
+  document.getElementById('abono-err').textContent='';
+  pintarMetodosAbono();
+}
+function pintarComprobanteAbono(){
+  const prev=document.getElementById('abono-comp-prev'), vacio=document.getElementById('abono-comp-vacio');
+  if(!prev||!vacio) return;
+  if(abonoComprobante){
+    prev.innerHTML='<img src="'+abonoComprobante+'" alt="Comprobante"><button type="button" class="btn bs bd" onclick="quitarComprobanteAbono()"><i class="ti ti-trash"></i> Quitar</button>';
+    prev.style.display='flex'; vacio.style.display='none';
+  } else { prev.innerHTML=''; prev.style.display='none'; vacio.style.display=''; }
+}
+async function cargarComprobanteAbono(file){
+  const err=document.getElementById('abono-err');
+  try{ abonoComprobante=await comprimirImagen(file); err.textContent=''; }
+  catch(e){ err.textContent='Ese archivo no es una imagen. Sube una foto o captura del pago.'; }
+  pintarComprobanteAbono();
+}
+function comprobanteInput(input){ const f=input.files&&input.files[0]; input.value=''; if(f) cargarComprobanteAbono(f); }
+function quitarComprobanteAbono(){ abonoComprobante=null; pintarComprobanteAbono(); }
+
+// Pegar captura con Ctrl+V y arrastrar imagen mientras la ventana de pago está abierta
+document.addEventListener('paste', e=>{
+  const m=document.getElementById('modal-abono');
+  if(!m || m.classList.contains('hidden')) return;
+  const items=(e.clipboardData&&e.clipboardData.items)||[];
+  for(const it of items){
+    if(it.kind==='file' && /^image\//.test(it.type)){
+      e.preventDefault();
+      if(esEfectivo(document.getElementById('abono-metodo').value) || !document.getElementById('abono-metodo').value) elegirMetodoAbono('Transferencia');
+      cargarComprobanteAbono(it.getAsFile()); return;
+    }
+  }
+});
+function soltarComprobante(e){
+  e.preventDefault(); e.currentTarget.classList.remove('arrastre');
+  const f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];
+  if(f) cargarComprobanteAbono(f);
+}
+
+function guardarComprobanteNube(datos){
+  const id=String(lvUid());
+  if(Nube.activo && Nube.ref){
+    nubeTarea(Nube.ref.collection('comprobantes').doc(id).set(Object.assign({creado:Date.now(), por:(usuarioActual&&usuarioActual.nombre)||''}, datos)));
+  }
+  return id;
+}
+
+// ── Ver y subir comprobantes desde el historial ──
+async function verComprobante(cid){
+  const modal=document.getElementById('modal-comp'), cont=document.getElementById('comp-cont');
+  cont.innerHTML='<div style="padding:30px;text-align:center;color:var(--text3)">Cargando…</div>';
+  modal.classList.remove('hidden');
+  try{
+    const ds=await Nube.ref.collection('comprobantes').doc(String(cid)).get();
+    if(!ds.exists){ cont.innerHTML='<div style="padding:30px;text-align:center;color:var(--text3)">No se encontró el comprobante.</div>'; return; }
+    const c=ds.data();
+    cont.innerHTML='<div class="comp-info"><b>'+fmt(c.valor||0)+'</b> · '+lvEsc(c.metodo||'')+' · '+lvEsc(c.fecha||'')+(c.facturaNum?' · '+lvEsc(c.facturaNum):'')+(c.por?' · registró '+lvEsc(c.por):'')+'</div>'
+      +'<img class="comp-img" src="'+c.img+'" alt="Comprobante de pago">';
+  }catch(e){
+    console.error(e);
+    cont.innerHTML='<div style="padding:30px;text-align:center;color:var(--red)">No se pudo abrir el comprobante ('+lvEsc((e&&e.code)||'error')+').</div>';
+  }
+}
+function cerrarComprobante(){ document.getElementById('modal-comp').classList.add('hidden'); }
+let compPendiente=null;
+function subirComprobanteAbono(fid, idx){
+  compPendiente={fid, idx};
+  const inp=document.getElementById('comp-file-tardio'); inp.value=''; inp.click();
+}
+async function comprobanteTardio(input){
+  const file=input.files&&input.files[0]; input.value='';
+  if(!file || !compPendiente) return;
+  const f=facturas.find(x=>String(x.id)===String(compPendiente.fid)); const ab=f&&f.abonos&&f.abonos[compPendiente.idx];
+  if(!ab){ compPendiente=null; return; }
+  try{
+    const img=await comprimirImagen(file);
+    ab.comprobanteId=guardarComprobanteNube({img, facturaId:f.id, facturaNum:f.num, cliente:f.clienteNombre, valor:ab.valor, metodo:ab.metodo, fecha:ab.fecha});
+    save();
+    verFactura(f.id);
+  }catch(e){ alert('Ese archivo no es una imagen. Sube una foto o captura del pago.'); }
+  compPendiente=null;
+}
+function celdaComprobante(f, ab, i){
+  if(ab.comprobanteId) return '<button class="btn bs comp-btn" onclick="verComprobante(\''+ab.comprobanteId+'\')"><i class="ti ti-receipt"></i> Ver</button>';
+  if(esEfectivo(ab.metodo)) return '<span style="color:var(--text3);font-size:11px">Efectivo</span>';
+  return '<button class="btn bs comp-btn comp-falta" onclick="subirComprobanteAbono(\''+f.id+'\','+i+')" title="Subir la captura del pago"><i class="ti ti-upload"></i> Subir</button>';
+}
+
 // ── MARCA DE LA TIENDA (logo y nombre) ──
 // Cada tienda sube su logo en "Mi tienda". Se guarda en la nube (config/marca) y
 // en este equipo para mostrarlo también en la pantalla de ingreso.
@@ -4317,7 +4450,7 @@ nubeIniciar();
   <div class="modal-box" style="max-width: 420px;">
     <div class="modal-head">
       <div style="font-size:16px;font-weight:700;color:var(--purple);display:flex;align-items:center;gap:6px">
-        <i class="ti ti-wallet"></i> Registrar Abono
+        <i class="ti ti-wallet"></i> <span id="abono-titulo">Registrar Abono</span>
       </div>
       <button class="btn bs" onclick="cerrarAbono()"><i class="ti ti-x"></i></button>
     </div>
@@ -4348,17 +4481,21 @@ nubeIniciar();
           <input type="number" id="abono-monto" placeholder="Ej: 50000" min="1" style="font-size:14px;font-weight:600">
         </div>
       </div>
-      <div class="fg" style="margin-bottom:12px">
-        <div>
-          <label>Método de pago</label>
-          <select id="abono-metodo">
-            <option>Nequi</option>
-            <option>Bancolombia</option>
-            <option>Daviplata</option>
-            <option>Efectivo</option>
-            <option>Transferencia</option>
-          </select>
+      <div style="margin-bottom:12px">
+        <label>¿Cómo pagó? *</label>
+        <select id="abono-metodo" style="display:none"><option value=""></option><option>Efectivo</option><option>Nequi</option><option>Bancolombia</option><option>Daviplata</option><option>Transferencia</option></select>
+        <div class="pago-ops" id="abono-metodos"></div>
+      </div>
+      <div id="abono-comp-zona" style="display:none;margin-bottom:12px">
+        <label>Comprobante del pago</label>
+        <div id="abono-comp-vacio" class="comp-drop" ondragover="event.preventDefault();this.classList.add('arrastre')" ondragleave="this.classList.remove('arrastre')" ondrop="soltarComprobante(event)">
+          <label class="btn bs" style="cursor:pointer;margin:0"><i class="ti ti-camera"></i> Subir foto o captura<input type="file" accept="image/*" onchange="comprobanteInput(this)" style="display:none"></label>
+          <div style="font-size:11px;color:var(--text3);margin-top:6px">En el computador también puedes pegar la captura con Ctrl+V</div>
         </div>
+        <div id="abono-comp-prev" class="comp-prev" style="display:none"></div>
+      </div>
+      <div class="fg" style="margin-bottom:12px">
+        <div style="display:none"></div>
         <div>
           <label>Fecha de pago</label>
           <input type="text" id="abono-fecha" readonly style="background:var(--bg3);color:var(--text2);border-color:var(--border)">
@@ -4371,6 +4508,7 @@ nubeIniciar();
         </div>
       </div>
       
+      <div id="abono-err" style="font-size:12px;color:var(--red);min-height:14px;margin-bottom:6px"></div>
       <button class="btn bp" style="width:100%;justify-content:center;padding:10px" onclick="guardarAbono()">
         <i class="ti ti-check"></i> Registrar Pago
       </button>

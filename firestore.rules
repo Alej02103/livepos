@@ -46,6 +46,11 @@ service cloud.firestore {
       match /live/{id} {
         allow read, write: if miembro(t);
       }
+      // Capturas de pagos: todo el equipo las sube y las ve; solo dueño y admin las borran
+      match /comprobantes/{id} {
+        allow read, create: if miembro(t);
+        allow update, delete: if rolEn(t, ['dueno', 'admin']);
+      }
       // stock, catálogo, inventario: todo el equipo. Gastos: solo dueño y admin.
       match /config/{doc} {
         allow read, write: if miembro(t) && (doc != 'gastos' || rolEn(t, ['dueno', 'admin']));
