@@ -349,7 +349,7 @@ body.dark .lv-wa{background:#0f2a1b!important;border-color:#1f5134!important;col
 .modal-logo{width:34px;height:34px;border-radius:8px;object-fit:cover}
 @media(max-width:768px){.brand-txt{display:none}.brand-img{width:32px;height:32px}}
 
-/* ── Modo de inventario y bultos ── */
+/* ── Modo de inventario y lotes ── */
 .modo-ops{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
 .modo-op{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--border2);border-radius:10px;cursor:pointer;font-size:13px}
 .modo-op input{width:auto;margin-top:3px;accent-color:var(--purple)}
@@ -656,6 +656,18 @@ body.nav-min .sb-user{flex-direction:column;padding:8px 4px;gap:8px}
   .sidebar .nav.active::before,.sidebar .nav.active::after{display:none}
   .sidebar .nav-salir i{color:var(--sb-mut)}
 }
+
+/* ── Plataforma: tiendas ── */
+.pt-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.pt-form label{font-size:11px;color:var(--text2);font-weight:600;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:.3px}
+.pt-res{margin-top:12px;background:var(--green-bg);border-radius:12px;padding:12px 14px}
+.pt-res pre{white-space:pre-wrap;font-family:inherit;font-size:13px;background:var(--bg2);border-radius:8px;padding:10px 12px;margin:0 0 10px;border:1px solid var(--border)}
+.pt-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.pt-row:last-child{border-bottom:none}
+.pt-av{width:40px;height:40px;border-radius:12px;background:var(--green-bg);color:var(--green);font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pt-chip{display:inline-block;font-size:10.5px;font-weight:700;border-radius:10px;padding:1px 8px;vertical-align:middle}
+.pt-on{background:var(--green-bg);color:var(--green)}.pt-off{background:var(--red-bg);color:var(--red)}
+@media(max-width:768px){.pt-row{flex-wrap:wrap}.pt-row .acc{width:100%;justify-content:flex-start}.pt-form input,.pt-form select{font-size:16px}}
 </style>
 </head>
 <body>
@@ -717,12 +729,13 @@ body.nav-min .sb-user{flex-direction:column;padding:8px 4px;gap:8px}
     <div class="nav-label">Operación</div>
     <button class="nav g-oper" onclick="go('despachos')" id="nav-despachos" data-roles="dueno,admin,bodega"><i class="ti ti-truck-delivery"></i><span>Despachos</span></button>
     <button class="nav g-oper" onclick="go('inventario')" id="nav-inventario" data-roles="dueno,admin"><i class="ti ti-box"></i><span>Inventario</span></button>
-    <button class="nav g-oper" onclick="go('bultos')" id="nav-bultos" data-roles="dueno,admin" style="display:none"><i class="ti ti-packages"></i><span>Bultos</span></button>
+    <button class="nav g-oper" onclick="go('bultos')" id="nav-bultos" data-roles="dueno,admin" style="display:none"><i class="ti ti-packages"></i><span>Lotes</span></button>
     <button class="nav g-oper" onclick="go('catalogo')" id="nav-catalogo" style="display:none"><i class="ti ti-settings"></i><span>Catálogo</span></button>
     <button class="nav g-oper" onclick="go('dashboard')" id="nav-dashboard" data-roles="dueno,admin"><i class="ti ti-chart-bar"></i><span>Dashboard</span></button>
     <div class="nav-label">Administración</div>
     <button class="nav g-admin" onclick="go('admin')" id="nav-admin" data-roles="dueno,admin"><i class="ti ti-report-analytics"></i><span>Finanzas</span></button>
     <button class="nav g-admin" onclick="go('usuarios')" id="nav-usuarios" data-roles="dueno"><i class="ti ti-building-store"></i><span>Mi tienda</span></button>
+    <button class="nav g-admin" onclick="go('plataforma')" id="nav-plataforma" style="display:none"><i class="ti ti-building-community"></i><span>Tiendas</span></button>
     <button class="nav nav-salir" onclick="cerrarSesion()"><i class="ti ti-logout"></i><span>Salir</span></button>
   </div>
   <div class="sidebar-footer">
@@ -1214,14 +1227,14 @@ body.nav-min .sb-user{flex-direction:column;padding:8px 4px;gap:8px}
 
 <!-- BULTOS -->
 <div class="topbar" id="tb-bultos" style="display:none">
-  <div class="topbar-title"><i class="ti ti-packages" style="color:var(--purple)"></i> Bultos</div>
-  <div class="topbar-actions"><button class="btn bp" onclick="abrirBulto()"><i class="ti ti-plus"></i> Registrar bulto</button></div>
+  <div class="topbar-title"><i class="ti ti-packages" style="color:var(--purple)"></i> Lotes</div>
+  <div class="topbar-actions"><button class="btn bp" onclick="abrirBulto()"><i class="ti ti-plus"></i> Registrar lote</button></div>
 </div>
 <div class="page" id="page-bultos" style="padding-top:16px">
   <div class="cgrid" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))">
     <div class="met"><div class="ml">Prendas disponibles</div><div class="mv pur" id="bm0">0</div></div>
     <div class="met"><div class="ml">Valor disponible</div><div class="mv grn" id="bm1">$0</div></div>
-    <div class="met"><div class="ml">Invertido en bultos</div><div class="mv amb" id="bm2">$0</div></div>
+    <div class="met"><div class="ml">Invertido en lotes</div><div class="mv amb" id="bm2">$0</div></div>
     <div class="met"><div class="ml">Vendido</div><div class="mv pur" id="bm3">$0</div></div>
   </div>
   <div id="bultos-cont"></div>
@@ -1274,7 +1287,7 @@ body.nav-min .sb-user{flex-direction:column;padding:8px 4px;gap:8px}
       <label class="modo-op"><input type="radio" name="modo-inv" value="ventas" onchange="elegirModo(this.value)">
         <div><b>Solo ventas</b><span>Se factura con código, referencia y precio, como en el Excel. Sin inventario. Ideal para empezar.</span></div></label>
       <label class="modo-op"><input type="radio" name="modo-inv" value="bultos" onchange="elegirModo(this.value)">
-        <div><b>Por bultos y precios</b><span>Se registra cada bulto y cuántas prendas quedaron en cada precio. Lo disponible baja solo con las ventas. Para ropa de segunda.</span></div></label>
+        <div><b>Por lotes y precios</b><span>Se registra cada lote y cuántas prendas quedaron en cada precio. Lo disponible baja solo con las ventas. Para ropa de segunda.</span></div></label>
       <label class="modo-op"><input type="radio" name="modo-inv" value="completo" onchange="elegirModo(this.value)">
         <div><b>Inventario completo</b><span>Productos por grupo y categoría con stock de cada uno. Para productos que se repiten.</span></div></label>
     </div>
@@ -1366,7 +1379,7 @@ body.nav-min .sb-user{flex-direction:column;padding:8px 4px;gap:8px}
         <div><label for="g-fecha">Fecha</label><input type="date" id="g-fecha"></div>
         <div><label for="g-cat">Categoría</label><select id="g-cat" onchange="if(this.value==='__nueva__')gNuevaCat()"></select></div>
         <div><label for="g-valor">Valor <span style="text-transform:none;font-weight:400;color:var(--text3)">(35 = $35.000)</span></label><input id="g-valor" inputmode="numeric" placeholder="$0" onkeydown="if(event.key==='Enter')gAgregar()" onblur="this.value=lvFmtNum(lvParsePrecio(this.value))"></div>
-        <div class="fin-form-nota"><label for="g-nota">Nota (opcional)</label><input id="g-nota" placeholder="Ej: bulto de Medellín, guía Servientrega…" onkeydown="if(event.key==='Enter')gAgregar()"></div>
+        <div class="fin-form-nota"><label for="g-nota">Nota (opcional)</label><input id="g-nota" placeholder="Ej: lote de Medellín, guía Servientrega…" onkeydown="if(event.key==='Enter')gAgregar()"></div>
         <button class="btn bp fin-form-btn" onclick="gAgregar()"><i class="ti ti-plus"></i> Agregar</button>
       </div>
       <div id="g-msg" style="font-size:12px;min-height:16px;margin-top:6px"></div>
@@ -1388,6 +1401,42 @@ body.nav-min .sb-user{flex-direction:column;padding:8px 4px;gap:8px}
   </div>
 </div>
 
+<!-- PLATAFORMA: tiendas que usan LIVEpos (solo el administrador de LIVEpos) -->
+<div class="topbar" id="tb-plataforma" style="display:none">
+  <div class="topbar-title"><i class="ti ti-building-community" style="color:var(--purple)"></i> Tiendas LIVEpos</div>
+  <div class="topbar-actions"><button class="btn bp" onclick="document.getElementById('pt-nombre').focus()"><i class="ti ti-plus"></i> Nueva tienda</button></div>
+</div>
+<div class="page" id="page-plataforma" style="padding-top:16px">
+  <div class="cgrid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+    <div class="met"><div class="ml">Tiendas activas</div><div class="mv grn" id="pt-k-act">0</div></div>
+    <div class="met"><div class="ml">Suspendidas</div><div class="mv red" id="pt-k-sus">0</div></div>
+    <div class="met"><div class="ml">Creadas este mes</div><div class="mv pur" id="pt-k-mes">0</div></div>
+  </div>
+  <div class="card">
+    <div class="ct">Crear tienda nueva</div>
+    <div class="pt-form">
+      <div><label for="pt-nombre">Nombre de la tienda</label><input id="pt-nombre" placeholder="Ej: Entre Cielo y Tela" oninput="ptAutoCodigo()"></div>
+      <div><label for="pt-codigo">Código interno</label><input id="pt-codigo" placeholder="entrecieloytela" oninput="this.dataset.manual='1';this.value=ptSlug(this.value)"></div>
+      <div><label for="pt-dueno">Nombre de la dueña o dueño</label><input id="pt-dueno" placeholder="Ej: Carolina Gómez"></div>
+      <div><label for="pt-email">Correo para entrar</label><input id="pt-email" type="email" placeholder="correo@gmail.com" autocomplete="off"></div>
+      <div><label for="pt-tel">WhatsApp (opcional)</label><input id="pt-tel" inputmode="tel" placeholder="300 000 0000"></div>
+      <div><label for="pt-modo">Cómo maneja la mercancía</label>
+        <select id="pt-modo"><option value="ventas">Solo ventas (sin inventario)</option><option value="bultos">Por lotes y precios</option><option value="completo">Inventario completo</option></select></div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px">
+      <button class="btn bp" id="pt-crear-btn" onclick="ptCrear()"><i class="ti ti-building-plus"></i> Crear tienda</button>
+      <span style="font-size:12px;color:var(--text3)">Se crea su usuario como dueño, con una clave temporal, y le llega un correo para poner su propia clave.</span>
+    </div>
+    <div id="pt-msg" style="font-size:12.5px;margin-top:8px;min-height:16px"></div>
+    <div id="pt-resultado"></div>
+  </div>
+  <div class="card">
+    <div class="ct">Tiendas</div>
+    <div id="pt-lista"><div class="fin-vacio">Cargando…</div></div>
+  </div>
+</div>
+
+
 </div>
 </div>
 
@@ -1398,16 +1447,16 @@ body.nav-min .sb-user{flex-direction:column;padding:8px 4px;gap:8px}
 <div class="modal-ov hidden" id="modal-bulto" onclick="if(event.target===this)cerrarBulto()">
   <div class="modal-box" style="max-width:560px">
     <div class="modal-head">
-      <div class="modal-head-num" id="bl-titulo" style="font-size:16px">Registrar bulto</div>
+      <div class="modal-head-num" id="bl-titulo" style="font-size:16px">Registrar lote</div>
       <button class="btn bs" onclick="cerrarBulto()"><i class="ti ti-x"></i> Cerrar</button>
     </div>
     <div style="padding:18px 20px;display:flex;flex-direction:column;gap:12px">
       <div class="fg">
-        <div><label for="bl-nombre">Nombre o número</label><input id="bl-nombre" placeholder="Ej: Bulto 15"></div>
+        <div><label for="bl-nombre">Nombre o número</label><input id="bl-nombre" placeholder="Ej: Lote 15"></div>
         <div><label for="bl-tipo">Tipo</label><select id="bl-tipo"><option value="sin">Sin seleccionar</option><option value="seleccionado">Seleccionado</option></select></div>
       </div>
       <div class="fg">
-        <div><label for="bl-costo">Costo del bulto</label><input id="bl-costo" inputmode="numeric" placeholder="$0" onchange="this.value=lvFmtNum(lvParsePrecio(this.value));totalesBulto()"></div>
+        <div><label for="bl-costo">Costo del lote</label><input id="bl-costo" inputmode="numeric" placeholder="$0" onchange="this.value=lvFmtNum(lvParsePrecio(this.value));totalesBulto()"></div>
         <div><label for="bl-fecha">Fecha de llegada</label><input id="bl-fecha" placeholder="dd/mm/aaaa"></div>
       </div>
       <div class="fg">
@@ -1426,7 +1475,7 @@ body.nav-min .sb-user{flex-direction:column;padding:8px 4px;gap:8px}
       </div>
       <div class="bl-stats" id="bl-totales"></div>
       <div id="bl-msg" style="font-size:12px;color:var(--red);min-height:14px"></div>
-      <button class="btn bp" style="justify-content:center;padding:10px" onclick="guardarBulto()"><i class="ti ti-check"></i> Guardar bulto</button>
+      <button class="btn bp" style="justify-content:center;padding:10px" onclick="guardarBulto()"><i class="ti ti-check"></i> Guardar lote</button>
     </div>
   </div>
 </div>
@@ -1493,7 +1542,7 @@ function getGrupoColor(g){
   const idx = Object.keys(CATS).indexOf(g);
   return GCOL_PALETTE[idx % GCOL_PALETTE.length];
 }
-const GRUPO_PAG={"nueva": "ventas", "facturas": "ventas", "cartera": "ventas", "live": "live", "clientes": "clientes", "despachos": "oper", "inventario": "oper", "bultos": "oper", "catalogo": "oper", "dashboard": "oper", "admin": "admin", "usuarios": "admin"};
+const GRUPO_PAG={"nueva": "ventas", "facturas": "ventas", "cartera": "ventas", "live": "live", "clientes": "clientes", "despachos": "oper", "inventario": "oper", "bultos": "oper", "catalogo": "oper", "dashboard": "oper", "admin": "admin", "usuarios": "admin", "plataforma": "admin"};
 // Menú contraído (solo íconos) en computador; se recuerda en este equipo
 function toggleNavMin(){
   const on=!document.body.classList.contains('nav-min');
@@ -1504,7 +1553,7 @@ function toggleNavMin(){
   try{ if(localStorage.getItem('ov_nav_min')) document.body.classList.add('nav-min'); }catch(e){}
   document.querySelectorAll('.sidebar .nav').forEach(b=>{ const t=b.querySelector('span'); if(t && !b.title) b.title=t.textContent; });
 })();
-const PAGES=["nueva","live","facturas","cartera","clientes","inventario","bultos","catalogo","despachos","dashboard","admin","usuarios"];
+const PAGES=["nueva","live","facturas","cartera","clientes","inventario","bultos","catalogo","despachos","dashboard","admin","usuarios","plataforma"];
 
 // PERSISTENCIA localStorage
 function save(){
@@ -1883,6 +1932,7 @@ function goInner(p){
   if(p==='nueva')initF();
   if(p==='usuarios')renderUsuarios();
   if(p==='bultos')renderBultos();
+  if(p==='plataforma')renderPlataforma();
 }
 
 // ── CLIENTE RÁPIDO ────────────────────────────────────────────────
@@ -2814,6 +2864,137 @@ function renderAdmin(){
     document.getElementById('fin-lives-lista').innerHTML=d.lives.length ? d.lives.map(lvhCardHTML).join('')
       : '<div class="card fin-vacio">No hay lives guardados en este período.<br><span style="font-size:12px">Usa las flechas de arriba para ver otros meses.</span></div>';
   }
+}
+
+// ═══════════════════════════════════════════════════════════
+// PLATAFORMA: crear y administrar las tiendas que usan LIVEpos.
+// Solo lo ve el administrador de LIVEpos (su UID está en las reglas de Firebase).
+// ═══════════════════════════════════════════════════════════
+let esSuperAdmin=false, ptTiendas=[];
+const PT_MODOS={ventas:'Solo ventas', bultos:'Lotes y precios', completo:'Inventario completo'};
+async function ptDetectar(){
+  esSuperAdmin=false;
+  const nav=document.getElementById('nav-plataforma'); if(nav) nav.style.display='none';
+  try{
+    const qs=await Nube.db.collection('tiendas').get();   // las reglas solo dejan listar al administrador
+    ptTiendas=[]; qs.forEach(d=>ptTiendas.push(Object.assign({id:d.id},d.data())));
+    esSuperAdmin=true;
+    if(usuarioActual && !usuarioActual.pages.includes('plataforma')) usuarioActual.pages.push('plataforma');
+    if(nav) nav.style.display='flex';
+    actualizarNavLabels();
+  }catch(e){ /* no es administrador de LIVEpos */ }
+}
+function ptSlug(t){
+  return String(t||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,30);
+}
+function ptAutoCodigo(){
+  const c=document.getElementById('pt-codigo');
+  if(!c.dataset.manual) c.value=ptSlug(document.getElementById('pt-nombre').value);
+}
+function ptMsg(t, ok){ const m=document.getElementById('pt-msg'); m.textContent=t; m.style.color=ok?'var(--green)':'var(--red)'; }
+function ptClaveTemporal(){
+  const L='abcdefghjkmnpqrstuvwxyz', N='23456789'; let s='';
+  for(let i=0;i<5;i++) s+=L[Math.floor(Math.random()*L.length)];
+  for(let i=0;i<3;i++) s+=N[Math.floor(Math.random()*N.length)];
+  return s.charAt(0).toUpperCase()+s.slice(1);
+}
+function ptLink(){ return location.origin+location.pathname.replace(/index\.html$/,''); }
+function ptTextoAcceso(t, clave){
+  return ['¡Hola '+(t.ownerNombre||'')+'! Tu tienda *'+t.nombre+'* ya está lista en LIVEpos 🎉','',
+    '👉 Entra aquí: '+ptLink(),'📧 Correo: '+t.ownerEmail].concat(clave?['🔑 Clave temporal: '+clave]:[]).concat(['',
+    'Te llegó un correo para crear tu propia clave (revisa también spam).',
+    'Al entrar, ve a *Mi tienda* para subir tu logo, tus cuentas de pago y crear a tu equipo.']).join('\n');
+}
+async function ptCrear(){
+  const nombre=document.getElementById('pt-nombre').value.trim();
+  let codigo=ptSlug(document.getElementById('pt-codigo').value||nombre);
+  const dueno=document.getElementById('pt-dueno').value.trim();
+  const email=document.getElementById('pt-email').value.trim().toLowerCase();
+  const tel=document.getElementById('pt-tel').value.trim();
+  const modo=document.getElementById('pt-modo').value;
+  if(!nombre||!dueno||!email){ ptMsg('Completa el nombre de la tienda, el nombre de la dueña y el correo.'); return; }
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ ptMsg('Revisa el correo.'); return; }
+  if(codigo.length<3){ ptMsg('El código interno debe tener al menos 3 letras.'); return; }
+  const btn=document.getElementById('pt-crear-btn'); btn.disabled=true; btn.innerHTML='Creando…';
+  document.getElementById('pt-resultado').innerHTML='';
+  try{
+    // Código libre: si ya existe, se le agrega un número
+    const base=codigo; let n=1;
+    while((await Nube.db.collection('tiendas').doc(codigo).get()).exists){ n++; codigo=(base.slice(0,27)+n); }
+    // Usuario de la dueña, con una conexión aparte para no cerrar tu sesión
+    const clave=ptClaveTemporal();
+    const sec=firebase.apps.find(a=>a.name==='crear-usuarios') || firebase.initializeApp(firebaseConfig,'crear-usuarios');
+    const secAuth=sec.auth();
+    try{ await secAuth.setPersistence(firebase.auth.Auth.Persistence.NONE); }catch(e){}
+    const cred=await secAuth.createUserWithEmailAndPassword(email, clave);
+    const uid=cred.user.uid;
+    await secAuth.signOut();
+    const ahora=Date.now(), yo=(usuarioActual&&usuarioActual.nombre)||'';
+    const t={nombre, owner:uid, ownerNombre:dueno, ownerEmail:email, tel, modoInicial:modo, activa:true, creada:ahora, creadaPor:yo};
+    const ref=Nube.db.collection('tiendas').doc(codigo);
+    await ref.set(t);
+    await Nube.db.collection('usuarios').doc(uid).set({nombre:dueno, email, rol:'dueno', tienda:codigo, activo:true, creado:ahora, creadoPor:usuarioActual.uid});
+    await ref.collection('config').doc('marca').set({json:nubeStable({nombre, logo:'', cuentas:''}), actualizado:ahora, por:yo});
+    await ref.collection('config').doc('ajustes').set({json:nubeStable({modoInv:modo, alertaMin:5, inicioBultos:modo==='bultos'?ahora:0}), actualizado:ahora, por:yo});
+    let correo=true; try{ await Nube.auth.sendPasswordResetEmail(email); }catch(e){ correo=false; }
+    ptTiendas.push(Object.assign({id:codigo},t));
+    ['pt-nombre','pt-codigo','pt-dueno','pt-email','pt-tel'].forEach(i=>{ const el=document.getElementById(i); el.value=''; delete el.dataset.manual; });
+    ptMsg('Listo: '+nombre+' quedó creada'+(correo?' y a '+email+' le llegó el correo para crear su clave.':'. No se pudo enviar el correo; compártele la clave temporal.'), true);
+    const txt=ptTextoAcceso(Object.assign({id:codigo},t), clave);
+    document.getElementById('pt-resultado').innerHTML='<div class="pt-res"><div style="font-weight:700;margin-bottom:6px"><i class="ti ti-circle-check" style="color:var(--green)"></i> Datos para enviarle</div>'
+      +'<pre id="pt-res-txt">'+lvEsc(txt)+'</pre><div class="acc" style="justify-content:flex-start">'
+      +'<button class="ab ab-pri" onclick="ptCopiar(document.getElementById(\'pt-res-txt\').textContent,this)"><i class="ti ti-copy"></i> Copiar</button>'
+      +(tel?'<a class="ab ab-wa" target="_blank" href="https://wa.me/'+ptTelWa(tel)+'?text='+encodeURIComponent(txt)+'"><i class="ti ti-brand-whatsapp"></i> Enviar por WhatsApp</a>':'')+'</div></div>';
+    renderPlataforma(true);
+  }catch(e){
+    console.error(e);
+    ptMsg(e&&/email-already-in-use/.test(e.code||'')
+      ? 'Ese correo ya tiene cuenta en LIVEpos (puede ser de otra tienda). Usa otro correo, o bórralo en Firebase → Authentication y vuelve a intentar.'
+      : e&&e.code==='permission-denied' ? 'Firebase no dejó crear la tienda: revisa que las reglas nuevas estén publicadas con tu UID.' : nubeMsgAuth(e));
+  }finally{ btn.disabled=false; btn.innerHTML='<i class="ti ti-building-plus"></i> Crear tienda'; }
+}
+function ptTelWa(t){ let d=String(t||'').replace(/\D/g,''); if(d.length===10) d='57'+d; return d; }
+async function ptCopiar(txt, btn){
+  try{ await navigator.clipboard.writeText(txt); }catch(e){ lvCopiarTextoViejo(txt); }
+  if(btn){ const h=btn.innerHTML; btn.innerHTML='<i class="ti ti-check"></i> Copiado'; setTimeout(()=>btn.innerHTML=h,1500); }
+}
+async function ptActivar(id, activa){
+  const t=ptTiendas.find(x=>x.id===id); if(!t) return;
+  if(!activa && !confirm('¿Suspender '+t.nombre+'? Su equipo no podrá entrar hasta que la vuelvas a activar. No se borra nada.')) return;
+  try{ await Nube.db.collection('tiendas').doc(id).update({activa}); t.activa=activa; renderPlataforma(true); }
+  catch(e){ alert('No se pudo cambiar ('+(e.code||'error')+').'); }
+}
+async function ptReenviar(id, btn){
+  const t=ptTiendas.find(x=>x.id===id); if(!t||!t.ownerEmail) return;
+  try{ await Nube.auth.sendPasswordResetEmail(t.ownerEmail); btn.innerHTML='<i class="ti ti-check"></i> Enviado'; }
+  catch(e){ alert(nubeMsgAuth(e)); }
+}
+async function renderPlataforma(sinRecargar){
+  const cont=document.getElementById('pt-lista'); if(!cont) return;
+  if(!sinRecargar){
+    try{ const qs=await Nube.db.collection('tiendas').get(); ptTiendas=[]; qs.forEach(d=>ptTiendas.push(Object.assign({id:d.id},d.data()))); }
+    catch(e){ cont.innerHTML='<div class="fin-vacio">No se pudieron cargar las tiendas ('+lvEsc(e.code||'error')+').</div>'; return; }
+  }
+  const lista=ptTiendas.slice().sort((a,b)=>(Number(b.creada)||0)-(Number(a.creada)||0));
+  const mes=new Date(); mes.setDate(1); mes.setHours(0,0,0,0);
+  document.getElementById('pt-k-act').textContent=lista.filter(t=>t.activa!==false).length;
+  document.getElementById('pt-k-sus').textContent=lista.filter(t=>t.activa===false).length;
+  document.getElementById('pt-k-mes').textContent=lista.filter(t=>(Number(t.creada)||0)>=mes.getTime()).length;
+  cont.innerHTML=lista.length ? lista.map(t=>{
+    const act=t.activa!==false, mia=Nube.t===t.id;
+    const ini=String(t.nombre||t.id).split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    return '<div class="pt-row'+(act?'':' usr-off')+'" data-t="'+lvEsc(t.id)+'">'
+      +'<div class="pt-av">'+lvEsc(ini)+'</div>'
+      +'<div style="min-width:0;flex:1"><div style="font-weight:700">'+lvEsc(t.nombre||t.id)+(mia?' <span style="color:var(--text3);font-weight:400">(tu tienda)</span>':'')
+        +' <span class="pt-chip '+(act?'pt-on':'pt-off')+'">'+(act?'Activa':'Suspendida')+'</span></div>'
+      +'<div style="font-size:12px;color:var(--text3);overflow:hidden;text-overflow:ellipsis">'+lvEsc(t.ownerNombre||'')+(t.ownerEmail?' · '+lvEsc(t.ownerEmail):'')+(t.tel?' · '+lvEsc(t.tel):'')+'</div>'
+      +'<div style="font-size:11.5px;color:var(--text3)">Código: '+lvEsc(t.id)+(t.modoInicial?' · '+(PT_MODOS[t.modoInicial]||''):'')+(t.creada?' · desde '+new Date(t.creada).toLocaleDateString('es-CO'):'')+'</div></div>'
+      +'<div class="acc">'
+      +(t.ownerEmail?'<button class="ab" data-id="'+lvEsc(t.id)+'" onclick="ptReenviar(this.dataset.id,this)" title="Le llega un correo para crear una clave nueva"><i class="ti ti-mail"></i> Clave</button>':'')
+      +(t.ownerEmail?'<button class="ab" data-id="'+lvEsc(t.id)+'" onclick="ptCopiar(ptTextoAcceso(ptTiendas.find(x=>x.id===this.dataset.id)),this)" title="Copiar mensaje con el link y su correo"><i class="ti ti-copy"></i> Acceso</button>':'')
+      +(mia?'':'<button class="ab'+(act?' ab-del':' ab-ok')+'" data-id="'+lvEsc(t.id)+'" onclick="ptActivar(this.dataset.id,'+(!act)+')">'+(act?'<i class="ti ti-player-pause"></i> Suspender':'<i class="ti ti-player-play"></i> Activar')+'</button>')
+      +'</div></div>';
+  }).join('') : '<div class="fin-vacio">Aún no hay tiendas.</div>';
 }
 
 // ── RESTORATION OF MISSING FUNCTIONS ──
@@ -4067,7 +4248,7 @@ function nubeEscuchar(){
 }
 function nubeDesconectar(){
   Nube.unsubs.forEach(u=>{ try{u();}catch(e){} });
-  Nube.unsubs=[]; Nube.activo=false; Nube.t=null; Nube.ref=null;
+  Nube.unsubs=[]; Nube.activo=false; Nube.t=null; Nube.ref=null; esSuperAdmin=false; ptTiendas=[];
   Nube.sync={clientes:{},facturas:{},live:{},gastos:{}}; Nube.gastosSinPermiso=false; Nube.cfg={}; Nube.cargados=new Set(); Nube.creadas=new Set();
   clientes=[]; facturas=[]; fc=1; stock={}; invStock=[]; CATS={}; GCOL={}; filasLive=[]; liveFiltro=''; cierreLive={}; bultos=[]; gastos=[]; gPend={}; AJUSTES={modoInv:'ventas',alertaMin:5,inicioBultos:0};
   DATOS_LOCALES.forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
@@ -4134,6 +4315,10 @@ async function nubeEntrar(user){
     }
     const p=ps.data();
     if(p.activo===false){ loginEstado('aviso','Tu usuario ('+user.email+') está desactivado. Habla con el dueño de la tienda.'); return; }
+    try{
+      const td=await Nube.db.collection('tiendas').doc(p.tienda||TIENDA_ID).get();
+      if(td.exists && td.data().activa===false){ loginEstado('aviso','La tienda está suspendida por el momento. Comunícate con LIVEpos para reactivarla.'); return; }
+    }catch(e){}
     const rol=ROLES[p.rol]?p.rol:'vendedor';
     usuarioActual={nombre:p.nombre||user.email, rol, pages:ROLES[rol].pages.slice(), username:user.email, uid:user.uid, tienda:p.tienda||TIENDA_ID};
     Nube.t=usuarioActual.tienda;
@@ -4187,6 +4372,7 @@ function aplicarUsuarioUI(){
   if(bImp) bImp.style.display=u.rol==='dueno'?'flex':'none';
   aplicarModoUI();
   goInner(u.pages[0]||'nueva');
+  ptDetectar();
 }
 
 function actualizarNavLabels(){
@@ -4306,8 +4492,8 @@ async function usrResetClave(email){
 
 // ═══════════════════════════════════════════════════════════
 // MODO DE INVENTARIO Y BULTOS
-// Cada tienda elige en "Mi tienda": solo ventas, por bultos y precios, o inventario completo.
-// En modo bultos lo disponible se calcula con las ventas: nadie descuenta a mano.
+// Cada tienda elige en "Mi tienda": solo ventas, por lotes y precios, o inventario completo.
+// En modo lotes lo disponible se calcula con las ventas: nadie descuenta a mano.
 // ═══════════════════════════════════════════════════════════
 let AJUSTES = {modoInv:'ventas', alertaMin:5, inicioBultos:0};
 let bultos = [];
@@ -4356,7 +4542,7 @@ function calcBultos(){
       else { fuera+=c; fueraValor+=pr*c; }
     });
   });
-  // Las ventas de cada precio se asignan primero a los bultos más antiguos (estimado)
+  // Las ventas de cada precio se asignan primero a los lotes más antiguos (estimado)
   const restante=Object.assign({}, vendidas);
   const porBulto=orden.map(b=>{
     let etiq=0, valorEtiq=0, vend=0, valorVend=0;
@@ -4399,7 +4585,7 @@ function renderBultos(){
       +'<td class="num">'+p.entraron+'</td><td class="num">'+p.vendidas+(p.demas?' <span title="Se vendieron más de las registradas a este precio" style="color:var(--red)">(+'+p.demas+')</span>':'')+'</td>'
       +'<td><div class="bl-quedan"><div class="bl-bar"><span style="width:'+pct+'%"></span></div><b>'+p.disponibles+'</b></div></td>'
       +'<td style="text-align:right">'+chip+'</td></tr>';
-  }).join('') : '<tr><td colspan="5" style="color:var(--text3);text-align:center;padding:18px">Registra un bulto y anota sus prendas por precio para ver lo disponible.</td></tr>';
+  }).join('') : '<tr><td colspan="5" style="color:var(--text3);text-align:center;padding:18px">Registra un lote y anota sus prendas por precio para ver lo disponible.</td></tr>';
 
   const lista=d.porBulto.slice().reverse();
   const filasBulto = lista.length ? lista.map(x=>{
@@ -4408,10 +4594,10 @@ function renderBultos(){
     const rec=Math.round(x.recuperado*100);
     const barra = b.costo ? '<div class="bl-rec" title="Lo vendido frente a lo que costó"><div class="bl-bar"><span style="width:'+Math.min(100,rec)+'%;background:'+(rec>=100?'var(--green)':'var(--purple)')+'"></span></div><span>'+rec+'% recuperado</span></div>' : '';
     return '<div class="bl-item">'
-      +'<div class="bl-item-top"><div style="min-width:0"><div style="font-weight:700;font-size:14px">'+lvEsc(b.nombre||'Bulto')+' '+tipo+(sinEtiq?' <span class="bl-chip bl-poco">Por etiquetar</span>':'')+'</div>'
+      +'<div class="bl-item-top"><div style="min-width:0"><div style="font-weight:700;font-size:14px">'+lvEsc(b.nombre||'Lote')+' '+tipo+(sinEtiq?' <span class="bl-chip bl-poco">Por etiquetar</span>':'')+'</div>'
       +'<div style="font-size:12px;color:var(--text3)">'+lvEsc(b.fecha||'')+(b.proveedor?' · '+lvEsc(b.proveedor):'')+(b.notas?' · '+lvEsc(b.notas):'')+'</div></div>'
       +'<div class="acc"><button class="ab'+(sinEtiq?' ab-pri':'')+'" data-id="'+b.id+'" onclick="abrirBulto(this.dataset.id)" title="Etiquetar o editar"><i class="ti '+(sinEtiq?'ti-tag':'ti-pencil')+'"></i> '+(sinEtiq?'Etiquetar':'Editar')+'</button>'
-      +'<button class="ab ab-ico ab-del" data-id="'+b.id+'" onclick="eliminarBulto(this.dataset.id)" title="Eliminar bulto" aria-label="Eliminar bulto"><i class="ti ti-trash"></i></button></div></div>'
+      +'<button class="ab ab-ico ab-del" data-id="'+b.id+'" onclick="eliminarBulto(this.dataset.id)" title="Eliminar lote" aria-label="Eliminar lote"><i class="ti ti-trash"></i></button></div></div>'
       +'<div class="bl-stats">'
         +'<div><span>Costó</span><b>'+fmt(+b.costo||0)+'</b></div>'
         +'<div><span>Prendas</span><b>'+x.etiq+'</b></div>'
@@ -4420,33 +4606,33 @@ function renderBultos(){
         +'<div><span>Quedan</span><b>'+x.quedan+'</b></div>'
         +'<div><span>Vendido</span><b>'+fmt(x.valorVend)+'</b></div>'
       +'</div>'+barra+'</div>';
-  }).join('') : '<div style="color:var(--text3);font-size:13px;padding:10px 0">Aún no hay bultos. Dale "Registrar bulto" cuando llegue mercancía.</div>';
+  }).join('') : '<div style="color:var(--text3);font-size:13px;padding:10px 0">Aún no hay lotes. Dale "Registrar lote" cuando llegue mercancía.</div>';
 
   cont.innerHTML=
     '<div class="card"><div class="ct" style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span>Disponible por precio</span><span style="font-weight:400;font-size:12px;color:var(--text3)" id="bultos-desde2">'+(d.inicio?'Ventas desde el '+new Date(d.inicio).toLocaleDateString('es-CO'):'')+'</span></div>'
     +'<div style="overflow-x:auto"><table class="bl-tabla"><thead><tr><th>Precio</th><th class="num">Entraron</th><th class="num">Vendidas</th><th>Quedan</th><th></th></tr></thead><tbody>'+filasPrecio+'</tbody></table></div>'
-    +(d.fuera?'<div class="bl-nota"><i class="ti ti-info-circle"></i> '+d.fuera+' prenda'+(d.fuera!==1?'s':'')+' ('+fmt(d.fueraValor)+') se vendieron a precios que no están en ningún bulto, por ejemplo rebajas. No se descuentan de lo disponible.</div>':'')
+    +(d.fuera?'<div class="bl-nota"><i class="ti ti-info-circle"></i> '+d.fuera+' prenda'+(d.fuera!==1?'s':'')+' ('+fmt(d.fueraValor)+') se vendieron a precios que no están en ningún lote, por ejemplo rebajas. No se descuentan de lo disponible.</div>':'')
     +'</div>'
-    +'<div class="card"><div class="ct">Bultos</div>'+filasBulto
-    +(lista.length?'<div class="bl-nota" style="margin-top:10px"><i class="ti ti-info-circle"></i> Como las etiquetas solo llevan precio, las ventas se asignan primero a los bultos más antiguos. Las cifras por bulto son un estimado; lo disponible por precio es exacto.</div>':'')
+    +'<div class="card"><div class="ct">Lotes</div>'+filasBulto
+    +(lista.length?'<div class="bl-nota" style="margin-top:10px"><i class="ti ti-info-circle"></i> Como las etiquetas solo llevan precio, las ventas se asignan primero a los lotes más antiguos. Las cifras por lote son un estimado; lo disponible por precio es exacto.</div>':'')
     +'</div>';
 }
 
 // Resumen corto para el panel de Nueva factura
 function bultosMini(){
   const d=calcBultos(); const min=+AJUSTES.alertaMin||0;
-  if(!d.precios.length) return 'Aún no hay bultos registrados.';
+  if(!d.precios.length) return 'Aún no hay lotes registrados.';
   return d.precios.map(p=>{
     const color=p.disponibles===0?'var(--red)':p.disponibles<=min?'#EF9F27':'var(--green)';
     return '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>'+fmt(p.precio)+'</span><span style="font-weight:600;color:'+color+'">'+p.disponibles+' disp.</span></div>';
   }).join('');
 }
 
-// ── Registrar / etiquetar bulto ──
+// ── Registrar / etiquetar lote ──
 function abrirBulto(id){
   const b = id ? bultos.find(x=>String(x.id)===String(id)) : null;
-  bultoEdit = b ? JSON.parse(JSON.stringify(b)) : {id:null, nombre:'Bulto '+(bultos.length+1), tipo:'sin', proveedor:'', costo:0, fecha:today(), notas:'', precios:[]};
-  document.getElementById('bl-titulo').textContent = b ? 'Editar '+(b.nombre||'bulto') : 'Registrar bulto';
+  bultoEdit = b ? JSON.parse(JSON.stringify(b)) : {id:null, nombre:'Lote '+(bultos.length+1), tipo:'sin', proveedor:'', costo:0, fecha:today(), notas:'', precios:[]};
+  document.getElementById('bl-titulo').textContent = b ? 'Editar '+(b.nombre||'lote') : 'Registrar lote';
   document.getElementById('bl-nombre').value=bultoEdit.nombre||'';
   document.getElementById('bl-tipo').value=bultoEdit.tipo==='seleccionado'?'seleccionado':'sin';
   document.getElementById('bl-prov').value=bultoEdit.proveedor||'';
@@ -4472,7 +4658,7 @@ function pintarPreciosBulto(){
   const usados=[...new Set(bultos.flatMap(b=>(b.precios||[]).map(p=>Math.round(+p.precio||0))).filter(Boolean))].sort((a,b)=>a-b)
     .filter(pr=>!bultoEdit.precios.some(p=>Math.round(+p.precio||0)===pr));
   document.getElementById('bl-sugeridos').innerHTML = usados.length
-    ? '<span style="font-size:11px;color:var(--text3)">Precios de otros bultos:</span> '+usados.map(pr=>'<button class="bl-sug" onclick="agregarPrecioBulto('+pr+')">'+fmt(pr)+'</button>').join('')
+    ? '<span style="font-size:11px;color:var(--text3)">Precios de otros lotes:</span> '+usados.map(pr=>'<button class="bl-sug" onclick="agregarPrecioBulto('+pr+')">'+fmt(pr)+'</button>').join('')
     : '';
   totalesBulto();
 }
@@ -4504,7 +4690,7 @@ function totalesBulto(){
 function guardarBulto(){
   if(!bultoEdit) return;
   const nombre=document.getElementById('bl-nombre').value.trim();
-  if(!nombre){ document.getElementById('bl-msg').textContent='Ponle un nombre o número al bulto.'; return; }
+  if(!nombre){ document.getElementById('bl-msg').textContent='Ponle un nombre o número al lote.'; return; }
   const precios=bultoEdit.precios.map(p=>({precio:Math.round(+p.precio||0), cantidad:+p.cantidad||0})).filter(p=>p.precio>0 && p.cantidad>0);
   // Un mismo precio repetido se suma
   const unidos={}; precios.forEach(p=>{ unidos[p.precio]=(unidos[p.precio]||0)+p.cantidad; });
@@ -4527,7 +4713,7 @@ function guardarBulto(){
 }
 function eliminarBulto(id){
   const b=bultos.find(x=>String(x.id)===String(id)); if(!b) return;
-  if(!confirm('¿Eliminar '+(b.nombre||'este bulto')+'? Sus prendas dejan de contar en lo disponible.')) return;
+  if(!confirm('¿Eliminar '+(b.nombre||'este lote')+'? Sus prendas dejan de contar en lo disponible.')) return;
   bultos=bultos.filter(x=>x!==b);
   saveBultos();
   renderBultos();
@@ -4551,7 +4737,7 @@ function guardarModo(){
   setAjustes(nuevo);
   nubePushCfg('ajustes');
   const msg=document.getElementById('modo-msg');
-  if(msg){ msg.style.color='var(--green)'; msg.textContent = sel.value==='bultos' ? 'Guardado. Ya aparece "Bultos" en el menú.' : sel.value==='completo' ? 'Guardado. Ya aparece "Inventario" en el menú.' : 'Guardado. El inventario queda oculto.'; }
+  if(msg){ msg.style.color='var(--green)'; msg.textContent = sel.value==='bultos' ? 'Guardado. Ya aparece "Lotes" en el menú.' : sel.value==='completo' ? 'Guardado. Ya aparece "Inventario" en el menú.' : 'Guardado. El inventario queda oculto.'; }
 }
 
 // ═══════════════════════════════════════════════════════════
