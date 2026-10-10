@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LIVEpos</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/tabler-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/dist/tabler-icons.min.css">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -443,6 +443,22 @@ body.dark .et-desp.et-chip{background:#0f2a44;color:#7db7ef}
   .lv-sheet{max-height:none}
   .page{padding-left:10px!important;padding-right:10px!important}
 }
+
+/* ── Celular: menú como barra inferior con nombres ── */
+.nav-salir{display:none!important}
+@media(max-width:768px){
+  .sidebar{top:auto;bottom:0;width:100%;height:auto;flex-direction:row;border-right:none;border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom,0px);z-index:60;box-shadow:0 -2px 12px rgba(0,0,0,.07)}
+  .brand{display:none!important}
+  .nav-section{display:flex;flex-direction:row;overflow-x:auto;padding:0;flex:1;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .nav-section::-webkit-scrollbar{display:none}
+  .nav{flex-direction:column;justify-content:center;align-items:center;gap:3px;min-width:70px;width:auto;flex:1 0 auto;padding:8px 6px!important;font-size:10.5px;text-align:center;border-left:none!important}
+  .nav span{display:block!important;white-space:nowrap}
+  .nav i{font-size:21px}
+  .nav-salir{display:flex!important}
+  .main{margin-left:0!important;padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))}
+  .page div[style*="grid-template-columns:1fr 300px"],.page div[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important}
+  #theme-toggle{bottom:calc(86px + env(safe-area-inset-bottom,0px))!important;width:42px!important;height:42px!important}
+}
 </style>
 </head>
 <body>
@@ -509,6 +525,7 @@ body.dark .et-desp.et-chip{background:#0f2a44;color:#7db7ef}
     <div class="nav-label">Administración</div>
     <button class="nav" onclick="go('admin')" id="nav-admin" data-roles="dueno"><i class="ti ti-report-analytics"></i><span>Financiero</span></button>
     <button class="nav" onclick="go('usuarios')" id="nav-usuarios" data-roles="dueno"><i class="ti ti-building-store"></i><span>Mi tienda</span></button>
+    <button class="nav nav-salir" onclick="cerrarSesion()"><i class="ti ti-logout"></i><span>Salir</span></button>
   </div>
   <div class="sidebar-footer" style="display:flex;flex-direction:column;gap:6px">
     <!-- Usuario logueado -->
