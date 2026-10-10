@@ -2468,6 +2468,25 @@ function rDashboard(){
 }
 
 // ── DETALLE FACTURA ───────────────────────────────────────────────
+// Tabla de artículos del detalle de factura: con grupo/categoría solo si la factura los tiene
+function itemsDetHTML(f){
+  const items=f.items||[];
+  const conGrupo=items.some(it=>it.grp||it.cat);
+  const td=(v,st)=>'<td style="'+(st||'font-size:12px')+'">'+v+'</td>';
+  const cola=it=>td(fmt(it.pre),'text-align:right;font-size:12px')+td(it.can,'text-align:center;font-size:12px')+td(fmt(it.sub),'text-align:right;font-weight:600');
+  const colaH='<th style="text-align:right">Precio</th><th style="text-align:center">Cant.</th><th style="text-align:right">Subtotal</th>';
+  if(conGrupo){
+    return '<table><thead><tr><th>Grupo</th><th>Categoría</th><th>Descripción</th>'+colaH+'</tr></thead><tbody>'
+      +items.map(it=>'<tr>'+td(it.grp?'<span class="'+(GCOL[it.grp]||'')+'">'+lvEsc(it.grp)+'</span>':'—','')
+        +td(lvEsc(it.cat||'—'))+td(lvEsc(it.dsc||'—'),'font-size:12px;color:var(--text2)')+cola(it)+'</tr>').join('')
+      +'</tbody></table>';
+  }
+  return '<table><thead><tr><th>Código</th><th>Referencia</th>'+colaH+'</tr></thead><tbody>'
+    +items.map(it=>'<tr>'+td(lvEsc(it.cod||'—'),'font-size:12px;font-weight:600')
+      +td(lvEsc(it.ref||it.dsc||'—'),'font-size:12px;color:var(--text2)')+cola(it)+'</tr>').join('')
+    +'</tbody></table>';
+}
+
 function verFactura(id){
   const f=facturas.find(x=>x.id===id);
   if(!f)return;
@@ -2524,17 +2543,7 @@ function verFactura(id){
       <div class="det-field"><div class="det-label">Modalidad</div><div class="det-value">${f.modalidad==='contado'?'Contado':'Crédito / Fiado'}</div></div>
     </div>
     <div class="items-det">
-      <table>
-        <thead><tr><th>Grupo</th><th>Categoría</th><th>Descripción</th><th style="text-align:right">Precio</th><th style="text-align:center">Cant.</th><th style="text-align:right">Subtotal</th></tr></thead>
-        <tbody>${f.items.map(it=>`<tr>
-          <td>${it.grp?`<span class="${GCOL[it.grp]||''}">${it.grp}</span>`:'—'}</td>
-          <td style="font-size:12px">${it.cat||'—'}</td>
-          <td style="font-size:12px;color:var(--text2)">${it.dsc||'—'}</td>
-          <td style="text-align:right;font-size:12px">${fmt(it.pre)}</td>
-          <td style="text-align:center;font-size:12px">${it.can}</td>
-          <td style="text-align:right;font-weight:600">${fmt(it.sub)}</td>
-        </tr>`).join('')}</tbody>
-      </table>
+      ${itemsDetHTML(f)}
     </div>
     
     <div class="total-det" style="display:flex;flex-direction:column;gap:5px;padding:12px 16px;align-items:stretch">
