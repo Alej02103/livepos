@@ -691,6 +691,36 @@ body.nav-min .sb-user{flex-direction:column;padding:8px 4px;gap:8px}
 .g-cat-chip{background:var(--bg2);border:1px solid var(--border);padding:4px 4px 4px 10px}
 .g-cat-chip button{border:none;background:none;color:var(--text3);cursor:pointer;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;padding:0;font-size:13px}
 .g-cat-chip button:hover{background:var(--red-bg);color:var(--red)}
+
+/* ── CRM de clientas ── */
+.crm-kpis{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.crm-row{display:grid;grid-template-columns:40px minmax(0,1fr) 150px 130px auto;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer}
+.crm-row:last-child{border-bottom:none}
+.crm-row:hover{background:var(--bg3)}
+.crm-nom{font-weight:700}
+.crm-tt{font-weight:400;color:var(--text3);font-size:12px}
+.crm-badges{display:flex;gap:5px;flex-wrap:wrap;margin:3px 0}
+.crm-sub{font-size:12px;color:var(--text3)}
+.crm-num{display:flex;flex-direction:column;text-align:right}
+.crm-num span{font-size:11px;color:var(--text3)}
+.crm-badge{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;border-radius:10px;padding:2px 8px}
+.crm-vip{background:#FFF1C9;color:#8A5A00}.crm-frec{background:var(--purple-light);color:var(--purple)}.crm-nueva{background:var(--blue-bg);color:var(--blue)}
+.crm-oca{background:var(--bg3);color:var(--text2)}.crm-dorm{background:#ECEAF2;color:#6B6585}.crm-sin{background:var(--bg3);color:var(--text3)}
+.crm-debe{background:var(--red-bg);color:var(--red)}.crm-cumple{background:#FDE8F1;color:#B0306A}
+body.dark .crm-vip{background:#3a2c0b;color:#F5C451}body.dark .crm-dorm{background:#262236;color:#A9A2C2}body.dark .crm-cumple{background:#3a1426;color:#FF8FC0}
+.ficha-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.ficha-stat{background:var(--bg3);border-radius:10px;padding:9px 11px}
+.ficha-cols{display:grid;grid-template-columns:1.1fr 1fr;gap:18px}
+.ficha-hist{max-height:430px;overflow:auto}
+.ficha-fac{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed var(--border);font-size:13px;cursor:pointer}
+.ficha-fac:hover{background:var(--bg3)}
+@media(max-width:768px){
+  .crm-row{grid-template-columns:36px minmax(0,1fr) auto;gap:10px;padding:12px}
+  .crm-row .crm-ult{display:none}
+  .crm-row .acc{grid-column:2/-1;justify-content:flex-start}
+  .ficha-stats{grid-template-columns:1fr 1fr}
+  .ficha-cols{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
@@ -983,22 +1013,31 @@ body.nav-min .sb-user{flex-direction:column;padding:8px 4px;gap:8px}
 </div>
 
 <!-- CLIENTES -->
-<div class="topbar" id="tb-clientes" style="display:none"><div class="topbar-title"><i class="ti ti-users" style="color:var(--purple)"></i> Clientes</div><div class="topbar-actions"><button class="btn bp" onclick="showSCF()"><i class="ti ti-user-plus"></i> Nuevo cliente</button></div></div>
+<div class="topbar" id="tb-clientes" style="display:none"><div class="topbar-title"><i class="ti ti-users" style="color:var(--purple)"></i> Clientes</div><div class="topbar-actions"><button class="btn bs" onclick="crmExportar()" title="Descargar la lista filtrada en Excel (CSV)"><i class="ti ti-download"></i> Exportar</button><button class="btn bp" onclick="showSCF()"><i class="ti ti-user-plus"></i> Nueva clienta</button></div></div>
 <div class="page" id="page-clientes" style="padding-top:16px">
   <div class="card" id="scf" style="display:none">
     <div class="ct">Nuevo cliente</div>
     <div class="fg"><div><label>Nombre completo *</label><input id="sc0" placeholder="Nombre y apellido"></div><div><label>Cédula</label><input id="sc1" placeholder="Número de cédula"></div></div>
     <div class="fg"><div><label>Teléfono</label><input id="sc2" placeholder="Celular"></div><div><label>Canal principal</label><select id="sc3"><option>TikTok Live</option><option>Bazar Fotográfico</option><option>Mayorista</option><option>Tienda Física</option></select></div></div>
+    <div class="fg"><div><label>Usuario de TikTok</label><input id="sc5" placeholder="@usuario"></div><div><label>Ciudad</label><input id="sc6" placeholder="Ej: Medellín"></div></div>
     <div class="fg f1"><div><label>Dirección</label><input id="sc4" placeholder="Dirección de entrega"></div></div>
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
       <button class="btn bs" onclick="document.getElementById('scf').style.display='none'"><i class="ti ti-x"></i> Cancelar</button>
       <button class="btn bs bp" onclick="saveClienteS()"><i class="ti ti-check"></i> Guardar cliente</button>
     </div>
   </div>
-  <div class="card">
-    <table><thead><tr><th>Cliente</th><th>Cédula</th><th>Teléfono</th><th>Dirección</th><th>Canal</th><th>Facturas</th><th></th></tr></thead>
-    <tbody id="tc"></tbody></table>
+  <div class="cgrid crm-kpis" id="crm-kpis"></div>
+  <div class="desp-tabs" id="crm-segs"></div>
+  <div class="fx-bar">
+    <input id="crm-q" placeholder="Buscar por nombre, teléfono, @TikTok o ciudad…" oninput="rClientes()">
+    <select id="crm-orden" onchange="rClientes()" style="width:auto">
+      <option value="ultima">Compra más reciente</option><option value="total">Más ha comprado</option><option value="compras">Más compras</option><option value="dormida">Más tiempo sin comprar</option><option value="nombre">Nombre</option>
+    </select>
   </div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div id="crm-lista"></div>
+  </div>
+  <div id="crm-pie" style="font-size:12px;color:var(--text3);margin-top:-4px"></div>
 </div>
 
 <!-- INVENTARIO -->
@@ -2011,7 +2050,9 @@ function saveClienteS(){
     cedula:document.getElementById('sc1').value.trim(),
     telefono:document.getElementById('sc2').value.trim(),
     canal:document.getElementById('sc3').value,
-    direccion:document.getElementById('sc4').value.trim()});
+    direccion:document.getElementById('sc4').value.trim(),
+    tiktok:crmArroba(document.getElementById('sc5').value), ciudad:document.getElementById('sc6').value.trim(), creado:Date.now()});
+  ['sc0','sc1','sc2','sc4','sc5','sc6'].forEach(i=>{ const e=document.getElementById(i); if(e) e.value=''; });
   save();
   document.getElementById('scf').style.display='none';
   rClientes();
@@ -2385,26 +2426,161 @@ function cobrarWhatsApp(k){
 }
 
 // ── RENDER CLIENTES ───────────────────────────────────────────────
+// ═══ CRM: lo que cada clienta compra, cada cuánto, cuánto debe y cómo contactarla ═══
+let crmSeg='todas';
+function crmVacio(){ return {compras:0,total:0,prendas:0,deuda:0,lives:0,primera:'',ultima:'',dias:null,facs:[],diasPago:null}; }
+function crmArroba(t){ t=String(t||'').trim().replace(/\s+/g,''); return t ? (t.startsWith('@')?t:'@'+t) : ''; }
+function crmCumpleMes(t){ const m=String(t||'').match(/^\s*(\d{1,2})\s*[\/\-.]\s*(\d{1,2})/); if(!m) return 0; const d=+m[1], mes=+m[2]; return (d>=1&&d<=31&&mes>=1&&mes<=12)?mes:0; }
+function crmHace(d){ return d===null?'—':d===0?'Hoy':d===1?'Ayer':'Hace '+d+' días'; }
+function crmIsoAbono(t){ const p=String(t||'').split('/'); return p.length===3 ? p[2].trim()+'-'+p[1].trim().padStart(2,'0')+'-'+p[0].trim().padStart(2,'0') : ''; }
+function crmStats(){
+  const m={}, hoy=hoyISO();
+  facturas.forEach(f=>{
+    const k=String(f.clienteId); const st=m[k]||(m[k]=Object.assign(crmVacio(),{livesSet:new Set(),pagos:[]}));
+    const i=facISO(f);
+    st.compras++; st.total+=Number(f.total)||0; st.deuda+=f.estado==='pendiente'?Math.max(0,Number(f.saldo)||0):0;
+    st.prendas+=(f.items||[]).reduce((s,it)=>s+(Number(it.can)||1),0);
+    if(liveIdDe(f)) st.livesSet.add(liveIdDe(f));
+    if(i){ if(!st.primera||i<st.primera) st.primera=i; if(!st.ultima||i>st.ultima) st.ultima=i; }
+    st.facs.push(f);
+    // Cuántos días tarda en pagar (facturas ya pagadas)
+    if(f.estado==='pagada' && i && (f.abonos||[]).length){
+      const ult=f.abonos.map(a=>crmIsoAbono(a.fecha)).filter(Boolean).sort().pop();
+      if(ult) st.pagos.push(Math.max(0,(dateDeISO(ult)-dateDeISO(i))/864e5));
+    }
+  });
+  Object.values(m).forEach(st=>{
+    st.lives=st.livesSet.size;
+    st.dias=st.ultima?Math.max(0,Math.round((dateDeISO(hoy)-dateDeISO(st.ultima))/864e5)):null;
+    st.diasPago=st.pagos.length?st.pagos.reduce((a,b)=>a+b,0)/st.pagos.length:null;
+  });
+  return m;
+}
+// Segmento principal de cada clienta
+function crmSegmento(st){
+  if(!st.compras) return 'sin';
+  if(st.dias>45) return 'dormida';
+  if(st.compras>=5 || st.total>=500000) return 'vip';
+  if(st.compras>=3) return 'frecuente';
+  if(st.primera && (dateDeISO(hoyISO())-dateDeISO(st.primera))/864e5<=30) return 'nueva';
+  return 'ocasional';
+}
+const CRM_SEGS={vip:['VIP','ti-crown','crm-vip'], frecuente:['Frecuente','ti-repeat','crm-frec'], nueva:['Nueva','ti-sparkles','crm-nueva'],
+  ocasional:['Ocasional','ti-user','crm-oca'], dormida:['Dormida','ti-zzz','crm-dorm'], sin:['Sin compras','ti-user-question','crm-sin']};
+function crmBadges(c,st){
+  const sg=CRM_SEGS[crmSegmento(st)];
+  let h='<span class="crm-badge '+sg[2]+'"><i class="ti '+sg[1]+'"></i> '+sg[0]+'</span>';
+  if(st.deuda>0) h+='<span class="crm-badge crm-debe">Debe '+fmt(st.deuda)+'</span>';
+  if(crmCumpleMes(c.cumple)===new Date().getMonth()+1) h+='<span class="crm-badge crm-cumple">🎂 Cumple este mes</span>';
+  return h;
+}
+function crmFiltros(c,st){
+  const seg=crmSegmento(st);
+  return {todas:true, vip:seg==='vip', frecuente:seg==='frecuente', nueva:seg==='nueva', ocasional:seg==='ocasional', dormida:seg==='dormida',
+    debe:st.deuda>0, cumple:crmCumpleMes(c.cumple)===new Date().getMonth()+1, sintel:!String(c.telefono||'').replace(/\D/g,''), sin:seg==='sin'};
+}
+const CRM_FILTROS=[['todas','Todas'],['vip','👑 VIP'],['frecuente','Frecuentes'],['nueva','Nuevas'],['ocasional','Ocasionales'],['dormida','Dormidas'],['debe','Deben'],['cumple','🎂 Cumpleaños del mes'],['sintel','Sin WhatsApp'],['sin','Sin compras']];
+function crmFiltrar(k){ crmSeg=k; rClientes(); }
+let crmVista=[];
 function rClientes(){
-  const tb=document.getElementById('tc');
-  if(!clientes.length){tb.innerHTML='<tr><td colspan="7" class="empty">Sin clientes registrados.</td></tr>';return;}
-  tb.innerHTML=clientes.map(c=>`<tr>
-    <td><div class="crow"><div class="av">${ini(c.nombre)}</div>
-      <div><div style="font-weight:500">${c.nombre}</div></div></div></td>
-    <td style="font-size:12px">${c.cedula||'—'}</td>
-    <td style="font-size:12px">${c.telefono||'—'}</td>
-    <td style="font-size:12px">${c.direccion||'—'}</td>
-    <td style="font-size:12px">${c.canal||'—'}</td>
-    <td style="font-weight:500">${facturas.filter(f=>f.clienteId===c.id).length}</td>
-    <td><div class="acc">
-      <button class="ab ab-wa" onclick="enviarWhatsAppCliente('${c.nombre.replace(/'/g,"\\'")}', '${c.telefono||''}', ${c.id})" title="Escribirle por WhatsApp"><i class="ti ti-brand-whatsapp"></i> WhatsApp</button>
-      <button class="ab" onclick="editarCliente(${c.id})" title="Editar datos del cliente"><i class="ti ti-pencil"></i> Editar</button>
-      <button class="ab ab-ico ab-del" onclick="delC(${c.id})" title="Eliminar cliente" aria-label="Eliminar cliente"><i class="ti ti-trash"></i></button>
-    </div></td>
-  </tr>`).join('');
+  const stats=crmStats();
+  const filas=clientes.map(c=>{ const st=stats[String(c.id)]||crmVacio(); return {c,st,f:crmFiltros(c,st)}; });
+  // KPIs
+  const mes=hoyISO().slice(0,7);
+  const kp=(l,v,cls,sub)=>'<div class="met"><div class="ml">'+l+'</div><div class="mv '+cls+'">'+v+'</div>'+(sub?'<div class="fin-sub">'+sub+'</div>':'')+'</div>';
+  const conTel=filas.filter(x=>!x.f.sintel).length;
+  document.getElementById('crm-kpis').innerHTML=
+    kp('Clientas',filas.length,'pur',filas.filter(x=>x.st.compras).length+' con compras')
+    +kp('Compraron este mes',filas.filter(x=>x.st.ultima&&x.st.ultima.slice(0,7)===mes).length,'grn')
+    +kp('VIP',filas.filter(x=>x.f.vip).length,'amb','5+ compras o $500.000+')
+    +kp('Dormidas',filas.filter(x=>x.f.dormida).length,'red','Más de 45 días sin comprar')
+    +kp('Con WhatsApp',filas.length?Math.round(conTel/filas.length*100)+'%':'—','pur',(filas.length-conTel)+' por completar');
+  const n=k=>filas.filter(x=>x.f[k]).length;
+  document.getElementById('crm-segs').innerHTML=CRM_FILTROS.filter(([k])=>k==='todas'||n(k)).map(([k,l])=>
+    '<button class="desp-tab'+(crmSeg===k?' on':'')+'" onclick="crmFiltrar(\''+k+'\')">'+l+' <span class="desp-n">'+n(k)+'</span></button>').join('');
+  const q=lvSinAcento(document.getElementById('crm-q')?.value||'');
+  const orden=document.getElementById('crm-orden')?.value||'ultima';
+  if(crmSeg!=='todas' && !filas.some(x=>x.f[crmSeg])) crmSeg='todas';
+  let lista=filas.filter(x=>x.f[crmSeg])
+    .filter(x=>!q || [x.c.nombre,x.c.telefono,x.c.tiktok,x.c.ciudad].some(v=>lvSinAcento(v).includes(q)));
+  const by={ultima:(a,b)=>String(b.st.ultima).localeCompare(String(a.st.ultima)), total:(a,b)=>b.st.total-a.st.total, compras:(a,b)=>b.st.compras-a.st.compras,
+    dormida:(a,b)=>(b.st.dias??-1)-(a.st.dias??-1), nombre:(a,b)=>String(a.c.nombre).localeCompare(String(b.c.nombre),'es')};
+  lista.sort(by[orden]||by.ultima);
+  crmVista=lista;
+  const el=document.getElementById('crm-lista');
+  if(!clientes.length){ el.innerHTML='<div class="fin-vacio">Aún no hay clientas. Se crean solas al facturar un live, o con "Nueva clienta".</div>'; document.getElementById('crm-pie').textContent=''; return; }
+  el.innerHTML=lista.length ? lista.map(({c,st})=>
+    '<div class="crm-row" onclick="editarCliente('+c.id+')">'
+    +'<div class="av">'+ini(c.nombre||'?')+'</div>'
+    +'<div class="crm-main"><div class="crm-nom">'+lvEsc(c.nombre)+(c.tiktok?' <span class="crm-tt">'+lvEsc(c.tiktok)+'</span>':'')+'</div>'
+    +'<div class="crm-badges">'+crmBadges(c,st)+'</div>'
+    +'<div class="crm-sub">'+(c.telefono?'<i class="ti ti-phone"></i> '+lvEsc(c.telefono):'<span style="color:var(--amber)"><i class="ti ti-phone-off"></i> Sin WhatsApp</span>')+(c.ciudad?' · '+lvEsc(c.ciudad):'')+(c.talla?' · Talla '+lvEsc(c.talla):'')+'</div></div>'
+    +'<div class="crm-num"><b>'+fmt(st.total)+'</b><span>'+st.compras+' compra'+(st.compras!==1?'s':'')+(st.lives?' · '+st.lives+' live'+(st.lives!==1?'s':''):'')+'</span></div>'
+    +'<div class="crm-num crm-ult"><b>'+(st.ultima?crmHace(st.dias):'—')+'</b><span>última compra</span></div>'
+    +'<div class="acc" onclick="event.stopPropagation()">'
+    +'<button class="ab ab-wa ab-ico" onclick="crmMensaje('+c.id+')" title="Escribirle por WhatsApp"><i class="ti ti-brand-whatsapp"></i></button>'
+    +'<button class="ab ab-ico ab-del" onclick="delC('+c.id+')" title="Eliminar clienta" aria-label="Eliminar"><i class="ti ti-trash"></i></button></div></div>'
+  ).join('') : '<div class="fin-vacio">Ninguna clienta en este filtro.</div>';
+  const tot=lista.reduce((s,x)=>s+x.st.total,0);
+  document.getElementById('crm-pie').textContent=lista.length+' clienta'+(lista.length!==1?'s':'')+' · han comprado '+fmt(tot)+' en total';
+}
+// ── Mensajes por WhatsApp con plantillas ──
+function crmPlantillas(c,st){
+  const n=String(c.nombre||'').split(' ')[0]||'', t=nombreTienda();
+  return [
+    ['live','📣 Invitar al live','¡Hola, '+n+'! 💜 Te invitamos a nuestro próximo live de *'+t+'* en TikTok. Tenemos prendas nuevas que te van a encantar. ¡Te esperamos!'],
+    ['reactivar','💌 Te extrañamos','¡Hola, '+n+'! Hace rato no te vemos por los lives de *'+t+'* 🥺 Llegó mercancía nueva'+(c.gustos?' y hay cositas de lo que te gusta ('+c.gustos+')':'')+'. ¡Conéctate al próximo live!'],
+    ['gracias','🙏 Agradecer','¡Hola, '+n+'! Gracias por tus compras en *'+t+'* 💜 Eres muy importante para nosotras. Cualquier cosa que necesites, aquí estamos.'],
+    ['cumple','🎂 Cumpleaños','¡Feliz cumpleaños, '+n+'! 🎉 De parte de todo el equipo de *'+t+'* te deseamos un día lindo. 💜'],
+    ['libre','✏️ Escribir','¡Hola, '+n+'! ']
+  ];
+}
+function crmMensaje(id){
+  const c=clientes.find(x=>x.id==id); if(!c) return;
+  const st=crmStats()[String(c.id)]||crmVacio();
+  const pl=crmPlantillas(c,st);
+  const def=crmCumpleMes(c.cumple)===new Date().getMonth()+1?'cumple':crmSegmento(st)==='dormida'?'reactivar':'live';
+  document.getElementById('crm-msg-id').value=c.id;
+  document.getElementById('crm-msg-tit').textContent='Mensaje a '+c.nombre;
+  document.getElementById('crm-msg-plantillas').innerHTML=pl.map(([k,l])=>'<button class="desp-tab'+(k===def?' on':'')+'" data-k="'+k+'" onclick="crmUsarPlantilla(this)">'+l+'</button>').join('');
+  document.getElementById('crm-msg-txt').value=pl.find(x=>x[0]===def)[2];
+  document.getElementById('modal-crm-msg').classList.remove('hidden');
+}
+function crmUsarPlantilla(btn){
+  const c=clientes.find(x=>x.id==document.getElementById('crm-msg-id').value); if(!c) return;
+  const pl=crmPlantillas(c,crmStats()[String(c.id)]||crmVacio()).find(x=>x[0]===btn.dataset.k);
+  btn.parentElement.querySelectorAll('.desp-tab').forEach(b=>b.classList.toggle('on',b===btn));
+  const ta=document.getElementById('crm-msg-txt'); ta.value=pl[2]; ta.focus();
+}
+function crmEnviar(){
+  const c=clientes.find(x=>x.id==document.getElementById('crm-msg-id').value); if(!c) return;
+  let phone=c.telefono||'';
+  if(!phone){
+    phone=prompt('"'+c.nombre+'" no tiene WhatsApp registrado. Escríbelo (ej: 3001234567):','');
+    if(phone===null) return; phone=phone.trim(); if(!phone) return;
+    c.telefono=phone; save();
+  }
+  phone=phone.replace(/\D/g,''); if(phone.length===10 && phone.startsWith('3')) phone='57'+phone;
+  c.ultimoContacto=Date.now(); save();
+  document.getElementById('modal-crm-msg').classList.add('hidden');
+  window.open('https://api.whatsapp.com/send?phone='+phone+'&text='+encodeURIComponent(document.getElementById('crm-msg-txt').value),'_blank');
+  rClientes();
+}
+// ── Exportar la lista filtrada (abre en Excel) ──
+function crmExportar(){
+  if(!crmVista.length) rClientes();
+  const seg=k=>CRM_SEGS[k]?CRM_SEGS[k][0]:'';
+  const cols=['Nombre','WhatsApp','TikTok','Ciudad','Dirección','Cumpleaños','Talla','Zapato','Le gusta','Cómo nos conoció','Segmento','Compras','Lives','Total comprado','Ticket promedio','Última compra','Días sin comprar','Debe','Acepta mensajes'];
+  const filas=crmVista.map(({c,st})=>[c.nombre,c.telefono,c.tiktok,c.ciudad,c.direccion,c.cumple,c.talla,c.zapato,c.gustos,c.origen,seg(crmSegmento(st)),
+    st.compras,st.lives,Math.round(st.total),st.compras?Math.round(st.total/st.compras):0,st.ultima,st.dias===null?'':st.dias,Math.round(st.deuda),c.acepta===false?'No':'Sí']);
+  const esc=v=>{ v=v==null?'':String(v); return /[;"\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; };
+  const csv='﻿'+[cols].concat(filas).map(r=>r.map(esc).join(';')).join('\r\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download='Clientes_'+(MARCA.nombre||'LIVEpos').replace(/[^\w]+/g,'_')+'_'+hoyISO()+'.csv'; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),2000);
 }
 
-function delC(id){if(confirm('¿Eliminar este cliente?')){clientes=clientes.filter(c=>c.id!==id);save();rClientes();}}
+function delC(id){const n=facturas.filter(f=>f.clienteId==id).length; if(confirm('¿Eliminar esta clienta?'+(n?'\n\nTiene '+n+' factura(s): las facturas no se borran, pero ya no aparecerá en Clientes.':''))){clientes=clientes.filter(c=>c.id!=id);save();rClientes();}}
 
 // ── RENDER INVENTARIO ─────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════
@@ -3864,7 +4040,7 @@ function facturarLive(key){
   const g=cierreLive[key]; if(!g || g.fac) return null;
   let cli=lvBuscarCliente(g.nombre);
   if(!cli){
-    cli={id:lvUid(),nombre:g.nombre,telefono:'',cedula:'',direccion:'',canal:'TikTok Live'};
+    cli={id:lvUid(),nombre:g.nombre,telefono:'',cedula:'',direccion:'',canal:'TikTok Live',origen:'TikTok',creado:Date.now()};
     clientes.push(cli);
   }
   const items=g.items.map(it=>({cod:it.cod||'',ref:it.ref||'',dsc:lvDesc(it),grp:'',cat:'',pre:it.pre||0,can:1,sub:it.pre||0}));
@@ -4065,15 +4241,30 @@ function rLive(){
 
 // ── CLIENTES EDIT ────────────────────────────────────────────────
 function editarCliente(id){
-  const c=clientes.find(x=>x.id===id);if(!c)return;
-  document.getElementById('edit-cli-id').value=id;
-  document.getElementById('edit-cli-nom').value=c.nombre||'';
-  document.getElementById('edit-cli-ced').value=c.cedula||'';
-  document.getElementById('edit-cli-tel').value=c.telefono||'';
-  document.getElementById('edit-cli-dir').value=c.direccion||'';
+  const c=clientes.find(x=>x.id==id);if(!c)return;
+  const st=crmStats()[String(c.id)]||crmVacio();
+  const set=(k,v)=>{ const e=document.getElementById(k); if(e) e.value=v||''; };
+  set('edit-cli-id',c.id); set('edit-cli-nom',c.nombre); set('edit-cli-ced',c.cedula); set('edit-cli-tel',c.telefono);
+  set('edit-cli-dir',c.direccion); set('edit-cli-tiktok',c.tiktok); set('edit-cli-ciudad',c.ciudad); set('edit-cli-cumple',c.cumple);
+  set('edit-cli-talla',c.talla); set('edit-cli-zapato',c.zapato); set('edit-cli-origen',c.origen); set('edit-cli-gustos',c.gustos); set('edit-cli-notas',c.notas);
   document.getElementById('edit-cli-canal').value=c.canal||'TikTok Live';
-  const modal=document.getElementById('modal-edit-cli');
-  modal.classList.remove('hidden');
+  document.getElementById('edit-cli-acepta').checked=c.acepta!==false;
+  document.getElementById('ficha-av').textContent=ini(c.nombre||'?');
+  document.getElementById('ficha-nom').textContent=c.nombre+(c.tiktok?'  ·  '+c.tiktok:'');
+  document.getElementById('ficha-badges').innerHTML=crmBadges(c,st);
+  const k=(l,v,cls)=>'<div class="ficha-stat"><div class="ml">'+l+'</div><div class="'+(cls||'')+'" style="font-weight:700;font-size:16px">'+v+'</div></div>';
+  document.getElementById('ficha-stats').innerHTML=
+    k('Ha comprado',fmt(st.total),'pur')+k('Compras',st.compras+(st.lives?' · '+st.lives+' live'+(st.lives!==1?'s':''):''))
+    +k('Ticket promedio',st.compras?fmt(st.total/st.compras):'—')+k('Prendas',st.prendas)
+    +k('Última compra',st.ultima?crmHace(st.dias):'—')+k('Debe',fmt(st.deuda),st.deuda?'red':'grn')
+    +k('Cliente desde',st.primera?new Date(dateDeISO(st.primera)).toLocaleDateString('es-CO',{month:'short',year:'numeric'}).replace('.',''):'—')
+    +k('Paga en',st.diasPago===null?'—':st.diasPago<1?'el mismo día':Math.round(st.diasPago)+' días aprox.');
+  document.getElementById('ficha-hist').innerHTML=st.facs.length ? st.facs.slice().sort((a,b)=>facISO(b).localeCompare(facISO(a))).map(f=>
+    '<div class="ficha-fac" onclick="cerrarEditCliente();verFactura('+f.id+')"><div style="min-width:0"><b style="color:var(--purple)">'+lvEsc(f.num)+'</b> <span style="color:var(--text3)">· '+lvEsc(f.fecha)+(liveIdDe(f)?' · Live':'')+'</span>'
+    +'<div class="g-row-nota">'+lvEsc((f.items||[]).map(nombrePrenda).join(', '))+'</div></div>'
+    +'<div style="text-align:right;white-space:nowrap"><b>'+fmt(f.total)+'</b><div style="font-size:11px;color:'+(f.saldo>0?'var(--red)':'var(--green)')+'">'+(f.saldo>0?'Debe '+fmt(f.saldo):'Pagada')+'</div></div></div>').join('')
+    : '<div class="fin-vacio">Aún no tiene compras.</div>';
+  document.getElementById('modal-edit-cli').classList.remove('hidden');
 }
 
 function cerrarEditCliente(){
@@ -4081,15 +4272,20 @@ function cerrarEditCliente(){
 }
 
 function guardarEditCliente(){
-  const id=parseInt(document.getElementById('edit-cli-id').value);
-  const c=clientes.find(x=>x.id===id);if(!c)return;
-  const nom=document.getElementById('edit-cli-nom').value.trim();
+  const id=document.getElementById('edit-cli-id').value;
+  const c=clientes.find(x=>String(x.id)===String(id));if(!c)return;
+  const v=k=>document.getElementById(k).value.trim();
+  const nom=v('edit-cli-nom');
   if(!nom){document.getElementById('edit-cli-nom').focus();return;}
-  c.nombre=nom;
-  c.cedula=document.getElementById('edit-cli-ced').value.trim();
-  c.telefono=document.getElementById('edit-cli-tel').value.trim();
-  c.direccion=document.getElementById('edit-cli-dir').value.trim();
-  c.canal=document.getElementById('edit-cli-canal').value;
+  const cumple=v('edit-cli-cumple');
+  if(cumple && !crmCumpleMes(cumple)){ alert('Escribe el cumpleaños como día/mes, por ejemplo 15/03.'); document.getElementById('edit-cli-cumple').focus(); return; }
+  const antes=c.nombre;
+  Object.assign(c,{nombre:nom, cedula:v('edit-cli-ced'), telefono:v('edit-cli-tel'), direccion:v('edit-cli-dir'), canal:document.getElementById('edit-cli-canal').value,
+    tiktok:crmArroba(v('edit-cli-tiktok')), ciudad:v('edit-cli-ciudad'), cumple, talla:v('edit-cli-talla'), zapato:v('edit-cli-zapato'),
+    origen:document.getElementById('edit-cli-origen').value, gustos:v('edit-cli-gustos'), notas:v('edit-cli-notas'),
+    acepta:document.getElementById('edit-cli-acepta').checked});
+  // Las facturas guardan el nombre y teléfono: se actualizan para que todo cuadre
+  facturas.forEach(f=>{ if(f.clienteId==c.id){ if(antes!==nom) f.clienteNombre=nom; if(c.telefono) f.clienteTel=c.telefono; } });
   save();
   cerrarEditCliente();
   rClientes();
@@ -5336,36 +5532,65 @@ nubeIniciar();
 </div>
 
 <!-- MODAL EDITAR CLIENTE -->
-<div id="modal-edit-cli" class="modal-ov hidden">
-  <div class="modal-box" style="max-width:480px">
+<div id="modal-edit-cli" class="modal-ov hidden" onclick="if(event.target===this)cerrarEditCliente()">
+  <div class="modal-box" style="max-width:760px">
     <div class="modal-head">
-      <div style="font-size:16px;font-weight:700;color:var(--text)">Editar cliente</div>
+      <div style="display:flex;align-items:center;gap:10px;min-width:0">
+        <div class="av" id="ficha-av" style="width:40px;height:40px;font-size:14px"></div>
+        <div style="min-width:0"><div style="font-size:16px;font-weight:700;color:var(--text)" id="ficha-nom">Clienta</div><div id="ficha-badges"></div></div>
+      </div>
       <button class="btn bs" onclick="cerrarEditCliente()"><i class="ti ti-x"></i></button>
     </div>
     <div class="modal-body">
-      <input type="hidden" id="edit-cli-id">
-      <div class="fg">
-        <div><label>Nombre completo *</label>
-          <input id="edit-cli-nom" placeholder="Nombre y apellido"></div>
-        <div><label>Cédula</label>
-          <input id="edit-cli-ced" placeholder="Número de cédula"></div>
+      <div class="ficha-stats" id="ficha-stats"></div>
+      <div class="ficha-cols">
+        <div>
+          <div class="ct" style="margin-bottom:8px">Datos de la clienta</div>
+          <input type="hidden" id="edit-cli-id">
+          <div class="fg"><div><label>Nombre completo *</label><input id="edit-cli-nom" placeholder="Nombre y apellido"></div>
+            <div><label>WhatsApp</label><input id="edit-cli-tel" inputmode="tel" placeholder="300 000 0000"></div></div>
+          <div class="fg"><div><label>Usuario de TikTok</label><input id="edit-cli-tiktok" placeholder="@usuario"></div>
+            <div><label>Ciudad</label><input id="edit-cli-ciudad" placeholder="Ej: Medellín"></div></div>
+          <div class="fg f1"><div><label>Dirección de entrega</label><input id="edit-cli-dir" placeholder="Dirección"></div></div>
+          <div class="fg"><div><label>Cumpleaños</label><input id="edit-cli-cumple" placeholder="dd/mm, ej: 15/03"></div>
+            <div><label>Cédula</label><input id="edit-cli-ced" placeholder="Número de cédula"></div></div>
+          <div class="fg"><div><label>Talla de ropa</label><input id="edit-cli-talla" placeholder="Ej: M, 10"></div>
+            <div><label>Talla de zapato</label><input id="edit-cli-zapato" placeholder="Ej: 37"></div></div>
+          <div class="fg"><div><label>¿Cómo nos conoció?</label><select id="edit-cli-origen"><option value=""></option><option>TikTok</option><option>Instagram</option><option>Facebook</option><option>Recomendación</option><option>Tienda física</option><option>Bazar o feria</option><option>Otro</option></select></div>
+            <div><label>Canal principal</label><select id="edit-cli-canal"><option>TikTok Live</option><option>Bazar Fotográfico</option><option>Mayorista</option><option>Tienda Física</option></select></div></div>
+          <div class="fg f1"><div><label>Le gusta / busca</label><input id="edit-cli-gustos" placeholder="Ej: jeans, tenis, ropa de marca, tonos tierra"></div></div>
+          <div class="fg f1"><div><label>Notas internas</label><textarea id="edit-cli-notas" rows="2" placeholder="Ej: paga siempre por Nequi, prefiere envío por Servientrega"></textarea></div></div>
+          <label class="desp-pend" style="margin:6px 0 0"><input type="checkbox" id="edit-cli-acepta"> Acepta recibir mensajes de promociones y lives</label>
+        </div>
+        <div>
+          <div class="ct" style="margin-bottom:8px">Historial de compras</div>
+          <div id="ficha-hist" class="ficha-hist"></div>
+        </div>
       </div>
-      <div class="fg">
-        <div><label>Teléfono</label>
-          <input id="edit-cli-tel" placeholder="Celular"></div>
-        <div><label>Canal principal</label>
-          <select id="edit-cli-canal">
-            <option>TikTok Live</option><option>Bazar Fotográfico</option><option>Mayorista</option><option>Tienda Física</option>
-          </select></div>
+      <div style="display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap;margin-top:14px">
+        <button class="ab ab-wa" onclick="crmMensaje(+document.getElementById('edit-cli-id').value)"><i class="ti ti-brand-whatsapp"></i> Escribirle</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn bs" onclick="cerrarEditCliente()"><i class="ti ti-x"></i> Cerrar</button>
+          <button class="btn bs bp" onclick="guardarEditCliente()"><i class="ti ti-check"></i> Guardar datos</button>
+        </div>
       </div>
-      <div class="fg f1">
-        <div><label>Dirección de entrega</label>
-          <input id="edit-cli-dir" placeholder="Dirección"></div>
-      </div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px">
-        <button class="btn bs" onclick="cerrarEditCliente()"><i class="ti ti-x"></i> Cancelar</button>
-        <button class="btn bs bp" onclick="guardarEditCliente()"><i class="ti ti-check"></i> Guardar cambios</button>
-      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL MENSAJE A CLIENTA -->
+<div id="modal-crm-msg" class="modal-ov hidden" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="modal-box" style="max-width:460px">
+    <div class="modal-head">
+      <div style="font-size:16px;font-weight:700;display:flex;align-items:center;gap:6px"><i class="ti ti-brand-whatsapp" style="color:#1FAF55"></i> <span id="crm-msg-tit">Mensaje</span></div>
+      <button class="btn bs" onclick="document.getElementById('modal-crm-msg').classList.add('hidden')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="crm-msg-id">
+      <label>¿Qué le quieres decir?</label>
+      <div class="desp-tabs" id="crm-msg-plantillas" style="margin:4px 0 10px"></div>
+      <textarea id="crm-msg-txt" rows="7" style="width:100%"></textarea>
+      <button class="btn bp" style="width:100%;justify-content:center;padding:10px;margin-top:10px;background:#25D366;border-color:#25D366" onclick="crmEnviar()"><i class="ti ti-brand-whatsapp"></i> Abrir WhatsApp</button>
     </div>
   </div>
 </div>
