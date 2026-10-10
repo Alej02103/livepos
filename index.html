@@ -329,6 +329,24 @@ button[style*="#25D366"]:hover{opacity:0.9;box-shadow:0 2px 12px rgba(37,211,102
 .usr-off{opacity:.55}
 .usr-av{width:32px;height:32px;border-radius:50%;background:var(--purple-light);color:var(--purple);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .usr-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+
+/* ── Marca de la tienda ── */
+.brand-row{display:flex;align-items:center;gap:10px;min-width:0}
+.brand-img{width:40px;height:40px;border-radius:10px;object-fit:cover;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.brand-txt{min-width:0}
+.brand-name{font-size:13.5px;font-weight:700;color:var(--text);line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.brand-sub b{color:var(--purple);font-weight:700}
+.login-marca{text-align:center;margin-bottom:14px}
+.login-marca-img{width:96px;height:96px;border-radius:22px;object-fit:cover;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.login-marca-nom{font-size:16px;font-weight:700;margin-top:12px;color:var(--text)}
+.login-card.con-marca .login-logo{margin-bottom:18px}
+.login-card.con-marca .login-logo-text{font-size:14px;letter-spacing:0}
+.login-card.con-marca .login-logo-sub{display:none}
+.marca-form{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+.marca-prev{width:104px;height:104px;border-radius:20px;background:var(--bg3);display:flex;align-items:center;justify-content:center;overflow:hidden;color:var(--text3);font-size:12px;border:1px dashed var(--border2);flex-shrink:0}
+.marca-prev img{width:100%;height:100%;object-fit:cover}
+.modal-logo{width:34px;height:34px;border-radius:8px;object-fit:cover}
+@media(max-width:768px){.brand-txt{display:none}.brand-img{width:32px;height:32px}}
 </style>
 </head>
 <body>
@@ -336,6 +354,7 @@ button[style*="#25D366"]:hover{opacity:0.9;box-shadow:0 2px 12px rgba(37,211,102
 <!-- LOGIN SCREEN -->
 <div class="login-screen" id="login-screen" style="display:flex">
   <div class="login-card">
+    <div class="login-marca" id="login-marca" style="display:none"></div>
     <div class="login-logo">
       <div class="login-logo-text">LIVE<span style="color:var(--text3);font-weight:400">pos</span></div>
       <div class="login-logo-sub">Sistema de punto de venta</div>
@@ -373,7 +392,7 @@ button[style*="#25D366"]:hover{opacity:0.9;box-shadow:0 2px 12px rgba(37,211,102
 
 <!-- SIDEBAR -->
 <div class="sidebar">
-  <div class="brand">
+  <div class="brand" id="brand-box">
     <div class="brand-logo" style="color:var(--purple);font-size:18px;font-weight:800;letter-spacing:-1px">LIVE<span style="color:var(--text3)">pos</span></div>
     <div class="brand-sub">Sistema POS</div>
   </div>
@@ -392,7 +411,7 @@ button[style*="#25D366"]:hover{opacity:0.9;box-shadow:0 2px 12px rgba(37,211,102
     <button class="nav" onclick="go('dashboard')" id="nav-dashboard" data-roles="dueno,admin"><i class="ti ti-chart-bar"></i><span>Dashboard</span></button>
     <div class="nav-label">Administración</div>
     <button class="nav" onclick="go('admin')" id="nav-admin" data-roles="dueno"><i class="ti ti-report-analytics"></i><span>Financiero</span></button>
-    <button class="nav" onclick="go('usuarios')" id="nav-usuarios" data-roles="dueno"><i class="ti ti-user-cog"></i><span>Usuarios</span></button>
+    <button class="nav" onclick="go('usuarios')" id="nav-usuarios" data-roles="dueno"><i class="ti ti-building-store"></i><span>Mi tienda</span></button>
   </div>
   <div class="sidebar-footer" style="display:flex;flex-direction:column;gap:6px">
     <!-- Usuario logueado -->
@@ -886,10 +905,26 @@ button[style*="#25D366"]:hover{opacity:0.9;box-shadow:0 2px 12px rgba(37,211,102
 
 <!-- USUARIOS -->
 <div class="topbar" id="tb-usuarios" style="display:none">
-  <div class="topbar-title"><i class="ti ti-user-cog" style="color:var(--purple)"></i> Usuarios</div>
+  <div class="topbar-title"><i class="ti ti-building-store" style="color:var(--purple)"></i> Mi tienda</div>
   <div class="topbar-actions"><button class="btn bp" onclick="usrNuevo()"><i class="ti ti-user-plus"></i> Nuevo usuario</button></div>
 </div>
 <div class="page" id="page-usuarios" style="padding-top:16px">
+  <div class="card" id="marca-card">
+    <div class="ct">Datos de la tienda</div>
+    <div class="marca-form">
+      <div class="marca-prev" id="marca-prev">Sin logo</div>
+      <div style="flex:1;min-width:220px;display:flex;flex-direction:column;gap:10px">
+        <div><label for="marca-nombre">Nombre de la tienda</label><input id="marca-nombre" placeholder="Ej: Otra Vida, Moda Circular"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <label class="btn bs" style="cursor:pointer;margin:0"><i class="ti ti-upload"></i> Subir logo<input type="file" id="marca-file" accept="image/*" onchange="marcaArchivo(this)" style="display:none"></label>
+          <button class="btn bs" onclick="marcaQuitarLogo()"><i class="ti ti-trash"></i> Quitar logo</button>
+          <button class="btn bp" onclick="marcaGuardar()"><i class="ti ti-check"></i> Guardar</button>
+        </div>
+        <div id="marca-msg" style="font-size:12px;min-height:16px"></div>
+        <div style="font-size:11px;color:var(--text3);line-height:1.5">El logo aparece en el menú, en la pantalla de ingreso, en las facturas, en la foto del resumen del live y en los mensajes de WhatsApp. Funciona mejor una imagen cuadrada.</div>
+      </div>
+    </div>
+  </div>
   <div class="card" id="usr-form-card" style="display:none">
     <div class="ct">Nuevo usuario</div>
     <div class="usr-form">
@@ -1309,7 +1344,7 @@ function enviarWADespacho(factId){
   if(!cli?.telefono) return;
   const items = (f.items||[]).map(it=>`- ${it.cat||it.dsc||"Item"} x${it.can}`).join('\n');
   const msg = encodeURIComponent(
-    'Hola '+f.clienteNombre+'! 👋\n\nTu pedido *'+f.num+'* está listo para despacho:\n\n'+items+'\n\n💰 Total: $'+Math.round(f.total).toLocaleString('es-CO')+'\n\nTe avisamos cuando salga 📦\n\n_LIVEpos – Gestión de pedidos_'
+    'Hola '+f.clienteNombre+'! 👋\n\nTu pedido *'+f.num+'* está listo para despacho:\n\n'+items+'\n\n💰 Total: $'+Math.round(f.total).toLocaleString('es-CO')+'\n\nTe avisamos cuando salga 📦\n\n_'+nombreTienda()+'_'
   );
   window.open('https://wa.me/'+cli.telefono.replace(/[^0-9]/g,'')+'?text='+msg, '_blank');
 }
@@ -1323,7 +1358,7 @@ function enviarWAConfirmacion(factId){
   const guiaLine = f.guia ? '\n🔖 Guía: *'+f.guia+'*' : '';
   const dirLine = f.despachoDir ? '\n📍 Dirección: '+f.despachoDir : '';
   const msg = encodeURIComponent(
-    'Hola '+f.clienteNombre+'! 📦\n\nTu pedido *'+f.num+'* ha sido despachado.\n\n'+tipo+guiaLine+dirLine+'\n\n¡Gracias por tu compra! 💜\n_LIVEpos_'
+    'Hola '+f.clienteNombre+'! 📦\n\nTu pedido *'+f.num+'* ha sido despachado.\n\n'+tipo+guiaLine+dirLine+'\n\n¡Gracias por tu compra! 💜\n_'+nombreTienda()+'_'
   );
   window.open('https://wa.me/'+cli.telefono.replace(/[^0-9]/g,'')+'?text='+msg, '_blank');
 }
@@ -2329,6 +2364,8 @@ function verFactura(id){
     :'<span class="badge bp2"><span class="dot dp"></span> Pendiente</span>';
 
   document.getElementById('modal-num').textContent=f.num;
+  const mLogo=document.getElementById('modal-logo');
+  if(mLogo){ if(MARCA.logo){ mLogo.src=MARCA.logo; mLogo.style.display=''; } else mLogo.style.display='none'; }
   document.getElementById('modal-estado').innerHTML=estadoBadge;
   document.getElementById('modal-fid').dataset.id=id;
 
@@ -2838,7 +2875,7 @@ function facturarTodosLive(){
 
 // ── Envío: WhatsApp y foto ──
 function lvTextoResumen(g){
-  const L=['Hola '+g.nombre+'! Este es el resumen de tu compra en el live:',''];
+  const L=(MARCA.nombre?['*'+MARCA.nombre+'*','']:[]).concat(['Hola '+g.nombre+'! Este es el resumen de tu compra en el live:','']);
   g.items.forEach(it=>L.push('- '+(it.cod?'Cód '+it.cod+' - ':'')+(it.ref||'Prenda')+': '+fmt(it.pre||0)));
   L.push('');
   L.push('*Total: '+fmt(g.total)+'*');
@@ -2872,10 +2909,21 @@ function fotoLive(key){
   c.width=W*2; c.height=H*2;
   const x=c.getContext('2d'); x.scale(2,2);
   const F='system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif';
+  const AC=MARCA_IMG?MARCA_COLOR:'#E94560';
   x.fillStyle='#ffffff'; x.fillRect(0,0,W,H);
-  x.fillStyle='#E94560'; x.fillRect(0,0,W,122);
-  x.fillStyle='#ffffff'; x.font='700 30px '+F; x.fillText('Resumen de tu compra',pad,60);
-  x.font='400 17px '+F; x.fillText('Live TikTok  ·  '+today()+(g.fac?'  ·  '+g.fac.num:''),pad,94);
+  x.fillStyle=AC; x.fillRect(0,0,W,122);
+  let tx=pad;
+  if(MARCA_IMG){
+    const L=86, ly=18;
+    x.save(); x.beginPath();
+    if(x.roundRect) x.roundRect(pad,ly,L,L,16); else x.rect(pad,ly,L,L);
+    x.clip(); x.drawImage(MARCA_IMG,pad,ly,L,L); x.restore();
+    tx=pad+L+20;
+  }
+  x.fillStyle='#ffffff'; x.font='700 28px '+F;
+  x.fillText(lvClip(x, MARCA_IMG?nombreTienda():'Resumen de tu compra', W-tx-pad), tx, 58);
+  x.font='400 16px '+F;
+  x.fillText(lvClip(x, (MARCA_IMG?'Resumen de tu compra  ·  ':'Live TikTok  ·  ')+today()+(g.fac?'  ·  '+g.fac.num:''), W-tx-pad), tx, 90);
   let y=172;
   x.fillStyle='#1a1a1a'; x.font='700 26px '+F; x.fillText(lvClip(x,g.nombre,W-2*pad),pad,y);
   x.fillStyle='#888888'; x.font='400 15px '+F; x.fillText(g.items.length+' prenda'+(g.items.length!==1?'s':''),pad,y+26);
@@ -2893,13 +2941,13 @@ function fotoLive(key){
     x.strokeStyle='#ececec'; x.lineWidth=1; x.beginPath(); x.moveTo(pad-12,y); x.lineTo(W-pad+12,y); x.stroke();
   });
   y+=22;
-  x.fillStyle='#FDECEF'; x.beginPath();
+  x.fillStyle=AC; x.globalAlpha=0.12; x.beginPath();
   if(x.roundRect) x.roundRect(pad-12,y,W-2*pad+24,64,12); else x.rect(pad-12,y,W-2*pad+24,64);
-  x.fill();
-  x.fillStyle='#E94560'; x.font='700 18px '+F; x.fillText('TOTAL',pad+6,y+40);
+  x.fill(); x.globalAlpha=1;
+  x.fillStyle=AC; x.font='700 18px '+F; x.fillText('TOTAL',pad+6,y+40);
   x.textAlign='right'; x.font='800 28px '+F; x.fillText(fmt(g.total),W-pad-6,y+43);
   y+=110;
-  x.textAlign='center'; x.fillStyle='#999999'; x.font='400 15px '+F; x.fillText('¡Gracias por tu compra!',W/2,y);
+  x.textAlign='center'; x.fillStyle='#999999'; x.font='400 15px '+F; x.fillText(MARCA.nombre?'¡Gracias por comprar en '+MARCA.nombre+'!':'¡Gracias por tu compra!',W/2,y);
   x.textAlign='left';
   c.toBlob(b=>{
     if(!b) return;
@@ -3121,7 +3169,7 @@ function enviarWhatsApp(id) {
     itemsText += '- ' + it.can + 'x ' + (gc ? gc + (it.dsc ? ' (' + it.dsc + ')' : '') : (it.dsc || 'Item')) + ': *' + fmt(it.pre * it.can) + '*\n';
   });
 
-  let text = `*LIVEpos - Factura ${f.num}*\n\n`;
+  let text = `*${nombreTienda()} - Factura ${f.num}*\n\n`;
   text += `¡Hola, *${f.clienteNombre}*! Muchas gracias por tu compra. Aquí tienes el detalle de tu factura:\n\n`;
   text += `📅 *Fecha:* ${f.fecha}\n`;
   text += `🛍️ *Canal:* ${f.canal}\n`;
@@ -3258,6 +3306,7 @@ const NUBE_CFG = {
   stock:      { get:()=>stock, set:v=>{ stock=(v&&typeof v==='object')?v:{}; } },
   catalogo:   { get:()=>({cats:CATS, gcol:GCOL}), set:v=>{ CATS=(v&&v.cats)||{}; GCOL=(v&&v.gcol)||{}; } },
   inventario: { get:()=>invStock, set:v=>{ invStock=Array.isArray(v)?v:[]; } },
+  marca:      { get:()=>MARCA, set:v=>{ MARCA={nombre:(v&&v.nombre)||'', logo:(v&&v.logo)||''}; aplicarMarca(); } },
   gastos:     { get:()=>loadAdmGastos(), set:v=>{ try{ localStorage.setItem('ov_gastos',JSON.stringify(v||{})); }catch(e){} } }
 };
 const DATOS_LOCALES = ['ov_clientes','ov_facturas','ov_stock','ov_fc','ov_gastos','ov_cats','ov_gcol','ov_inv_stock','ov_live','ov_sesion'];
@@ -3459,7 +3508,7 @@ function nubeEscuchar(){
     const listo=()=>{ faltan--; if(faltan===0 && !terminado){ terminado=true; resolve(); } };
     const fallo=e=>{ console.error('LIVEpos nube (lectura):',e); if(!terminado){ terminado=true; reject(e); } else nubeError(e); };
     ['clientes','facturas','live'].forEach(c=>tareas.push(()=>nubeEscucharCol(c,listo,fallo)));
-    ['stock','catalogo','inventario'].concat(gestor?['gastos']:[]).forEach(n=>tareas.push(()=>nubeEscucharCfg(n,listo,fallo)));
+    ['stock','catalogo','inventario','marca'].concat(gestor?['gastos']:[]).forEach(n=>tareas.push(()=>nubeEscucharCfg(n,listo,fallo)));
     faltan=tareas.length;
     tareas.forEach(t=>Nube.unsubs.push(t()));
   });
@@ -3616,6 +3665,7 @@ function go(p){
 // ── Usuarios (solo dueño) ──
 let usrLista=[];
 async function renderUsuarios(){
+  pintarMarcaForm();
   const cont=document.getElementById('usr-lista'); if(!cont) return;
   cont.innerHTML='<div style="color:var(--text3);font-size:13px;padding:8px 0">Cargando…</div>';
   try{
@@ -3692,6 +3742,129 @@ async function usrResetClave(email){
   catch(e){ alert(nubeMsgAuth(e)); }
 }
 
+// ── MARCA DE LA TIENDA (logo y nombre) ──
+// Cada tienda sube su logo en "Mi tienda". Se guarda en la nube (config/marca) y
+// en este equipo para mostrarlo también en la pantalla de ingreso.
+let MARCA = cargarMarcaLocal();
+let MARCA_IMG = null, MARCA_COLOR = '#E94560';
+let marcaBorrador = null;
+
+function cargarMarcaLocal(){
+  try{ const m=JSON.parse(localStorage.getItem('ov_marca')||'null'); if(m && typeof m==='object') return {nombre:m.nombre||'', logo:m.logo||''}; }catch(e){}
+  return {nombre:'', logo:''};
+}
+function nombreTienda(){ return MARCA.nombre || 'LIVEpos'; }
+
+function aplicarMarca(){
+  try{ localStorage.setItem('ov_marca', JSON.stringify(MARCA)); }catch(e){}
+  const b=document.getElementById('brand-box');
+  if(b){
+    b.innerHTML = MARCA.logo
+      ? '<div class="brand-row"><img class="brand-img" src="'+MARCA.logo+'" alt="Logo"><div class="brand-txt"><div class="brand-name">'+lvEsc(MARCA.nombre||'Mi tienda')+'</div><div class="brand-sub">con LIVE<b>pos</b></div></div></div>'
+      : '<div class="brand-logo" style="color:var(--purple);font-size:18px;font-weight:800;letter-spacing:-1px">LIVE<span style="color:var(--text3)">pos</span></div><div class="brand-sub">'+(MARCA.nombre?lvEsc(MARCA.nombre):'Sistema POS')+'</div>';
+  }
+  const lm=document.getElementById('login-marca');
+  if(lm){
+    lm.innerHTML = MARCA.logo ? '<img src="'+MARCA.logo+'" class="login-marca-img" alt="Logo"><div class="login-marca-nom">'+lvEsc(MARCA.nombre)+'</div>' : '';
+    lm.style.display = MARCA.logo ? 'block' : 'none';
+    const card=lm.closest('.login-card'); if(card) card.classList.toggle('con-marca', !!MARCA.logo);
+  }
+  document.title = MARCA.nombre ? MARCA.nombre+' · LIVEpos' : 'LIVEpos';
+  let fav=document.getElementById('favicon');
+  if(MARCA.logo){
+    if(!fav){ fav=document.createElement('link'); fav.id='favicon'; fav.rel='icon'; document.head.appendChild(fav); }
+    fav.href=MARCA.logo;
+  } else if(fav) fav.remove();
+  MARCA_IMG=null; MARCA_COLOR='#E94560';
+  if(MARCA.logo){
+    const im=new Image();
+    im.onload=()=>{ MARCA_IMG=im; MARCA_COLOR=colorDeImagen(im)||'#E94560'; };
+    im.src=MARCA.logo;
+  }
+  if(typeof paginaActual==='function' && paginaActual()==='usuarios' && !marcaBorrador) pintarMarcaForm();
+}
+
+// Color de acento sacado del logo, oscurecido para que el texto blanco se lea encima
+function colorDeImagen(im){
+  try{
+    const c=document.createElement('canvas'); c.width=c.height=24;
+    const x=c.getContext('2d'); x.drawImage(im,0,0,24,24);
+    const d=x.getImageData(0,0,24,24).data; let r=0,g=0,b=0,n=0;
+    for(let i=0;i<d.length;i+=4){
+      if(d[i+3]<128) continue;
+      const mx=Math.max(d[i],d[i+1],d[i+2]), mn=Math.min(d[i],d[i+1],d[i+2]);
+      if(mx-mn<20) continue;
+      r+=d[i]; g+=d[i+1]; b+=d[i+2]; n++;
+    }
+    if(!n) return null;
+    r/=n*255; g/=n*255; b/=n*255;
+    // A HSL: más saturado y con luz media para que se vea vivo y el texto blanco se lea
+    const mx=Math.max(r,g,b), mn=Math.min(r,g,b); let hh=0, s=0;
+    if(mx!==mn){
+      const d=mx-mn; s=d/(1-Math.abs(mx+mn-1));
+      hh = mx===r ? ((g-b)/d)%6 : mx===g ? (b-r)/d+2 : (r-g)/d+4; hh*=60; if(hh<0) hh+=360;
+    }
+    s=Math.min(0.75, Math.max(0.35, s*1.8));
+    return 'hsl('+Math.round(hh)+','+Math.round(s*100)+'%,36%)';
+  }catch(e){ return null; }
+}
+
+// ── Formulario en "Mi tienda" ──
+function pintarMarcaForm(){
+  const nom=document.getElementById('marca-nombre'); if(!nom) return;
+  marcaBorrador={nombre:MARCA.nombre, logo:MARCA.logo};
+  nom.value=MARCA.nombre||'';
+  pintarMarcaPrev();
+  marcaMsg('');
+}
+function pintarMarcaPrev(){
+  const p=document.getElementById('marca-prev'); if(!p) return;
+  const logo=marcaBorrador?marcaBorrador.logo:MARCA.logo;
+  p.innerHTML = logo ? '<img src="'+logo+'" alt="Logo de la tienda">' : 'Sin logo';
+}
+function marcaMsg(t, ok){ const el=document.getElementById('marca-msg'); if(!el) return; el.textContent=t; el.style.color=ok?'var(--green)':'var(--red)'; }
+function marcaArchivo(input){
+  const file=input.files && input.files[0]; input.value='';
+  if(!file) return;
+  if(!/^image\//.test(file.type)){ marcaMsg('Ese archivo no es una imagen. Sube un PNG o JPG.'); return; }
+  const rd=new FileReader();
+  rd.onload=()=>{
+    const im=new Image();
+    im.onload=()=>{
+      // Recorte cuadrado al centro, 320 x 320
+      const S=320, c=document.createElement('canvas'); c.width=c.height=S;
+      const x=c.getContext('2d');
+      const lado=Math.min(im.width, im.height);
+      const sx=(im.width-lado)/2, sy=(im.height-lado)/2;
+      const png=file.type==='image/png';
+      if(!png){ x.fillStyle='#ffffff'; x.fillRect(0,0,S,S); }
+      x.drawImage(im, sx, sy, lado, lado, 0, 0, S, S);
+      if(!marcaBorrador) marcaBorrador={nombre:MARCA.nombre, logo:MARCA.logo};
+      marcaBorrador.logo = png ? c.toDataURL('image/png') : c.toDataURL('image/jpeg', 0.88);
+      pintarMarcaPrev();
+      marcaMsg('Logo listo. Dale "Guardar" para que lo vea todo el equipo.', true);
+    };
+    im.onerror=()=>marcaMsg('No se pudo leer la imagen. Prueba con otro archivo PNG o JPG.');
+    im.src=rd.result;
+  };
+  rd.readAsDataURL(file);
+}
+function marcaQuitarLogo(){
+  if(!marcaBorrador) marcaBorrador={nombre:MARCA.nombre, logo:MARCA.logo};
+  marcaBorrador.logo=''; pintarMarcaPrev();
+  marcaMsg('Logo quitado. Dale "Guardar" para confirmar.', true);
+}
+function marcaGuardar(){
+  const nombre=(document.getElementById('marca-nombre').value||'').trim();
+  MARCA={nombre, logo:(marcaBorrador?marcaBorrador.logo:MARCA.logo)||''};
+  marcaBorrador=null;
+  aplicarMarca();
+  nubePushCfg('marca');
+  pintarMarcaForm();
+  marcaMsg('Guardado. Todo el equipo ya ve el logo y el nombre.', true);
+}
+aplicarMarca();
+
 // ── Arranque ──
 function nubeIniciar(){
   if(typeof firebase==='undefined'){
@@ -3714,6 +3887,7 @@ nubeIniciar();
   <div class="modal-box">
     <div class="modal-head">
       <div style="display:flex;align-items:center;gap:10px">
+        <img id="modal-logo" class="modal-logo" alt="" style="display:none">
         <div class="modal-head-num" id="modal-num"></div>
         <div id="modal-estado"></div>
       </div>
