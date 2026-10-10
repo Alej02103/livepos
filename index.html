@@ -347,6 +347,38 @@ button[style*="#25D366"]:hover{opacity:0.9;box-shadow:0 2px 12px rgba(37,211,102
 .marca-prev img{width:100%;height:100%;object-fit:cover}
 .modal-logo{width:34px;height:34px;border-radius:8px;object-fit:cover}
 @media(max-width:768px){.brand-txt{display:none}.brand-img{width:32px;height:32px}}
+
+/* ── Modo de inventario y bultos ── */
+.modo-ops{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.modo-op{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--border2);border-radius:10px;cursor:pointer;font-size:13px}
+.modo-op input{width:auto;margin-top:3px;accent-color:var(--purple)}
+.modo-op b{display:block;margin-bottom:3px}
+.modo-op span{color:var(--text2);font-size:12px;line-height:1.45}
+.modo-op.on{border-color:var(--purple);background:var(--purple-light)}
+.bl-tabla{width:100%;font-size:13px}
+.bl-tabla .num{text-align:right;font-variant-numeric:tabular-nums}
+.bl-quedan{display:flex;align-items:center;gap:8px;min-width:120px}
+.bl-quedan b{font-variant-numeric:tabular-nums;min-width:28px;text-align:right}
+.bl-bar{flex:1;height:7px;border-radius:4px;background:var(--bg3);overflow:hidden;min-width:60px}
+.bl-bar span{display:block;height:100%;background:var(--purple);border-radius:4px}
+.bl-chip{font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:10px;white-space:nowrap;vertical-align:middle}
+.bl-agotado{background:var(--red-bg);color:var(--red)}
+.bl-poco{background:var(--amber-bg);color:var(--amber)}
+.bl-sel{background:var(--purple-light);color:var(--purple)}
+.bl-sin{background:var(--bg3);color:var(--text2)}
+.bl-nota{font-size:12px;color:var(--text3);margin-top:10px;line-height:1.5}
+.bl-item{padding:12px 0;border-bottom:1px solid var(--border)}
+.bl-item:last-of-type{border-bottom:none}
+.bl-item-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.bl-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:8px;margin-top:10px}
+.bl-stats div{background:var(--bg3);border-radius:8px;padding:7px 10px;display:flex;flex-direction:column;gap:2px}
+.bl-stats span{font-size:10.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.3px}
+.bl-stats b{font-size:14px;font-variant-numeric:tabular-nums}
+.bl-rec{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:12px;color:var(--text2)}
+.bl-prow{display:grid;grid-template-columns:1fr 110px 36px;gap:6px;margin-bottom:6px}
+.bl-prow-h{font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px}
+.bl-sug{border:1px solid var(--border2);background:var(--bg2);color:var(--text);border-radius:14px;padding:3px 9px;font-size:12px;cursor:pointer}
+.bl-sug:hover{border-color:var(--purple);color:var(--purple)}
 </style>
 </head>
 <body>
@@ -407,6 +439,7 @@ button[style*="#25D366"]:hover{opacity:0.9;box-shadow:0 2px 12px rgba(37,211,102
     <div class="nav-label">Operación</div>
     <button class="nav" onclick="go('despachos')" id="nav-despachos" data-roles="dueno,admin,bodega"><i class="ti ti-truck-delivery"></i><span>Despachos</span></button>
     <button class="nav" onclick="go('inventario')" id="nav-inventario" data-roles="dueno,admin"><i class="ti ti-box"></i><span>Inventario</span></button>
+    <button class="nav" onclick="go('bultos')" id="nav-bultos" data-roles="dueno,admin" style="display:none"><i class="ti ti-packages"></i><span>Bultos</span></button>
     <button class="nav" onclick="go('catalogo')" id="nav-catalogo" style="display:none"><i class="ti ti-settings"></i><span>Catálogo</span></button>
     <button class="nav" onclick="go('dashboard')" id="nav-dashboard" data-roles="dueno,admin"><i class="ti ti-chart-bar"></i><span>Dashboard</span></button>
     <div class="nav-label">Administración</div>
@@ -494,7 +527,7 @@ button[style*="#25D366"]:hover{opacity:0.9;box-shadow:0 2px 12px rgba(37,211,102
       <div class="card">
         <div class="ct">Artículos vendidos</div>
         <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px">
-          <div class="irow ih"><span>Grupo / Categoría</span><span class="irow-desc">Descripción</span><span>Precio</span><span>Cant.</span><span></span></div>
+          <div class="irow ih"><span id="ih-grupo">Grupo / Categoría</span><span class="irow-desc">Descripción</span><span>Precio</span><span>Cant.</span><span></span></div>
           <div id="ic"></div>
         </div>
         <button class="btn bs" onclick="addItem()"><i class="ti ti-plus"></i> Agregar artículo</button>
@@ -512,8 +545,8 @@ button[style*="#25D366"]:hover{opacity:0.9;box-shadow:0 2px 12px rgba(37,211,102
         <div style="height:10px"></div>
         <button class="btn bp" style="width:100%;justify-content:center;padding:10px" onclick="crearFactura()"><i class="ti ti-receipt"></i> Crear factura</button>
       </div>
-      <div class="card">
-        <div class="ct">Stock rápido</div>
+      <div class="card" id="stock-card">
+        <div class="ct" id="stock-card-t">Stock rápido</div>
         <div id="stock-quick" style="font-size:12px;color:var(--text2)">Selecciona grupo y categoría para ver disponibilidad.</div>
       </div>
     </div>
@@ -903,6 +936,21 @@ button[style*="#25D366"]:hover{opacity:0.9;box-shadow:0 2px 12px rgba(37,211,102
   </div>
 </div>
 
+<!-- BULTOS -->
+<div class="topbar" id="tb-bultos" style="display:none">
+  <div class="topbar-title"><i class="ti ti-packages" style="color:var(--purple)"></i> Bultos</div>
+  <div class="topbar-actions"><button class="btn bp" onclick="abrirBulto()"><i class="ti ti-plus"></i> Registrar bulto</button></div>
+</div>
+<div class="page" id="page-bultos" style="padding-top:16px">
+  <div class="cgrid" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))">
+    <div class="met"><div class="ml">Prendas disponibles</div><div class="mv pur" id="bm0">0</div></div>
+    <div class="met"><div class="ml">Valor disponible</div><div class="mv grn" id="bm1">$0</div></div>
+    <div class="met"><div class="ml">Invertido en bultos</div><div class="mv amb" id="bm2">$0</div></div>
+    <div class="met"><div class="ml">Vendido</div><div class="mv pur" id="bm3">$0</div></div>
+  </div>
+  <div id="bultos-cont"></div>
+</div>
+
 <!-- USUARIOS -->
 <div class="topbar" id="tb-usuarios" style="display:none">
   <div class="topbar-title"><i class="ti ti-building-store" style="color:var(--purple)"></i> Mi tienda</div>
@@ -939,6 +987,24 @@ button[style*="#25D366"]:hover{opacity:0.9;box-shadow:0 2px 12px rgba(37,211,102
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn bp" id="usr-crear-btn" onclick="usrCrear()"><i class="ti ti-user-plus"></i> Crear usuario</button>
       <button class="btn bs" onclick="usrCancelar()">Cancelar</button>
+    </div>
+  </div>
+  <div class="card" id="modo-card">
+    <div class="ct">¿Cómo maneja el inventario esta tienda?</div>
+    <div class="modo-ops">
+      <label class="modo-op"><input type="radio" name="modo-inv" value="ventas" onchange="elegirModo(this.value)">
+        <div><b>Solo ventas</b><span>Se factura con código, referencia y precio, como en el Excel. Sin inventario. Ideal para empezar.</span></div></label>
+      <label class="modo-op"><input type="radio" name="modo-inv" value="bultos" onchange="elegirModo(this.value)">
+        <div><b>Por bultos y precios</b><span>Se registra cada bulto y cuántas prendas quedaron en cada precio. Lo disponible baja solo con las ventas. Para ropa de segunda.</span></div></label>
+      <label class="modo-op"><input type="radio" name="modo-inv" value="completo" onchange="elegirModo(this.value)">
+        <div><b>Inventario completo</b><span>Productos por grupo y categoría con stock de cada uno. Para productos que se repiten.</span></div></label>
+    </div>
+    <div id="modo-bultos-extra" style="display:none;margin-top:10px;font-size:13px">
+      Avisar cuando queden <input id="modo-alerta" type="number" min="0" style="width:70px;display:inline-block;padding:5px 8px"> prendas o menos de un precio.
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap">
+      <button class="btn bp" onclick="guardarModo()"><i class="ti ti-check"></i> Guardar</button>
+      <span id="modo-msg" style="font-size:12px"></span>
     </div>
   </div>
   <div class="card">
@@ -1043,6 +1109,43 @@ button[style*="#25D366"]:hover{opacity:0.9;box-shadow:0 2px 12px rgba(37,211,102
 <!-- FLOATING THEME TOGGLE -->
 <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Alternar Modo Oscuro"><i class="ti ti-moon"></i></button>
 
+<!-- MODAL BULTO -->
+<div class="modal-ov hidden" id="modal-bulto" onclick="if(event.target===this)cerrarBulto()">
+  <div class="modal-box" style="max-width:560px">
+    <div class="modal-head">
+      <div class="modal-head-num" id="bl-titulo" style="font-size:16px">Registrar bulto</div>
+      <button class="btn bs" onclick="cerrarBulto()"><i class="ti ti-x"></i> Cerrar</button>
+    </div>
+    <div style="padding:18px 20px;display:flex;flex-direction:column;gap:12px">
+      <div class="fg">
+        <div><label for="bl-nombre">Nombre o número</label><input id="bl-nombre" placeholder="Ej: Bulto 15"></div>
+        <div><label for="bl-tipo">Tipo</label><select id="bl-tipo"><option value="sin">Sin seleccionar</option><option value="seleccionado">Seleccionado</option></select></div>
+      </div>
+      <div class="fg">
+        <div><label for="bl-costo">Costo del bulto</label><input id="bl-costo" inputmode="numeric" placeholder="$0" onchange="this.value=lvFmtNum(lvParsePrecio(this.value));totalesBulto()"></div>
+        <div><label for="bl-fecha">Fecha de llegada</label><input id="bl-fecha" placeholder="dd/mm/aaaa"></div>
+      </div>
+      <div class="fg">
+        <div><label for="bl-prov">Proveedor (opcional)</label><input id="bl-prov" placeholder="¿A quién se le compró?"></div>
+        <div><label for="bl-notas">Notas (opcional)</label><input id="bl-notas" placeholder="Ej: mucha ropa de niño"></div>
+      </div>
+      <div>
+        <label>Prendas etiquetadas por precio</label>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px">Escribe "25" para $25.000. Si todavía no lo han etiquetado, guárdalo así y lo completas después.</div>
+        <div class="bl-prow bl-prow-h"><span>Precio</span><span>Prendas</span><span></span></div>
+        <div id="bl-precios"></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px">
+          <button class="btn bs" onclick="agregarPrecioBulto()"><i class="ti ti-plus"></i> Otro precio</button>
+          <span id="bl-sugeridos" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center"></span>
+        </div>
+      </div>
+      <div class="bl-stats" id="bl-totales"></div>
+      <div id="bl-msg" style="font-size:12px;color:var(--red);min-height:14px"></div>
+      <button class="btn bp" style="justify-content:center;padding:10px" onclick="guardarBulto()"><i class="ti ti-check"></i> Guardar bulto</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL RESET SISTEMA -->
 <div id="modal-reset" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:300;align-items:center;justify-content:center">
   <div style="background:var(--bg2);border-radius:16px;padding:28px;width:420px;max-width:92vw;box-shadow:0 8px 40px rgba(0,0,0,0.2)">
@@ -1093,7 +1196,7 @@ function getGrupoColor(g){
   const idx = Object.keys(CATS).indexOf(g);
   return GCOL_PALETTE[idx % GCOL_PALETTE.length];
 }
-const PAGES=["nueva","live","facturas","cartera","clientes","inventario","catalogo","despachos","dashboard","admin","usuarios"];
+const PAGES=["nueva","live","facturas","cartera","clientes","inventario","bultos","catalogo","despachos","dashboard","admin","usuarios"];
 
 // PERSISTENCIA localStorage
 function save(){
@@ -1401,7 +1504,8 @@ function ejecutarReset(){
   invStock = [];
   stock = {};
   CATS = {}; GCOL = {};
-  save(); saveCats(); saveInvStock(); saveAdmGastos({}); saveLiveNow();
+  bultos = [];
+  save(); saveCats(); saveInvStock(); saveAdmGastos({}); saveLiveNow(); saveBultos();
 
   cerrarReset();
   if(usuarioActual) goInner(usuarioActual.pages[0]||'nueva');
@@ -1437,6 +1541,7 @@ function goInner(p){
   if(p==='dashboard')rDashboard();
   if(p==='nueva')initF();
   if(p==='usuarios')renderUsuarios();
+  if(p==='bultos')renderBultos();
 }
 
 // ── CLIENTE RÁPIDO ────────────────────────────────────────────────
@@ -1539,7 +1644,7 @@ function initF(){
   document.getElementById('ic').innerHTML='';
   document.getElementById('fobs').value='';
   document.getElementById('mf').classList.remove('vis');
-  document.getElementById('stock-quick').innerHTML='Selecciona grupo y categoría para ver disponibilidad.';
+  updStockQ();
   // Reset cliente search
   document.getElementById('f0').value='';
   document.getElementById('cli-search').value='';
@@ -1553,14 +1658,16 @@ function addItem(){
   ic++;const id=ic;
   const d=document.createElement('div');
   d.className='irow';d.id='it'+id;
-  d.innerHTML=`
-    <div style="display:flex;flex-direction:column;gap:4px">
+  const primera = modoInv()==='completo'
+    ? `<div style="display:flex;flex-direction:column;gap:4px">
       <select onchange="updCats(${id},this.value);updStockQ()" style="font-size:12px">
         <option value="">Grupo...</option>
         ${Object.keys(CATS).map(g=>`<option value="${g}">${g}</option>`).join('')}
       </select>
       <select id="cat${id}" onchange="updStockQ()" style="font-size:12px"><option value="">Categoría...</option></select>
-    </div>
+    </div>`
+    : `<input type="text" id="cod${id}" placeholder="Código" style="font-size:12px" autocomplete="off">`;
+  d.innerHTML=primera+`
     <input type="text" placeholder="Descripción" class="irow-desc" style="font-size:12px" id="dsc${id}">
     <input type="number" placeholder="$0" min="0" style="font-size:12px;text-align:right" id="pre${id}" oninput="calcT()">
     <input type="number" placeholder="1" min="1" value="1" style="font-size:12px;text-align:center" id="can${id}" oninput="calcT()">
@@ -1574,6 +1681,8 @@ function updCats(id,g){
 }
 
 function updStockQ(){
+  if(modoInv()==='bultos'){ document.getElementById('stock-quick').innerHTML=bultosMini(); return; }
+  if(modoInv()==='ventas') return;
   let html='';
   for(let i=1;i<=ic;i++){
     const gEl=document.getElementById('it'+i)?.querySelector('select');
@@ -1614,7 +1723,11 @@ function crearFactura(){
     const cat=document.getElementById('cat'+i)?.value||'';
     const gEl=document.getElementById('it'+i)?.querySelector('select');
     const grp=gEl?gEl.value:'';
-    if(pre>0)items.push({dsc:document.getElementById('dsc'+i)?.value||'',cat,grp,pre,can,sub:pre*can});
+    const cod=(document.getElementById('cod'+i)?.value||'').trim();
+    const ref=(document.getElementById('dsc'+i)?.value||'').trim();
+    if(pre>0)items.push(cod
+      ? {cod,ref,dsc:(ref||'Prenda')+' (Cód '+cod+')',cat,grp,pre,can,sub:pre*can}
+      : {dsc:ref,cat,grp,pre,can,sub:pre*can});
   }
   if(!items.length)return alert('Agrega al menos un artículo con precio');
 
@@ -2477,7 +2590,7 @@ function exportarDatos(){
     version:'1.1',
     fecha:new Date().toISOString(),
     clientes,facturas,stock,fc,
-    cats:CATS, gcol:GCOL, inventario:invStock, gastos:loadAdmGastos()
+    cats:CATS, gcol:GCOL, inventario:invStock, gastos:loadAdmGastos(), bultos, ajustes:AJUSTES
   };
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob);
@@ -2511,6 +2624,8 @@ function importarDatos(input){
       if(data.cats){ CATS=data.cats; GCOL=data.gcol||{}; saveCats(); }
       if(Array.isArray(data.inventario)){ invStock=data.inventario; saveInvStock(); }
       if(data.gastos && typeof data.gastos==='object') saveAdmGastos(data.gastos);
+      if(Array.isArray(data.bultos)){ bultos=data.bultos; saveBultos(); }
+      if(data.ajustes){ setAjustes(data.ajustes); nubePushCfg('ajustes'); }
       save();
       go('facturas');
       alert(`✅ Importación exitosa\n${clientes.length} clientes y ${facturas.length} facturas restauradas.`);
@@ -3280,8 +3395,8 @@ const TIENDA_ID = 'otravida';
 const TIENDA_NOMBRE = 'Otra Vida, Moda Circular';
 
 const ROLES = {
-  dueno:    {etiqueta:'👑 Dueño',    nombre:'Dueño',    pages:['nueva','live','facturas','cartera','clientes','inventario','catalogo','despachos','dashboard','admin','usuarios']},
-  admin:    {etiqueta:'⚙️ Admin',    nombre:'Admin',    pages:['nueva','live','facturas','cartera','clientes','inventario','despachos','dashboard']},
+  dueno:    {etiqueta:'👑 Dueño',    nombre:'Dueño',    pages:['nueva','live','facturas','cartera','clientes','inventario','bultos','catalogo','despachos','dashboard','admin','usuarios']},
+  admin:    {etiqueta:'⚙️ Admin',    nombre:'Admin',    pages:['nueva','live','facturas','cartera','clientes','inventario','bultos','despachos','dashboard']},
   vendedor: {etiqueta:'🛍️ Vendedor', nombre:'Vendedor', pages:['nueva','live','facturas']},
   bodega:   {etiqueta:'📦 Bodega',   nombre:'Bodega',   pages:['despachos']}
 };
@@ -3306,6 +3421,8 @@ const NUBE_CFG = {
   stock:      { get:()=>stock, set:v=>{ stock=(v&&typeof v==='object')?v:{}; } },
   catalogo:   { get:()=>({cats:CATS, gcol:GCOL}), set:v=>{ CATS=(v&&v.cats)||{}; GCOL=(v&&v.gcol)||{}; } },
   inventario: { get:()=>invStock, set:v=>{ invStock=Array.isArray(v)?v:[]; } },
+  ajustes:    { get:()=>AJUSTES, set:v=>setAjustes(v) },
+  bultos:     { get:()=>bultos, set:v=>{ bultos=Array.isArray(v)?v:[]; } },
   marca:      { get:()=>MARCA, set:v=>{ MARCA={nombre:(v&&v.nombre)||'', logo:(v&&v.logo)||''}; aplicarMarca(); } },
   gastos:     { get:()=>loadAdmGastos(), set:v=>{ try{ localStorage.setItem('ov_gastos',JSON.stringify(v||{})); }catch(e){} } }
 };
@@ -3438,7 +3555,7 @@ function nubeRefrescar(){
   nubeRefT=setTimeout(()=>{
     const p=paginaActual(); if(!p) return;
     const vistas={facturas:rFacturas, clientes:rClientes, cartera:rCartera, inventario:renderInv, admin:renderAdmin,
-      despachos:renderDespachos, catalogo:renderCatalogo, dashboard:rDashboard, usuarios:null};
+      despachos:renderDespachos, catalogo:renderCatalogo, dashboard:rDashboard, bultos:renderBultos, nueva:null, usuarios:null};
     const fn=vistas[p]; if(!fn) return;
     // No repintar mientras la persona escribe en esa página: se intenta de nuevo en un momento
     const ae=document.activeElement, pg=document.getElementById('page-'+p);
@@ -3508,7 +3625,7 @@ function nubeEscuchar(){
     const listo=()=>{ faltan--; if(faltan===0 && !terminado){ terminado=true; resolve(); } };
     const fallo=e=>{ console.error('LIVEpos nube (lectura):',e); if(!terminado){ terminado=true; reject(e); } else nubeError(e); };
     ['clientes','facturas','live'].forEach(c=>tareas.push(()=>nubeEscucharCol(c,listo,fallo)));
-    ['stock','catalogo','inventario','marca'].concat(gestor?['gastos']:[]).forEach(n=>tareas.push(()=>nubeEscucharCfg(n,listo,fallo)));
+    ['stock','catalogo','inventario','marca','ajustes','bultos'].concat(gestor?['gastos']:[]).forEach(n=>tareas.push(()=>nubeEscucharCfg(n,listo,fallo)));
     faltan=tareas.length;
     tareas.forEach(t=>Nube.unsubs.push(t()));
   });
@@ -3517,7 +3634,7 @@ function nubeDesconectar(){
   Nube.unsubs.forEach(u=>{ try{u();}catch(e){} });
   Nube.unsubs=[]; Nube.activo=false; Nube.t=null; Nube.ref=null;
   Nube.sync={clientes:{},facturas:{},live:{}}; Nube.cfg={}; Nube.cargados=new Set(); Nube.creadas=new Set();
-  clientes=[]; facturas=[]; fc=1; stock={}; invStock=[]; CATS={}; GCOL={}; filasLive=[]; liveFiltro=''; cierreLive={};
+  clientes=[]; facturas=[]; fc=1; stock={}; invStock=[]; CATS={}; GCOL={}; filasLive=[]; liveFiltro=''; cierreLive={}; bultos=[]; AJUSTES={modoInv:'ventas',alertaMin:5,inicioBultos:0};
   DATOS_LOCALES.forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
   nubeEstado();
 }
@@ -3626,6 +3743,7 @@ function aplicarUsuarioUI(){
   actualizarNavLabels();
   const resetBtn=document.getElementById('btn-reset');
   if(resetBtn) resetBtn.style.display=u.rol==='dueno'?'flex':'none';
+  aplicarModoUI();
   goInner(u.pages[0]||'nueva');
 }
 
@@ -3666,6 +3784,8 @@ function go(p){
 let usrLista=[];
 async function renderUsuarios(){
   pintarMarcaForm();
+  pintarModoForm();
+  const mm=document.getElementById('modo-msg'); if(mm) mm.textContent='';
   const cont=document.getElementById('usr-lista'); if(!cont) return;
   cont.innerHTML='<div style="color:var(--text3);font-size:13px;padding:8px 0">Cargando…</div>';
   try{
@@ -3740,6 +3860,256 @@ async function usrResetClave(email){
   if(!email) return;
   try{ await Nube.auth.sendPasswordResetEmail(email); alert('Le enviamos a '+email+' un correo para crear una contraseña nueva.'); }
   catch(e){ alert(nubeMsgAuth(e)); }
+}
+
+// ═══════════════════════════════════════════════════════════
+// MODO DE INVENTARIO Y BULTOS
+// Cada tienda elige en "Mi tienda": solo ventas, por bultos y precios, o inventario completo.
+// En modo bultos lo disponible se calcula con las ventas: nadie descuenta a mano.
+// ═══════════════════════════════════════════════════════════
+let AJUSTES = {modoInv:'ventas', alertaMin:5, inicioBultos:0};
+let bultos = [];
+let bultoEdit = null;
+
+function modoInv(){ return (AJUSTES && AJUSTES.modoInv) || 'ventas'; }
+function setAjustes(v){
+  AJUSTES = Object.assign({modoInv:'ventas', alertaMin:5, inicioBultos:0}, (v && typeof v==='object') ? v : {});
+  aplicarModoUI();
+}
+function aplicarModoUI(){
+  const m=modoInv();
+  const ih=document.getElementById('ih-grupo'); if(ih) ih.textContent = m==='completo' ? 'Grupo / Categoría' : 'Código';
+  const sc=document.getElementById('stock-card'); if(sc) sc.style.display = m==='ventas' ? 'none' : '';
+  const sct=document.getElementById('stock-card-t'); if(sct) sct.textContent = m==='bultos' ? 'Disponible por precio' : 'Stock rápido';
+  if(usuarioActual){
+    const rol=usuarioActual.rol;
+    const permitido=id=>{ const b=document.getElementById(id); return !!b && b.getAttribute('data-roles').split(',').includes(rol); };
+    const inv=document.getElementById('nav-inventario'), bul=document.getElementById('nav-bultos');
+    if(inv) inv.style.display = (m==='completo' && permitido('nav-inventario')) ? 'flex' : 'none';
+    if(bul) bul.style.display = (m==='bultos' && permitido('nav-bultos')) ? 'flex' : 'none';
+    actualizarNavLabels();
+    const p=paginaActual();
+    if((p==='inventario' && m!=='completo') || (p==='bultos' && m!=='bultos')) goInner(usuarioActual.pages[0]||'nueva');
+  }
+  if(paginaActual()==='nueva') try{ updStockQ(); }catch(e){}
+  if(paginaActual()==='usuarios') pintarModoForm();
+}
+
+// Fecha de una factura a partir de su id (milisegundos o microsegundos)
+function facTs(f){ const n=Number(f.id)||0; return n>1e14 ? Math.floor(n/1000) : n; }
+function saveBultos(){ nubePushCfg('bultos'); }
+
+function calcBultos(){
+  const inicio=Number(AJUSTES.inicioBultos)||0;
+  const orden=bultos.slice().sort((a,b)=>(a.creado||0)-(b.creado||0));
+  const entradas={};
+  orden.forEach(b=>(b.precios||[]).forEach(p=>{ const pr=Math.round(+p.precio||0); if(pr>0) entradas[pr]=(entradas[pr]||0)+(+p.cantidad||0); }));
+  const vendidas={}; let fuera=0, fueraValor=0, valorVendidoTotal=0;
+  facturas.forEach(f=>{
+    if(facTs(f)<inicio) return;
+    (f.items||[]).forEach(it=>{
+      const pr=Math.round(+it.pre||0), c=+it.can||1; if(!pr) return;
+      valorVendidoTotal+=pr*c;
+      if(entradas[pr]!==undefined) vendidas[pr]=(vendidas[pr]||0)+c;
+      else { fuera+=c; fueraValor+=pr*c; }
+    });
+  });
+  // Las ventas de cada precio se asignan primero a los bultos más antiguos (estimado)
+  const restante=Object.assign({}, vendidas);
+  const porBulto=orden.map(b=>{
+    let etiq=0, valorEtiq=0, vend=0, valorVend=0;
+    (b.precios||[]).forEach(p=>{
+      const pr=Math.round(+p.precio||0), q=+p.cantidad||0; if(!pr) return;
+      etiq+=q; valorEtiq+=pr*q;
+      const asign=Math.min(q, restante[pr]||0);
+      restante[pr]=(restante[pr]||0)-asign; vend+=asign; valorVend+=asign*pr;
+    });
+    const costo=+b.costo||0;
+    return {b, etiq, valorEtiq, vend, valorVend, quedan:etiq-vend, recuperado: costo>0 ? valorVend/costo : 0};
+  });
+  const precios=Object.keys(entradas).map(Number).sort((a,b)=>a-b).map(pr=>{
+    const v=vendidas[pr]||0, e=entradas[pr];
+    return {precio:pr, entraron:e, vendidas:v, disponibles:Math.max(0,e-v), demas:Math.max(0,v-e)};
+  });
+  const disponibles=precios.reduce((s,p)=>s+p.disponibles,0);
+  const valorDisponible=precios.reduce((s,p)=>s+p.disponibles*p.precio,0);
+  const invertido=bultos.reduce((s,b)=>s+(+b.costo||0),0);
+  return {precios, porBulto, fuera, fueraValor, disponibles, valorDisponible, invertido, valorVendidoTotal, inicio};
+}
+
+function renderBultos(){
+  const cont=document.getElementById('bultos-cont'); if(!cont) return;
+  const d=calcBultos(); const min=+AJUSTES.alertaMin||0;
+  const set=(id,v)=>{ const el=document.getElementById(id); if(el) el.textContent=v; };
+  set('bm0', d.disponibles.toLocaleString('es-CO'));
+  set('bm1', fmt(d.valorDisponible));
+  set('bm2', fmt(d.invertido));
+  set('bm3', fmt(d.valorVendidoTotal));
+  set('bultos-desde', d.inicio ? 'Contando ventas desde el '+new Date(d.inicio).toLocaleDateString('es-CO') : '');
+
+  const maxE=Math.max(1,...d.precios.map(p=>p.entraron));
+  const filasPrecio = d.precios.length ? d.precios.map(p=>{
+    let chip='';
+    if(p.disponibles===0) chip='<span class="bl-chip bl-agotado">Agotado</span>';
+    else if(p.disponibles<=min) chip='<span class="bl-chip bl-poco">Se está acabando</span>';
+    const pct=Math.round(p.disponibles/maxE*100);
+    return '<tr><td style="font-weight:700">'+fmt(p.precio)+'</td>'
+      +'<td class="num">'+p.entraron+'</td><td class="num">'+p.vendidas+(p.demas?' <span title="Se vendieron más de las registradas a este precio" style="color:var(--red)">(+'+p.demas+')</span>':'')+'</td>'
+      +'<td><div class="bl-quedan"><div class="bl-bar"><span style="width:'+pct+'%"></span></div><b>'+p.disponibles+'</b></div></td>'
+      +'<td style="text-align:right">'+chip+'</td></tr>';
+  }).join('') : '<tr><td colspan="5" style="color:var(--text3);text-align:center;padding:18px">Registra un bulto y anota sus prendas por precio para ver lo disponible.</td></tr>';
+
+  const lista=d.porBulto.slice().reverse();
+  const filasBulto = lista.length ? lista.map(x=>{
+    const b=x.b; const sinEtiq=!(b.precios&&b.precios.length);
+    const tipo = b.tipo==='seleccionado' ? '<span class="bl-chip bl-sel">Seleccionado</span>' : '<span class="bl-chip bl-sin">Sin seleccionar</span>';
+    const rec=Math.round(x.recuperado*100);
+    const barra = b.costo ? '<div class="bl-rec" title="Lo vendido frente a lo que costó"><div class="bl-bar"><span style="width:'+Math.min(100,rec)+'%;background:'+(rec>=100?'var(--green)':'var(--purple)')+'"></span></div><span>'+rec+'% recuperado</span></div>' : '';
+    return '<div class="bl-item">'
+      +'<div class="bl-item-top"><div style="min-width:0"><div style="font-weight:700;font-size:14px">'+lvEsc(b.nombre||'Bulto')+' '+tipo+(sinEtiq?' <span class="bl-chip bl-poco">Por etiquetar</span>':'')+'</div>'
+      +'<div style="font-size:12px;color:var(--text3)">'+lvEsc(b.fecha||'')+(b.proveedor?' · '+lvEsc(b.proveedor):'')+(b.notas?' · '+lvEsc(b.notas):'')+'</div></div>'
+      +'<div style="display:flex;gap:6px"><button class="btn bs" data-id="'+b.id+'" onclick="abrirBulto(this.dataset.id)" title="Etiquetar o editar"><i class="ti ti-settings"></i> '+(sinEtiq?'Etiquetar':'Editar')+'</button>'
+      +'<button class="btn bs bd" data-id="'+b.id+'" onclick="eliminarBulto(this.dataset.id)" title="Eliminar bulto"><i class="ti ti-trash"></i></button></div></div>'
+      +'<div class="bl-stats">'
+        +'<div><span>Costó</span><b>'+fmt(+b.costo||0)+'</b></div>'
+        +'<div><span>Prendas</span><b>'+x.etiq+'</b></div>'
+        +'<div><span>Valor etiquetado</span><b>'+fmt(x.valorEtiq)+'</b></div>'
+        +'<div><span>Vendidas</span><b>'+x.vend+'</b></div>'
+        +'<div><span>Quedan</span><b>'+x.quedan+'</b></div>'
+        +'<div><span>Vendido</span><b>'+fmt(x.valorVend)+'</b></div>'
+      +'</div>'+barra+'</div>';
+  }).join('') : '<div style="color:var(--text3);font-size:13px;padding:10px 0">Aún no hay bultos. Dale "Registrar bulto" cuando llegue mercancía.</div>';
+
+  cont.innerHTML=
+    '<div class="card"><div class="ct" style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span>Disponible por precio</span><span style="font-weight:400;font-size:12px;color:var(--text3)" id="bultos-desde2">'+(d.inicio?'Ventas desde el '+new Date(d.inicio).toLocaleDateString('es-CO'):'')+'</span></div>'
+    +'<div style="overflow-x:auto"><table class="bl-tabla"><thead><tr><th>Precio</th><th class="num">Entraron</th><th class="num">Vendidas</th><th>Quedan</th><th></th></tr></thead><tbody>'+filasPrecio+'</tbody></table></div>'
+    +(d.fuera?'<div class="bl-nota"><i class="ti ti-info-circle"></i> '+d.fuera+' prenda'+(d.fuera!==1?'s':'')+' ('+fmt(d.fueraValor)+') se vendieron a precios que no están en ningún bulto, por ejemplo rebajas. No se descuentan de lo disponible.</div>':'')
+    +'</div>'
+    +'<div class="card"><div class="ct">Bultos</div>'+filasBulto
+    +(lista.length?'<div class="bl-nota" style="margin-top:10px"><i class="ti ti-info-circle"></i> Como las etiquetas solo llevan precio, las ventas se asignan primero a los bultos más antiguos. Las cifras por bulto son un estimado; lo disponible por precio es exacto.</div>':'')
+    +'</div>';
+}
+
+// Resumen corto para el panel de Nueva factura
+function bultosMini(){
+  const d=calcBultos(); const min=+AJUSTES.alertaMin||0;
+  if(!d.precios.length) return 'Aún no hay bultos registrados.';
+  return d.precios.map(p=>{
+    const color=p.disponibles===0?'var(--red)':p.disponibles<=min?'#EF9F27':'var(--green)';
+    return '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>'+fmt(p.precio)+'</span><span style="font-weight:600;color:'+color+'">'+p.disponibles+' disp.</span></div>';
+  }).join('');
+}
+
+// ── Registrar / etiquetar bulto ──
+function abrirBulto(id){
+  const b = id ? bultos.find(x=>String(x.id)===String(id)) : null;
+  bultoEdit = b ? JSON.parse(JSON.stringify(b)) : {id:null, nombre:'Bulto '+(bultos.length+1), tipo:'sin', proveedor:'', costo:0, fecha:today(), notas:'', precios:[]};
+  document.getElementById('bl-titulo').textContent = b ? 'Editar '+(b.nombre||'bulto') : 'Registrar bulto';
+  document.getElementById('bl-nombre').value=bultoEdit.nombre||'';
+  document.getElementById('bl-tipo').value=bultoEdit.tipo==='seleccionado'?'seleccionado':'sin';
+  document.getElementById('bl-prov').value=bultoEdit.proveedor||'';
+  document.getElementById('bl-costo').value=lvFmtNum(+bultoEdit.costo||0);
+  document.getElementById('bl-fecha').value=bultoEdit.fecha||today();
+  document.getElementById('bl-notas').value=bultoEdit.notas||'';
+  if(!bultoEdit.precios.length) bultoEdit.precios=[{precio:0,cantidad:0}];
+  pintarPreciosBulto();
+  document.getElementById('bl-msg').textContent='';
+  document.getElementById('modal-bulto').classList.remove('hidden');
+  document.getElementById(b?'bl-costo':'bl-nombre').focus();
+}
+function cerrarBulto(){ document.getElementById('modal-bulto').classList.add('hidden'); bultoEdit=null; }
+function pintarPreciosBulto(){
+  const cont=document.getElementById('bl-precios'); if(!cont||!bultoEdit) return;
+  cont.innerHTML=bultoEdit.precios.map((p,i)=>
+    '<div class="bl-prow">'
+    +'<input inputmode="numeric" placeholder="Precio, ej: 25" value="'+lvFmtNum(+p.precio||0)+'" data-i="'+i+'" data-k="precio" onchange="editPrecioBulto(this)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.parentElement.querySelector(\'[data-k=cantidad]\').focus();}">'
+    +'<input type="number" min="0" placeholder="Prendas" value="'+(+p.cantidad||'')+'" data-i="'+i+'" data-k="cantidad" oninput="editPrecioBulto(this)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();agregarPrecioBulto();}">'
+    +'<button class="btn bs bd" data-i="'+i+'" onclick="quitarPrecioBulto(+this.dataset.i)" title="Quitar"><i class="ti ti-x"></i></button>'
+    +'</div>').join('');
+  // Precios que ya usa la tienda, para agregarlos con un toque
+  const usados=[...new Set(bultos.flatMap(b=>(b.precios||[]).map(p=>Math.round(+p.precio||0))).filter(Boolean))].sort((a,b)=>a-b)
+    .filter(pr=>!bultoEdit.precios.some(p=>Math.round(+p.precio||0)===pr));
+  document.getElementById('bl-sugeridos').innerHTML = usados.length
+    ? '<span style="font-size:11px;color:var(--text3)">Precios de otros bultos:</span> '+usados.map(pr=>'<button class="bl-sug" onclick="agregarPrecioBulto('+pr+')">'+fmt(pr)+'</button>').join('')
+    : '';
+  totalesBulto();
+}
+function editPrecioBulto(inp){
+  const i=+inp.dataset.i, k=inp.dataset.k; if(!bultoEdit||!bultoEdit.precios[i]) return;
+  if(k==='precio'){ bultoEdit.precios[i].precio=lvParsePrecio(inp.value); inp.value=lvFmtNum(bultoEdit.precios[i].precio); }
+  else bultoEdit.precios[i].cantidad=Math.max(0,parseInt(inp.value,10)||0);
+  totalesBulto();
+}
+function agregarPrecioBulto(pr){
+  if(!bultoEdit) return;
+  bultoEdit.precios.push({precio:pr||0, cantidad:0});
+  pintarPreciosBulto();
+  const filas=document.querySelectorAll('#bl-precios .bl-prow');
+  const ult=filas[filas.length-1]; if(ult) ult.querySelector(pr?'[data-k=cantidad]':'[data-k=precio]').focus();
+}
+function quitarPrecioBulto(i){ if(!bultoEdit) return; bultoEdit.precios.splice(i,1); if(!bultoEdit.precios.length) bultoEdit.precios.push({precio:0,cantidad:0}); pintarPreciosBulto(); }
+function totalesBulto(){
+  if(!bultoEdit) return;
+  const costo=lvParsePrecio(document.getElementById('bl-costo').value);
+  let prendas=0, valor=0;
+  bultoEdit.precios.forEach(p=>{ const q=+p.cantidad||0, pr=+p.precio||0; if(pr>0){ prendas+=q; valor+=q*pr; } });
+  const margen=valor-costo;
+  document.getElementById('bl-totales').innerHTML=
+    '<div><span>Prendas</span><b>'+prendas+'</b></div>'
+    +'<div><span>Valor etiquetado</span><b>'+fmt(valor)+'</b></div>'
+    +'<div><span>Ganancia posible</span><b style="color:'+(margen>=0?'var(--green)':'var(--red)')+'">'+fmt(margen)+'</b></div>';
+}
+function guardarBulto(){
+  if(!bultoEdit) return;
+  const nombre=document.getElementById('bl-nombre').value.trim();
+  if(!nombre){ document.getElementById('bl-msg').textContent='Ponle un nombre o número al bulto.'; return; }
+  const precios=bultoEdit.precios.map(p=>({precio:Math.round(+p.precio||0), cantidad:+p.cantidad||0})).filter(p=>p.precio>0 && p.cantidad>0);
+  // Un mismo precio repetido se suma
+  const unidos={}; precios.forEach(p=>{ unidos[p.precio]=(unidos[p.precio]||0)+p.cantidad; });
+  const datos={
+    nombre, tipo:document.getElementById('bl-tipo').value,
+    proveedor:document.getElementById('bl-prov').value.trim(),
+    costo:lvParsePrecio(document.getElementById('bl-costo').value),
+    fecha:document.getElementById('bl-fecha').value.trim()||today(),
+    notas:document.getElementById('bl-notas').value.trim(),
+    precios:Object.keys(unidos).map(Number).sort((a,b)=>a-b).map(pr=>({precio:pr, cantidad:unidos[pr]}))
+  };
+  if(bultoEdit.id){
+    const b=bultos.find(x=>String(x.id)===String(bultoEdit.id)); if(b) Object.assign(b, datos);
+  } else {
+    bultos.push(Object.assign({id:lvUid(), creado:Date.now(), por:(usuarioActual&&usuarioActual.nombre)||''}, datos));
+  }
+  saveBultos();
+  cerrarBulto();
+  renderBultos();
+}
+function eliminarBulto(id){
+  const b=bultos.find(x=>String(x.id)===String(id)); if(!b) return;
+  if(!confirm('¿Eliminar '+(b.nombre||'este bulto')+'? Sus prendas dejan de contar en lo disponible.')) return;
+  bultos=bultos.filter(x=>x!==b);
+  saveBultos();
+  renderBultos();
+}
+
+// ── Ajuste en Mi tienda ──
+function pintarModoForm(){
+  const m=modoInv();
+  document.querySelectorAll('input[name="modo-inv"]').forEach(r=>{ r.checked = r.value===m; r.closest('.modo-op').classList.toggle('on', r.value===m); });
+  const al=document.getElementById('modo-alerta'); if(al && document.activeElement!==al) al.value=+AJUSTES.alertaMin||5;
+  const extra=document.getElementById('modo-bultos-extra'); if(extra) extra.style.display = m==='bultos' ? '' : 'none';
+}
+function elegirModo(v){
+  document.querySelectorAll('.modo-op').forEach(o=>o.classList.toggle('on', o.querySelector('input').value===v));
+  const extra=document.getElementById('modo-bultos-extra'); if(extra) extra.style.display = v==='bultos' ? '' : 'none';
+}
+function guardarModo(){
+  const sel=document.querySelector('input[name="modo-inv"]:checked'); if(!sel) return;
+  const nuevo=Object.assign({}, AJUSTES, {modoInv:sel.value, alertaMin:Math.max(0,parseInt(document.getElementById('modo-alerta').value,10)||0)});
+  if(sel.value==='bultos' && !nuevo.inicioBultos) nuevo.inicioBultos=Date.now();
+  setAjustes(nuevo);
+  nubePushCfg('ajustes');
+  const msg=document.getElementById('modo-msg');
+  if(msg){ msg.style.color='var(--green)'; msg.textContent = sel.value==='bultos' ? 'Guardado. Ya aparece "Bultos" en el menú.' : sel.value==='completo' ? 'Guardado. Ya aparece "Inventario" en el menú.' : 'Guardado. El inventario queda oculto.'; }
 }
 
 // ── MARCA DE LA TIENDA (logo y nombre) ──
