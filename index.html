@@ -686,6 +686,11 @@ body.nav-min .sb-user{flex-direction:column;padding:8px 4px;gap:8px}
 .car-d2{background:var(--amber-bg);color:var(--amber)}
 .car-d3{background:var(--red-bg);color:var(--red)}
 @media(max-width:768px){.car-fac{grid-template-columns:1fr auto}.car-fac .acc{grid-column:1/-1;justify-content:flex-start}.car-saldo{font-size:17px}.fx-bar input,.fx-bar select{font-size:16px}}
+
+.g-cats-panel{background:var(--bg3);border-radius:12px;padding:12px 14px;margin-bottom:14px}
+.g-cat-chip{background:var(--bg2);border:1px solid var(--border);padding:4px 4px 4px 10px}
+.g-cat-chip button{border:none;background:none;color:var(--text3);cursor:pointer;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;padding:0;font-size:13px}
+.g-cat-chip button:hover{background:var(--red-bg);color:var(--red)}
 </style>
 </head>
 <body>
@@ -1403,7 +1408,19 @@ body.nav-min .sb-user{flex-direction:column;padding:8px 4px;gap:8px}
   <!-- GASTOS -->
   <div id="fin-gastos" style="display:none">
     <div class="card">
-      <div class="ct">Registrar gasto</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:14px">
+        <div class="ct" style="margin:0">Registrar gasto</div>
+        <button class="ab" id="g-cats-btn" onclick="gCatsToggle()" title="Crear o quitar categorías de gasto"><i class="ti ti-tags"></i> Categorías</button>
+      </div>
+      <div id="g-cats-panel" class="g-cats-panel" style="display:none">
+        <div style="font-size:12px;color:var(--text2);margin-bottom:8px">Estas son las categorías que aparecen al registrar un gasto. Quitar una no borra los gastos que ya tiene.</div>
+        <div id="g-cats-lista" class="fin-chips"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <input id="g-cats-nueva" placeholder="Nueva categoría, ej: Bolsas, Gasolina…" style="flex:1;min-width:180px" onkeydown="if(event.key==='Enter')gCatAgregar()">
+          <button class="btn bp" onclick="gCatAgregar()"><i class="ti ti-plus"></i> Agregar</button>
+        </div>
+        <div id="g-cats-msg" style="font-size:12px;min-height:14px;margin-top:6px"></div>
+      </div>
       <div class="fin-form">
         <div><label for="g-fecha">Fecha</label><input type="date" id="g-fecha"></div>
         <div><label for="g-cat">Categoría</label><select id="g-cat" onchange="if(this.value==='__nueva__')gNuevaCat()"></select></div>
@@ -2785,23 +2802,57 @@ function finIrGasto(){
 }
 
 // ── Categorías de gasto (cada tienda puede agregar las suyas) ──
+// Categorías activas (las que salen al registrar). Las quitadas siguen en los gastos viejos y en los resúmenes.
+function catsActivas(){ return Array.isArray(AJUSTES.catGastos) ? AJUSTES.catGastos.slice() : CAT_GASTOS_BASE.slice(); }
 function catsGasto(){
-  const c=(Array.isArray(AJUSTES.catGastos)&&AJUSTES.catGastos.length)?AJUSTES.catGastos.slice():CAT_GASTOS_BASE.slice();
+  const c=catsActivas();
   gastos.forEach(g=>{ if(g.cat && !c.includes(g.cat)) c.push(g.cat); });
   return c;
+}
+function gCatsGuardar(lista){ AJUSTES.catGastos=lista; nubePushCfg('ajustes'); pintarCatsGasto(); gCatsPintar(); }
+function gCatsToggle(){
+  const p=document.getElementById('g-cats-panel'); const ver=p.style.display==='none';
+  p.style.display=ver?'':'none'; if(ver){ gCatsPintar(); document.getElementById('g-cats-nueva').focus(); }
+}
+function gCatsMsg(t,ok){ const m=document.getElementById('g-cats-msg'); if(m){ m.textContent=t; m.style.color=ok?'var(--green)':'var(--red)'; } }
+function gCatsPintar(){
+  const el=document.getElementById('g-cats-lista'); if(!el) return;
+  const act=catsActivas();
+  el.innerHTML=act.length ? act.map((c,i)=>{
+    const n=gastos.filter(g=>g.cat===c).length;
+    return '<span class="fin-chip g-cat-chip"><span class="fin-dot" style="background:'+colorCat(c)+'"></span>'+lvEsc(c)
+      +(n?' <span style="color:var(--text3)">('+n+')</span>':'')
+      +'<button onclick="gCatQuitar('+i+')" title="Quitar categoría" aria-label="Quitar '+lvEsc(c)+'"><i class="ti ti-x"></i></button></span>';
+  }).join('') : '<span style="font-size:12px;color:var(--text3)">No hay categorías. Agrega la primera.</span>';
+}
+function gCatAgregar(){
+  const inp=document.getElementById('g-cats-nueva');
+  const n=inp.value.trim().replace(/\s+/g,' ');
+  if(!n){ gCatsMsg('Escribe el nombre de la categoría.'); inp.focus(); return; }
+  const act=catsActivas();
+  if(act.some(x=>x.toLowerCase()===n.toLowerCase())){ gCatsMsg('"'+n+'" ya existe.'); return; }
+  gCatsGuardar(act.concat([n])); inp.value=''; inp.focus();
+  gCatsMsg('Agregada: '+n, true);
+}
+function gCatQuitar(i){
+  const act=catsActivas(); const c=act[i]; if(c===undefined) return;
+  const n=gastos.filter(g=>g.cat===c).length;
+  if(!confirm('¿Quitar la categoría "'+c+'"?'+(n?'\n\nTiene '+n+' gasto(s) registrados: esos se quedan igual en el historial y en los resúmenes. Solo deja de aparecer para gastos nuevos.':''))) return;
+  act.splice(i,1); gCatsGuardar(act);
+  gCatsMsg('Quitada: '+c, true);
 }
 function colorCat(cat){ const i=catsGasto().indexOf(cat); return FIN_COLORES[(i<0?0:i)%FIN_COLORES.length]; }
 function pintarCatsGasto(sel){
   const s=document.getElementById('g-cat'); if(!s) return;
   const actual=sel||s.value;
-  s.innerHTML='<option value="">Elige…</option>'+catsGasto().map(c=>'<option'+(c===actual?' selected':'')+'>'+lvEsc(c)+'</option>').join('')
+  s.innerHTML='<option value="">Elige…</option>'+catsActivas().map(c=>'<option'+(c===actual?' selected':'')+'>'+lvEsc(c)+'</option>').join('')
     +'<option value="__nueva__">+ Nueva categoría…</option>';
 }
 function gNuevaCat(){
   const n=(prompt('Nombre de la nueva categoría de gasto:')||'').trim().replace(/\s+/g,' ');
   if(n){
-    const c=catsGasto();
-    if(!c.some(x=>x.toLowerCase()===n.toLowerCase())){ AJUSTES.catGastos=c.concat([n]); nubePushCfg('ajustes'); }
+    const c=catsActivas();
+    if(!c.some(x=>x.toLowerCase()===n.toLowerCase())){ AJUSTES.catGastos=c.concat([n]); nubePushCfg('ajustes'); gCatsPintar(); }
     pintarCatsGasto(c.find(x=>x.toLowerCase()===n.toLowerCase())||n);
     document.getElementById('g-valor').focus();
   } else pintarCatsGasto('');
