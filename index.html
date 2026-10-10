@@ -277,7 +277,7 @@ button[style*="#25D366"]:hover{opacity:0.9;box-shadow:0 2px 12px rgba(37,211,102
 @media(max-width:900px){.lv-layout{grid-template-columns:1fr}}
 .lv-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 12px;font-size:12px;color:var(--text3);border-bottom:1px solid var(--border)}
 .lv-sheet{max-height:calc(100vh - 250px);min-height:240px;overflow:auto}
-.lv-row{display:grid;grid-template-columns:42px minmax(130px,1.3fr) 100px 120px minmax(150px,1.7fr) 38px;border-bottom:1px solid var(--border);min-width:600px}
+.lv-row{display:grid;grid-template-columns:42px minmax(150px,1.7fr) 100px 120px minmax(130px,1.3fr) 38px;border-bottom:1px solid var(--border);min-width:600px}
 .lv-row>div{border-right:1px solid var(--border);min-width:0}
 .lv-row>div:last-child{border-right:none}
 .lv-head{background:var(--bg3);font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;position:sticky;top:0;z-index:2}
@@ -623,11 +623,11 @@ body.dark .et-desp.et-chip{background:#0f2a44;color:#7db7ef}
     <div class="lv-layout">
       <div class="card" style="padding:0;overflow:hidden;margin-bottom:0">
         <div class="lv-toolbar">
-          <span><i class="ti ti-keyboard"></i> Escribe como en Excel: <b>Enter</b> baja, <b>Tab</b> pasa a la derecha. El nombre lo puedes poner al final.</span>
+          <span><i class="ti ti-keyboard"></i> Escribe como en Excel: <b>Enter</b> baja, <b>Tab</b> pasa a la derecha. El cliente lo puedes poner al final.</span>
           <span id="lv-filtro-chip"></span>
         </div>
         <div class="lv-sheet" id="lv-sheet">
-          <div class="lv-row lv-head"><div>#</div><div>Nombre</div><div>Código</div><div style="text-align:right">Precio</div><div>Referencia</div><div></div></div>
+          <div class="lv-row lv-head"><div>#</div><div>Descripción</div><div>Código</div><div style="text-align:right">Precio</div><div>Cliente</div><div></div></div>
           <div id="lv-tabla"></div>
         </div>
         <div class="lv-foot">
@@ -2770,10 +2770,10 @@ function lvRowHTML(f, n){
   const ph=(t)=>isNew?' placeholder="'+t+'"':'';
   return '<div class="lv-row'+(isNew?' lv-new':'')+(sin?' lv-sin-nombre':'')+'" data-id="'+(isNew?'new':d.id)+'">'
     +'<div class="lv-n">'+(isNew?'+':n)+'</div>'
-    +'<div class="lv-c-nom"><input class="lv-cell" data-f="nombre" list="lv-nombres" autocomplete="off" value="'+lvEsc(d.nombre)+'"'+ph('Nombre')+'></div>'
+    +'<div><input class="lv-cell" data-f="ref" autocomplete="off" value="'+lvEsc(d.ref)+'"'+ph('Descripción')+'></div>'
     +'<div><input class="lv-cell" data-f="cod" autocomplete="off" value="'+lvEsc(d.cod)+'"'+ph('Código')+'></div>'
     +'<div><input class="lv-cell lv-pre" data-f="pre" inputmode="numeric" autocomplete="off" value="'+lvFmtNum(d.pre)+'"'+ph('$0')+'></div>'
-    +'<div><input class="lv-cell" data-f="ref" autocomplete="off" value="'+lvEsc(d.ref)+'"'+ph('Referencia')+'></div>'
+    +'<div class="lv-c-nom"><input class="lv-cell" data-f="nombre" list="lv-nombres" autocomplete="off" value="'+lvEsc(d.nombre)+'"'+ph('Cliente')+'></div>'
     +'<div>'+(isNew?'':'<button class="lv-del" tabindex="-1" title="Eliminar fila" onclick="rmFilaLive('+d.id+')"><i class="ti ti-trash"></i></button>')+'</div>'
     +'</div>';
 }
@@ -2904,7 +2904,7 @@ function limpiarLive(){
   filasLive=[]; liveFilaId=0; liveFiltro='';
   saveLiveNow();
   rLiveTabla();
-  lvFocusCelda(document.querySelector('#lv-tabla .lv-new'),'cod');
+  lvFocusCelda(document.querySelector('#lv-tabla .lv-new'),'ref');
 }
 
 function lvActualizarDatalist(){
@@ -2997,14 +2997,14 @@ function lvCardHTML(g){
     ? '<span class="lv-badge" style="background:var(--green-bg);color:var(--green)"><i class="ti ti-check"></i> '+g.fac.num+' · a crédito</span>'
     : (cli ? '<span class="lv-badge" style="background:var(--bg3);color:var(--text2)">Cliente registrado</span>'
            : '<span class="lv-badge" style="background:var(--amber-bg);color:var(--amber)">Cliente nuevo</span>');
-  const filas=g.items.map(it=>'<tr><td style="font-weight:600">'+lvEsc(it.cod||'-')+'</td><td>'+lvEsc(it.ref||'-')+'</td>'
+  const filas=g.items.map(it=>'<tr><td>'+lvEsc(it.ref||'-')+'</td><td style="font-weight:600">'+lvEsc(it.cod||'-')+'</td>'
     +'<td style="text-align:right;font-weight:600'+(it.pre?'':';color:var(--red)')+'">'+(it.pre?fmt(it.pre):'Sin precio')+'</td></tr>').join('');
   return '<div class="card lv-card'+(g.fac?' lv-done':'')+'">'
     +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px">'
       +'<div style="min-width:0"><div style="font-size:15px;font-weight:700">'+lvEsc(g.nombre)+'</div>'
       +'<div style="font-size:12px;color:var(--text3)">'+g.items.length+' prenda'+(g.items.length!==1?'s':'')+'</div></div>'+badge
     +'</div>'
-    +'<table><thead><tr><th>Código</th><th>Referencia</th><th style="text-align:right">Precio</th></tr></thead><tbody>'+filas+'</tbody>'
+    +'<table><thead><tr><th>Descripción</th><th>Código</th><th style="text-align:right">Precio</th></tr></thead><tbody>'+filas+'</tbody>'
     +'<tfoot><tr><td colspan="2" style="text-align:right;font-weight:700;padding-top:8px">Total</td>'
     +'<td style="text-align:right;font-weight:800;color:var(--purple);font-size:15px;padding-top:8px">'+fmt(g.total)+'</td></tr></tfoot></table>'
     +'<div class="lv-card-actions">'
@@ -3232,7 +3232,7 @@ function rLive(){
   document.getElementById('live-captura').style.display='block';
   document.getElementById('live-cierre').style.display='none';
   rLiveTabla();
-  setTimeout(()=>lvFocusCelda(document.querySelector('#lv-tabla .lv-new'),'cod'),50);
+  setTimeout(()=>lvFocusCelda(document.querySelector('#lv-tabla .lv-new'),'ref'),50);
 }
 
 // ── CLIENTES EDIT ────────────────────────────────────────────────
