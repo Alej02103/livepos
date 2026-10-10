@@ -1,0 +1,55 @@
+rules_version = '2';
+// Reglas de seguridad de LIVEpos.
+// Se pegan en Firebase → Firestore Database → Reglas → Publicar.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function logueado() { return request.auth != null; }
+    function perfilDoc() { return /databases/$(database)/documents/usuarios/$(request.auth.uid); }
+    function perfil() { return get(perfilDoc()).data; }
+    // Pertenece a la tienda y está activo
+    function miembro(t) {
+      return logueado() && exists(perfilDoc()) && perfil().tienda == t && perfil().activo == true;
+    }
+    function rolEn(t, roles) { return miembro(t) && perfil().rol in roles; }
+
+    // Perfiles: cada quien lee el suyo; el dueño administra los de su tienda
+    match /usuarios/{uid} {
+      allow get: if logueado() && (request.auth.uid == uid || rolEn(resource.data.tienda, ['dueno']));
+      allow list: if logueado() && rolEn(resource.data.tienda, ['dueno']);
+      allow create: if logueado() && request.resource.data.keys().hasAll(['tienda', 'rol']) && (
+        rolEn(request.resource.data.tienda, ['dueno']) ||
+        // Primer ingreso: quien creó la tienda queda como dueño
+        (request.auth.uid == uid
+          && request.resource.data.rol == 'dueno'
+          && request.resource.data.activo == true
+          && get(/databases/$(database)/documents/tiendas/$(request.resource.data.tienda)).data.owner == request.auth.uid)
+      );
+      allow update: if rolEn(resource.data.tienda, ['dueno'])
+        && request.resource.data.tienda == resource.data.tienda;
+      allow delete: if rolEn(resource.data.tienda, ['dueno']);
+    }
+
+    match /tiendas/{t} {
+      allow get: if logueado();
+      allow create: if logueado() && request.resource.data.owner == request.auth.uid;
+      allow update: if rolEn(t, ['dueno']);
+
+      match /clientes/{id} {
+        allow read, create, update: if miembro(t);
+        allow delete: if rolEn(t, ['dueno', 'admin']);
+      }
+      match /facturas/{id} {
+        allow read, create, update: if miembro(t);
+        allow delete: if rolEn(t, ['dueno', 'admin']);
+      }
+      match /live/{id} {
+        allow read, write: if miembro(t);
+      }
+      // stock, catálogo, inventario: todo el equipo. Gastos: solo dueño y admin.
+      match /config/{doc} {
+        allow read, write: if miembro(t) && (doc != 'gastos' || rolEn(t, ['dueno', 'admin']));
+      }
+    }
+  }
+}

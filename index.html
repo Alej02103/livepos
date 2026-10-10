@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LIVEpos</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/tabler-icons.min.css">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -304,6 +308,27 @@ button[style*="#25D366"]:hover{opacity:0.9;box-shadow:0 2px 12px rgba(37,211,102
 .lv-card-actions .btn{flex:1;justify-content:center}
 .lv-wa{background:#25D366!important;border-color:#25D366!important;color:#fff!important}
 .lv-badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600}
+
+/* ── Nube / ingreso / usuarios ── */
+.login-error.ok{background:var(--green-bg);color:var(--green)}
+.login-link{display:block;width:100%;margin-top:10px;background:none;border:none;color:var(--purple);font-size:12px;cursor:pointer;padding:6px}
+.login-link:hover{text-decoration:underline}
+.login-btn:disabled{opacity:.6;cursor:wait}
+.login-spin{width:26px;height:26px;border:3px solid var(--border2);border-top-color:var(--purple);border-radius:50%;margin:0 auto 10px;animation:lspin .8s linear infinite}
+@keyframes lspin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.login-spin{animation:none}}
+.nube-estado{display:none;align-items:center;justify-content:center;gap:6px;font-size:10.5px;color:var(--text3);padding:2px 0}
+.nube-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);flex-shrink:0}
+.nube-estado.ok .nube-dot{background:var(--green)}
+.nube-estado.sync .nube-dot{background:var(--amber)}
+.nube-estado.off{color:var(--amber)} .nube-estado.off .nube-dot{background:var(--amber)}
+.nube-estado.err{color:var(--red)} .nube-estado.err .nube-dot{background:var(--red)}
+.usr-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.usr-row:last-child{border-bottom:none}
+.usr-row .btn{padding:5px 9px;font-size:12px}
+.usr-off{opacity:.55}
+.usr-av{width:32px;height:32px;border-radius:50%;background:var(--purple-light);color:var(--purple);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.usr-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
 </style>
 </head>
 <body>
@@ -315,32 +340,31 @@ button[style*="#25D366"]:hover{opacity:0.9;box-shadow:0 2px 12px rgba(37,211,102
       <div class="login-logo-text">LIVE<span style="color:var(--text3);font-weight:400">pos</span></div>
       <div class="login-logo-sub">Sistema de punto de venta</div>
     </div>
-    <div class="login-error" id="login-error">Usuario o contraseña incorrectos</div>
-    <label class="login-label">Usuario</label>
-    <input class="login-input" id="login-user" placeholder="Tu nombre de usuario" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()">
-    <label class="login-label">Contraseña</label>
-    <input class="login-input" id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')intentarLogin()">
-    <button class="login-btn" onclick="intentarLogin()"><i class="ti ti-login"></i> Ingresar</button>
-    <div style="margin-top:20px;padding-top:16px;border-top:0.5px solid var(--border)">
-      <div style="font-size:11px;color:var(--text3);margin-bottom:8px;text-align:center;font-weight:500;text-transform:uppercase;letter-spacing:0.4px">Accesos de prueba</div>
-      <div style="display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--text2)">
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:var(--bg3);border-radius:6px">
-          <span>👑 dueno / <code style="color:var(--purple)">1234</code></span>
-          <span class="role-badge role-dueno">Dueño</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:var(--bg3);border-radius:6px">
-          <span>⚙️ admin / <code style="color:var(--purple)">1234</code></span>
-          <span class="role-badge role-admin">Admin</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:var(--bg3);border-radius:6px">
-          <span>🛍️ vendedor / <code style="color:var(--purple)">1234</code></span>
-          <span class="role-badge role-vendedor">Vendedor</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:var(--bg3);border-radius:6px">
-          <span>📦 bodega / <code style="color:var(--purple)">1234</code></span>
-          <span class="role-badge" style="background:#E0F2F1;color:#004D40">Bodega</span>
-        </div>
-      </div>
+    <div id="login-cargando" style="display:block;text-align:center;padding:18px 0;color:var(--text2);font-size:13px">
+      <div class="login-spin"></div>
+      <div id="login-cargando-txt">Conectando…</div>
+    </div>
+    <div id="login-form" style="display:none">
+      <div class="login-error" id="login-error"></div>
+      <label class="login-label" for="login-user">Correo</label>
+      <input class="login-input" id="login-user" type="email" placeholder="tucorreo@gmail.com" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()">
+      <label class="login-label" for="login-pass">Contraseña</label>
+      <input class="login-input" id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')intentarLogin()">
+      <button class="login-btn" id="login-btn" onclick="intentarLogin()"><i class="ti ti-login"></i> Ingresar</button>
+      <button class="login-link" onclick="olvideClave()">Olvidé mi contraseña</button>
+    </div>
+    <div id="login-crear" style="display:none">
+      <div style="font-size:15px;font-weight:700;margin-bottom:6px">Crear la tienda</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:14px">Eres la primera persona en entrar. Vas a quedar como <b>dueño</b> de la tienda y desde la sección Usuarios podrás dar acceso a tu equipo.</div>
+      <label class="login-label" for="crear-nombre">Tu nombre</label>
+      <input class="login-input" id="crear-nombre" placeholder="Tu nombre" onkeydown="if(event.key==='Enter')crearTiendaDueno()">
+      <button class="login-btn" id="crear-btn" onclick="crearTiendaDueno()">Crear tienda y entrar</button>
+      <button class="login-link" onclick="cerrarSesion()">Usar otra cuenta</button>
+    </div>
+    <div id="login-aviso" style="display:none;text-align:center">
+      <div style="font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:14px" id="login-aviso-txt"></div>
+      <button class="login-btn" onclick="location.reload()"><i class="ti ti-refresh"></i> Intentar de nuevo</button>
+      <button class="login-link" onclick="cerrarSesion()">Usar otra cuenta</button>
     </div>
   </div>
 </div>
@@ -368,6 +392,7 @@ button[style*="#25D366"]:hover{opacity:0.9;box-shadow:0 2px 12px rgba(37,211,102
     <button class="nav" onclick="go('dashboard')" id="nav-dashboard" data-roles="dueno,admin"><i class="ti ti-chart-bar"></i><span>Dashboard</span></button>
     <div class="nav-label">Administración</div>
     <button class="nav" onclick="go('admin')" id="nav-admin" data-roles="dueno"><i class="ti ti-report-analytics"></i><span>Financiero</span></button>
+    <button class="nav" onclick="go('usuarios')" id="nav-usuarios" data-roles="dueno"><i class="ti ti-user-cog"></i><span>Usuarios</span></button>
   </div>
   <div class="sidebar-footer" style="display:flex;flex-direction:column;gap:6px">
     <!-- Usuario logueado -->
@@ -384,7 +409,8 @@ button[style*="#25D366"]:hover{opacity:0.9;box-shadow:0 2px 12px rgba(37,211,102
     <button class="btn bs" onclick="exportarDatos()" style="width:100%;justify-content:center;font-size:11px;background:var(--purple-light);color:var(--purple);border-color:var(--border2)"><i class="ti ti-download"></i><span>Exportar datos</span></button>
     <label class="btn bs" style="width:100%;justify-content:center;cursor:pointer;font-size:11px;margin:0"><i class="ti ti-upload"></i><span>Importar datos</span><input type="file" accept=".json" onchange="importarDatos(this)" style="display:none"></label>
     <button id="btn-reset" onclick="abrirReset()" data-roles="dueno" style="display:none;width:100%;padding:6px;background:none;border:0.5px solid var(--border2);border-radius:8px;font-size:11px;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:all 0.15s" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text3)'"><i class="ti ti-refresh-alert"></i> Restablecer sistema</button>
-    <div style="font-size:10px;color:var(--text3);text-align:center">v1.1 · LIVEpos</div>
+    <div id="nube-estado" class="nube-estado"></div>
+    <div style="font-size:10px;color:var(--text3);text-align:center">v2.0 · LIVEpos</div>
   </div>
 </div>
 
@@ -855,6 +881,45 @@ button[style*="#25D366"]:hover{opacity:0.9;box-shadow:0 2px 12px rgba(37,211,102
     <div class="ct">Últimas 10 facturas</div>
     <table><thead><tr><th>#</th><th>Cliente</th><th>Canal</th><th>Monto Total</th><th>Pendiente</th><th>Estado</th></tr></thead>
     <tbody id="d-ult"></tbody></table>
+  </div>
+</div>
+
+<!-- USUARIOS -->
+<div class="topbar" id="tb-usuarios" style="display:none">
+  <div class="topbar-title"><i class="ti ti-user-cog" style="color:var(--purple)"></i> Usuarios</div>
+  <div class="topbar-actions"><button class="btn bp" onclick="usrNuevo()"><i class="ti ti-user-plus"></i> Nuevo usuario</button></div>
+</div>
+<div class="page" id="page-usuarios" style="padding-top:16px">
+  <div class="card" id="usr-form-card" style="display:none">
+    <div class="ct">Nuevo usuario</div>
+    <div class="usr-form">
+      <div><label for="usr-nombre">Nombre</label><input id="usr-nombre" placeholder="Ej: Paula"></div>
+      <div><label for="usr-email">Correo</label><input id="usr-email" type="email" placeholder="paula@gmail.com" autocomplete="off"></div>
+      <div><label for="usr-clave">Contraseña inicial</label><input id="usr-clave" type="text" placeholder="Mínimo 6 caracteres" autocomplete="off"></div>
+      <div><label for="usr-rol">Rol</label>
+        <select id="usr-rol"><option value="vendedor">Vendedor</option><option value="admin">Admin</option><option value="bodega">Bodega</option><option value="dueno">Dueño</option></select>
+      </div>
+    </div>
+    <div id="usr-msg" style="font-size:12px;min-height:16px;margin:10px 0"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn bp" id="usr-crear-btn" onclick="usrCrear()"><i class="ti ti-user-plus"></i> Crear usuario</button>
+      <button class="btn bs" onclick="usrCancelar()">Cancelar</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct">Personas con acceso</div>
+    <div id="usr-lista"></div>
+  </div>
+  <div class="card" style="font-size:12px;color:var(--text2);line-height:1.6">
+    <div class="ct">Qué puede hacer cada rol</div>
+    <div><b>Dueño:</b> todo, incluido Financiero, Usuarios y restablecer el sistema.</div>
+    <div><b>Admin:</b> ventas, live, facturas, cartera, clientes, inventario, despachos y dashboard.</div>
+    <div><b>Vendedor:</b> nueva factura, modo live y facturas.</div>
+    <div><b>Bodega:</b> solo despachos.</div>
+    <div style="margin-top:8px;color:var(--text3)">Para que alguien deje de entrar, desactívalo. Con "Clave" le llega un correo para crear una contraseña nueva.</div>
+  </div>
+</div>
+
 <div class="topbar" id="tb-admin" style="display:none">
   <div class="topbar-title"><i class="ti ti-report-analytics" style="color:var(--purple)"></i> Dashboard Financiero</div>
   <div class="topbar-actions">
@@ -937,10 +1002,6 @@ button[style*="#25D366"]:hover{opacity:0.9;box-shadow:0 2px 12px rgba(37,211,102
   </div>
 </div>
 
-
-  </div>
-</div>
-
 </div>
 </div>
 
@@ -991,12 +1052,13 @@ function loadCats(){
 function saveCats(){
   localStorage.setItem('ov_cats', JSON.stringify(CATS));
   localStorage.setItem('ov_gcol', JSON.stringify(GCOL));
+  nubePushCfg('catalogo');
 }
 function getGrupoColor(g){
   const idx = Object.keys(CATS).indexOf(g);
   return GCOL_PALETTE[idx % GCOL_PALETTE.length];
 }
-const PAGES=["nueva","live","facturas","cartera","clientes","inventario","catalogo","despachos","dashboard","admin"];
+const PAGES=["nueva","live","facturas","cartera","clientes","inventario","catalogo","despachos","dashboard","admin","usuarios"];
 
 // PERSISTENCIA localStorage
 function save(){
@@ -1004,6 +1066,7 @@ function save(){
   localStorage.setItem('ov_facturas',JSON.stringify(facturas));
   localStorage.setItem('ov_stock',JSON.stringify(stock));
   localStorage.setItem('ov_fc',String(fc));
+  nubePush('clientes'); nubePush('facturas'); nubePushCfg('stock');
 }
 function load(){
   try{
@@ -1302,10 +1365,11 @@ function ejecutarReset(){
   filasLive = []; liveFilaId = 0; liveFiltro = '';
   invStock = [];
   stock = {};
-  Object.keys(CATS).forEach(g=>{ stock[g]={}; CATS[g].forEach(c=>{ stock[g][c]=0; }); });
+  CATS = {}; GCOL = {};
+  save(); saveCats(); saveInvStock(); saveAdmGastos({}); saveLiveNow();
 
   cerrarReset();
-  cerrarSesion();
+  if(usuarioActual) goInner(usuarioActual.pages[0]||'nueva');
   alert('✅ Sistema restablecido. Todos los datos han sido eliminados.');
 }
 
@@ -1316,99 +1380,6 @@ document.getElementById('reset-confirm-input')?.addEventListener('keydown', func
   if(e.key==='Enter') ejecutarReset();
   this.style.borderColor = 'var(--border2)';
 });
-
-
-// ═══════════════════════════════════════════════════════════
-// SISTEMA DE ROLES Y AUTENTICACIÓN
-// ═══════════════════════════════════════════════════════════
-const USUARIOS = {
-  'dueno':       {pass:'1234', rol:'dueno',    nombre:'Dueño',        pages:['nueva','live','facturas','cartera','clientes','inventario','catalogo','despachos','dashboard','admin']},
-  'admin':       {pass:'1234', rol:'admin',    nombre:'Administrador', pages:['nueva','live','facturas','cartera','clientes','inventario','despachos','dashboard']},
-  'vendedor':    {pass:'1234', rol:'vendedor', nombre:'Vendedor',      pages:['nueva','live','facturas']},
-  'santiago v.': {pass:'1234', rol:'vendedor', nombre:'Santiago V.',   pages:['nueva','live','facturas']},
-  'santiago u.': {pass:'1234', rol:'vendedor', nombre:'Santiago U.',   pages:['nueva','live','facturas']},
-  'camilo':      {pass:'1234', rol:'vendedor', nombre:'Camilo',        pages:['nueva','live','facturas']},
-  'kevin':       {pass:'1234', rol:'vendedor', nombre:'Kevin',         pages:['nueva','live','facturas']},
-  'maryi':       {pass:'1234', rol:'vendedor', nombre:'Maryi',         pages:['nueva','live','facturas']},
-  'paula':       {pass:'1234', rol:'admin',    nombre:'Paula',         pages:['nueva','live','facturas','cartera','clientes','inventario','despachos','dashboard']},
-  'bodega':      {pass:'1234', rol:'bodega',   nombre:'Bodega',        pages:['despachos']},
-};
-let usuarioActual = null;
-
-function intentarLogin(){
-  const user = document.getElementById('login-user').value.trim().toLowerCase();
-  const pass = document.getElementById('login-pass').value;
-  const errEl = document.getElementById('login-error');
-  const u = USUARIOS[user];
-  if(!u || u.pass !== pass){
-    errEl.style.display='block';
-    document.getElementById('login-pass').value='';
-    document.getElementById('login-pass').focus();
-    return;
-  }
-  errEl.style.display='none';
-  usuarioActual = {...u, username:user};
-  try{ localStorage.setItem('ov_sesion', user); }catch(e){}
-  document.getElementById('login-screen').style.display='none';
-  // Update sidebar user info
-  const av=document.getElementById('sidebar-avatar');
-  const nm=document.getElementById('sidebar-username');
-  const rl=document.getElementById('sidebar-role');
-  const ub=document.getElementById('sidebar-user-block');
-  if(ub) ub.style.display='block';
-  if(av) av.textContent=u.nombre.slice(0,2).toUpperCase();
-  if(nm) nm.textContent=u.nombre;
-  if(rl) rl.textContent={dueno:'👑 Dueño',admin:'⚙️ Admin',vendedor:'🛍️ Vendedor',bodega:'📦 Bodega'}[u.rol]||u.rol;
-  // Show/hide nav items based on role
-  document.querySelectorAll('.nav[data-roles]').forEach(btn=>{
-    const allowed=btn.getAttribute('data-roles').split(',');
-    btn.style.display=allowed.includes(u.rol)?'flex':'none';
-  });
-  actualizarNavLabels();
-  // Show reset button only for dueño
-  const resetBtn = document.getElementById('btn-reset');
-  if(resetBtn) resetBtn.style.display = u.rol==='dueno' ? 'flex' : 'none';
-  goInner(u.pages[0]||'nueva');
-}
-
-function actualizarNavLabels(){
-  document.querySelectorAll('.nav-label').forEach(label=>{
-    let next=label.nextElementSibling;
-    let allHidden=true;
-    while(next&&!next.classList.contains('nav-label')){
-      if(next.classList.contains('nav')&&next.style.display!=='none'){allHidden=false;break;}
-      next=next.nextElementSibling;
-    }
-    label.style.display=allHidden?'none':'';
-  });
-}
-
-function cerrarSesion(){
-  usuarioActual=null;
-  try{ localStorage.removeItem('ov_sesion'); }catch(e){}
-  const ub=document.getElementById('sidebar-user-block');
-  if(ub) ub.style.display='none';
-  document.getElementById('login-screen').style.display='flex';
-  document.getElementById('login-user').value='';
-  document.getElementById('login-pass').value='';
-  document.getElementById('login-error').style.display='none';
-  // Reset nav visibility
-  document.querySelectorAll('.nav[data-roles]').forEach(btn=>btn.style.display='flex');
-  document.querySelectorAll('.nav-label').forEach(l=>l.style.display='');
-}
-
-function tieneAcceso(page){
-  if(!usuarioActual) return false;
-  return usuarioActual.pages.includes(page);
-}
-
-function go(p){
-  if(usuarioActual && !tieneAcceso(p)){
-    alert('No tienes permisos para acceder a esta sección.');
-    return;
-  }
-  goInner(p);
-}
 
 
 function goInner(p){
@@ -1430,6 +1401,7 @@ function goInner(p){
   if(p==='catalogo'){renderCatalogo();}
   if(p==='dashboard')rDashboard();
   if(p==='nueva')initF();
+  if(p==='usuarios')renderUsuarios();
 }
 
 // ── CLIENTE RÁPIDO ────────────────────────────────────────────────
@@ -1767,7 +1739,7 @@ function loadInvStock(){
 
 let invStock = loadInvStock();
 
-function saveInvStock(){ localStorage.setItem('ov_inv_stock', JSON.stringify(invStock)); }
+function saveInvStock(){ localStorage.setItem('ov_inv_stock', JSON.stringify(invStock)); nubePushCfg('inventario'); }
 
 function renderInv(){
   const tbody = document.getElementById('inv-tbody');
@@ -2079,7 +2051,7 @@ let admPeriod = 'semana';
 function loadAdmGastos(){
   try{ return JSON.parse(localStorage.getItem('ov_gastos')||'{}'); }catch(e){return {};}
 }
-function saveAdmGastos(g){localStorage.setItem('ov_gastos',JSON.stringify(g));}
+function saveAdmGastos(g){localStorage.setItem('ov_gastos',JSON.stringify(g)); nubePushCfg('gastos');}
 
 function getAdmData(){
   const gastosDB = loadAdmGastos();
@@ -2467,7 +2439,8 @@ function exportarDatos(){
   const data={
     version:'1.1',
     fecha:new Date().toISOString(),
-    clientes,facturas,stock,fc
+    clientes,facturas,stock,fc,
+    cats:CATS, gcol:GCOL, inventario:invStock, gastos:loadAdmGastos()
   };
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob);
@@ -2498,6 +2471,9 @@ function importarDatos(input){
         }
       });
 
+      if(data.cats){ CATS=data.cats; GCOL=data.gcol||{}; saveCats(); }
+      if(Array.isArray(data.inventario)){ invStock=data.inventario; saveInvStock(); }
+      if(data.gastos && typeof data.gastos==='object') saveAdmGastos(data.gastos);
       save();
       go('facturas');
       alert(`✅ Importación exitosa\n${clientes.length} clientes y ${facturas.length} facturas restauradas.`);
@@ -2535,6 +2511,7 @@ function saveLive(){
 function saveLiveNow(){
   clearTimeout(liveSaveT);
   try{ localStorage.setItem('ov_live',JSON.stringify(filasLive)); }catch(e){}
+  nubePush('live');
 }
 function lvUid(){ let t=Date.now(); if(t<=lvLastId) t=lvLastId+1; lvLastId=t; return t; }
 function lvKey(n){ return String(n||'').trim().replace(/\s+/g,' ').toLowerCase(); }
@@ -2599,7 +2576,7 @@ function lvOnInput(e){
   let f;
   if(row.dataset.id==='new'){
     if(!inp.value.trim()) return;
-    f={id:++liveFilaId,nombre:'',cod:'',pre:0,ref:''};
+    f={id:nubeUid(),nombre:'',cod:'',pre:0,ref:''};
     filasLive.push(f);
     row.dataset.id=f.id;
     row.classList.remove('lv-new');
@@ -3240,21 +3217,496 @@ document.addEventListener('click',function(e){
   if(e.target===modalEditCli) cerrarEditCliente();
 });
 
-// ── INGRESO AUTOMÁTICO ──
-// LOGIN_ACTIVO = false  -> entra directo como Dueño (modo pruebas, sin pedir clave).
-// LOGIN_ACTIVO = true   -> pide usuario y clave. En ambos casos recuerda la sesión al recargar.
-const LOGIN_ACTIVO = false;
-function autoIngreso(){
-  let u=null;
-  try{ u=localStorage.getItem('ov_sesion'); }catch(e){}
-  if(!u && !LOGIN_ACTIVO) u='dueno';
-  if(u && USUARIOS[u]){
-    document.getElementById('login-user').value=u;
-    document.getElementById('login-pass').value=USUARIOS[u].pass;
-    intentarLogin();
+// ═══════════════════════════════════════════════════════════
+// NUBE (Firebase): login, datos compartidos en tiempo real y usuarios
+// ═══════════════════════════════════════════════════════════
+const firebaseConfig = {
+  apiKey: "AIzaSyC52ABSApVnfgKAEerGUWcSEukY76ltI24",
+  authDomain: "livepos-otravida.firebaseapp.com",
+  projectId: "livepos-otravida",
+  storageBucket: "livepos-otravida.firebasestorage.app",
+  messagingSenderId: "864885101490",
+  appId: "1:864885101490:web:dc49900968a3fa3dc64aab"
+};
+const TIENDA_ID = 'otravida';
+const TIENDA_NOMBRE = 'Otra Vida, Moda Circular';
+
+const ROLES = {
+  dueno:    {etiqueta:'👑 Dueño',    nombre:'Dueño',    pages:['nueva','live','facturas','cartera','clientes','inventario','catalogo','despachos','dashboard','admin','usuarios']},
+  admin:    {etiqueta:'⚙️ Admin',    nombre:'Admin',    pages:['nueva','live','facturas','cartera','clientes','inventario','despachos','dashboard']},
+  vendedor: {etiqueta:'🛍️ Vendedor', nombre:'Vendedor', pages:['nueva','live','facturas']},
+  bodega:   {etiqueta:'📦 Bodega',   nombre:'Bodega',   pages:['despachos']}
+};
+let usuarioActual = null;
+
+const Nube = {
+  auth:null, db:null, t:null, ref:null,
+  activo:false,                         // datos de la nube cargados y escuchando cambios
+  sync:{clientes:{}, facturas:{}, live:{}},
+  cfg:{}, unsubs:[], pendientes:0, creadas:new Set(), cargados:new Set(), error:''
+};
+
+const NUBE_COLS = {
+  clientes:{ get:()=>clientes, set:a=>{ clientes=a.sort((x,y)=>(Number(x.id)||0)-(Number(y.id)||0)); } },
+  facturas:{ get:()=>facturas, set:a=>{
+    a.forEach(f=>{ if(f.abonos===undefined) f.abonos=[]; if(f.saldo===undefined) f.saldo=f.estado==='pagada'?0:f.total; });
+    facturas=a.sort((x,y)=>(Number(y.id)||0)-(Number(x.id)||0));
+  } },
+  live:{ get:()=>filasLive, set:null }
+};
+const NUBE_CFG = {
+  stock:      { get:()=>stock, set:v=>{ stock=(v&&typeof v==='object')?v:{}; } },
+  catalogo:   { get:()=>({cats:CATS, gcol:GCOL}), set:v=>{ CATS=(v&&v.cats)||{}; GCOL=(v&&v.gcol)||{}; } },
+  inventario: { get:()=>invStock, set:v=>{ invStock=Array.isArray(v)?v:[]; } },
+  gastos:     { get:()=>loadAdmGastos(), set:v=>{ try{ localStorage.setItem('ov_gastos',JSON.stringify(v||{})); }catch(e){} } }
+};
+const DATOS_LOCALES = ['ov_clientes','ov_facturas','ov_stock','ov_fc','ov_gastos','ov_cats','ov_gcol','ov_inv_stock','ov_live','ov_sesion'];
+
+let nubeUltimoId = 0;
+function nubeUid(){ let t=Date.now()*1000+Math.floor(Math.random()*1000); if(t<=nubeUltimoId) t=nubeUltimoId+1; nubeUltimoId=t; return t; }
+
+// JSON con llaves ordenadas: sirve para comparar si un registro cambió
+function nubeStable(v){
+  if(v===undefined || typeof v==='function') return 'null';
+  if(typeof v==='number' && !isFinite(v)) return 'null';
+  if(v===null || typeof v!=='object') return JSON.stringify(v);
+  if(Array.isArray(v)) return '['+v.map(nubeStable).join(',')+']';
+  return '{'+Object.keys(v).filter(k=>v[k]!==undefined && typeof v[k]!=='function').sort()
+    .map(k=>JSON.stringify(k)+':'+nubeStable(v[k])).join(',')+'}';
+}
+function nubeLimpio(o){ return JSON.parse(nubeStable(o)); }
+
+// ── Enviar cambios ──
+function nubePush(col){
+  if(!Nube.activo) return;
+  const prev=Nube.sync[col]; const ops=[]; const vistos=new Set();
+  (NUBE_COLS[col].get()||[]).forEach(it=>{
+    if(!it || typeof it!=='object') return;
+    if(it.id===undefined || it.id===null || it.id==='') it.id=nubeUid();
+    const id=String(it.id); vistos.add(id);
+    const j=nubeStable(it);
+    if(prev[id]!==j){
+      if(prev[id]===undefined && col==='facturas') Nube.creadas.add(id);
+      ops.push(['set',id,JSON.parse(j)]); prev[id]=j;
+    }
+  });
+  Object.keys(prev).forEach(id=>{ if(!vistos.has(id)){ ops.push(['del',id]); delete prev[id]; } });
+  nubeCommit(Nube.ref.collection(col), ops);
+}
+function nubeCommit(colRef, ops){
+  for(let i=0;i<ops.length;i+=400){
+    const b=Nube.db.batch();
+    ops.slice(i,i+400).forEach(o=>{ const d=colRef.doc(o[1]); if(o[0]==='set') b.set(d,o[2]); else b.delete(d); });
+    nubeTarea(b.commit());
   }
 }
-autoIngreso();
+function nubePushCfg(name){
+  if(!Nube.activo) return;
+  const j=nubeStable(NUBE_CFG[name].get());
+  if(Nube.cfg[name]===j) return;
+  Nube.cfg[name]=j;
+  nubeTarea(Nube.ref.collection('config').doc(name).set({json:j, actualizado:Date.now(), por:(usuarioActual&&usuarioActual.nombre)||''}));
+}
+function nubeTarea(promesa){
+  Nube.pendientes++; nubeEstado();
+  promesa.then(()=>{ Nube.pendientes--; nubeEstado(); })
+    .catch(e=>{ Nube.pendientes--; nubeError(e); });
+}
+function nubeError(e){
+  console.error('LIVEpos nube:', e);
+  Nube.error = (e && e.code==='permission-denied') ? 'Sin permiso para guardar ese cambio' : 'Error al guardar en la nube';
+  nubeEstado();
+  setTimeout(()=>{ Nube.error=''; nubeEstado(); }, 8000);
+}
+function nubeEstado(){
+  const el=document.getElementById('nube-estado'); if(!el) return;
+  let txt, cls;
+  if(!Nube.activo){ el.style.display='none'; return; }
+  el.style.display='flex';
+  if(Nube.error){ txt=Nube.error; cls='err'; }
+  else if(!navigator.onLine){ txt='Sin internet · se guarda en este equipo'; cls='off'; }
+  else if(Nube.pendientes>0){ txt='Guardando…'; cls='sync'; }
+  else { txt='Guardado en la nube'; cls='ok'; }
+  el.className='nube-estado '+cls;
+  el.innerHTML='<span class="nube-dot"></span>'+txt;
+}
+window.addEventListener('online', nubeEstado);
+window.addEventListener('offline', nubeEstado);
+
+// ── Recibir cambios ──
+function nubeEscucharCol(col, listo, fallo){
+  return Nube.ref.collection(col).onSnapshot(qs=>{
+    const prev=Nube.sync[col]; const remoto={}; const mapa={};
+    qs.forEach(d=>{ const data=d.data(); remoto[d.id]=data; mapa[d.id]=nubeStable(data); });
+    const primera=!Nube.cargados.has(col);
+    let cambio=primera;
+    Object.keys(mapa).forEach(id=>{ if(prev[id]!==mapa[id]) cambio=true; });
+    Object.keys(prev).forEach(id=>{ if(!(id in mapa)) cambio=true; });
+    if(cambio){
+      if(col==='live') lvAplicarRemoto(remoto, prev, mapa, primera);
+      else NUBE_COLS[col].set(Object.values(remoto));
+    }
+    Object.keys(prev).forEach(k=>{ delete prev[k]; });
+    Object.assign(prev, mapa);
+    if(col==='facturas'){ nubeRecalcFc(); nubeResolverDuplicados(); }
+    if(primera){ Nube.cargados.add(col); listo(); }
+    else if(cambio && col!=='live') nubeRefrescar();
+  }, fallo);
+}
+function nubeEscucharCfg(name, listo, fallo){
+  return Nube.ref.collection('config').doc(name).onSnapshot(ds=>{
+    const k='cfg:'+name; const primera=!Nube.cargados.has(k);
+    const j = ds.exists ? (ds.data().json||'null') : null;
+    if(primera || (j!==null && j!==Nube.cfg[name])){
+      let v=null; try{ v = j ? JSON.parse(j) : null; }catch(e){}
+      NUBE_CFG[name].set(v);
+      Nube.cfg[name] = nubeStable(NUBE_CFG[name].get());
+      if(!primera) nubeRefrescar();
+    }
+    if(primera){ Nube.cargados.add(k); listo(); }
+  }, fallo);
+}
+function nubeRecalcFc(){
+  let max=0;
+  facturas.forEach(f=>{ const n=parseInt(String(f.num||'').replace(/\D/g,''),10); if(n>max) max=n; });
+  fc=max+1;
+}
+// Si dos equipos crearon el mismo número de factura, el que la creó después le asigna el siguiente
+function nubeResolverDuplicados(){
+  const porNum={}; let cambio=false;
+  facturas.forEach(f=>{ (porNum[f.num]=porNum[f.num]||[]).push(f); });
+  Object.values(porNum).forEach(arr=>{
+    if(arr.length<2) return;
+    arr.sort((a,b)=>Number(a.id)-Number(b.id));
+    arr.slice(1).forEach(f=>{ if(Nube.creadas.has(String(f.id))){ f.num='F-'+String(fc++).padStart(4,'0'); cambio=true; } });
+  });
+  if(cambio){ save(); nubeRefrescar(); }
+}
+let nubeRefT=null;
+function paginaActual(){ const el=document.querySelector('.page.on'); return el?el.id.replace('page-',''):null; }
+function nubeRefrescar(){
+  clearTimeout(nubeRefT);
+  nubeRefT=setTimeout(()=>{
+    const p=paginaActual(); if(!p) return;
+    const vistas={facturas:rFacturas, clientes:rClientes, cartera:rCartera, inventario:renderInv, admin:renderAdmin,
+      despachos:renderDespachos, catalogo:renderCatalogo, dashboard:rDashboard, usuarios:null};
+    const fn=vistas[p]; if(!fn) return;
+    // No repintar mientras la persona escribe en esa página: se intenta de nuevo en un momento
+    const ae=document.activeElement, pg=document.getElementById('page-'+p);
+    if(ae && pg && pg.contains(ae) && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)){ nubeRefT=setTimeout(nubeRefrescar,1500); return; }
+    try{ fn(); }catch(e){ console.error(e); }
+  },150);
+}
+
+// Hoja del live: mezcla lo que llega de otros equipos sin borrar lo que se está escribiendo aquí
+function lvAplicarRemoto(remoto, prev, mapa, primera){
+  const norm=r=>({id:Number(r.id), nombre:r.nombre||'', cod:r.cod||'', pre:Number(r.pre)||0, ref:r.ref||''});
+  if(primera){
+    filasLive=Object.values(remoto).map(norm).sort((a,b)=>a.id-b.id);
+    return;
+  }
+  const ae=document.activeElement;
+  const foco=(ae && ae.classList && ae.classList.contains('lv-cell')) ? {id:(ae.closest('.lv-row')||{}).dataset?.id, f:ae.dataset.f} : null;
+  const porId=new Map(filasLive.map(f=>[String(f.id),f]));
+  Object.keys(mapa).forEach(id=>{
+    if(prev[id]===mapa[id]) return;
+    const r=norm(remoto[id]); const loc=porId.get(id);
+    if(loc){ ['nombre','cod','pre','ref'].forEach(k=>{ if(!(foco && foco.id===id && foco.f===k)) loc[k]=r[k]; }); }
+    else filasLive.push(r);
+  });
+  Object.keys(prev).forEach(id=>{
+    if(id in mapa) return;
+    const i=filasLive.findIndex(f=>String(f.id)===id);
+    if(i>=0) filasLive.splice(i,1);
+  });
+  filasLive.sort((a,b)=>a.id-b.id);
+  if(paginaActual()==='live' && document.getElementById('live-captura')?.style.display!=='none') lvPatchDom();
+}
+function lvPatchDom(){
+  const tabla=document.getElementById('lv-tabla'); if(!tabla) return;
+  const ae=document.activeElement;
+  const vis=lvFilasVisibles(); const visIds=new Set(vis.map(f=>String(f.id)));
+  tabla.querySelectorAll('.lv-row').forEach(r=>{ if(r.dataset.id!=='new' && !visIds.has(r.dataset.id) && !r.contains(ae)) r.remove(); });
+  let anterior=null;
+  vis.forEach(f=>{
+    const id=String(f.id), n=filasLive.indexOf(f)+1;
+    let row=tabla.querySelector('.lv-row[data-id="'+id+'"]');
+    if(!row){ const tmp=document.createElement('div'); tmp.innerHTML=lvRowHTML(f,n); row=tmp.firstElementChild; }
+    else{
+      row.querySelector('.lv-n').textContent=n;
+      row.querySelectorAll('input.lv-cell').forEach(inp=>{
+        if(inp===ae) return;
+        const k=inp.dataset.f; const v = k==='pre' ? lvFmtNum(f.pre) : String(f[k]||'');
+        if(inp.value!==v) inp.value=v;
+      });
+      row.classList.toggle('lv-sin-nombre', !String(f.nombre||'').trim());
+    }
+    const destino = anterior ? anterior.nextElementSibling : tabla.firstElementChild;
+    if(destino!==row) tabla.insertBefore(row, destino);
+    anterior=row;
+  });
+  const nueva=tabla.querySelector('.lv-row[data-id="new"]');
+  if(nueva && nueva!==tabla.lastElementChild) tabla.appendChild(nueva);
+  lvActualizarDatalist();
+  lvActualizarTotales();
+}
+
+function nubeEscuchar(){
+  return new Promise((resolve,reject)=>{
+    const gestor = usuarioActual.rol==='dueno' || usuarioActual.rol==='admin';
+    const tareas=[];
+    let faltan=0, terminado=false;
+    const listo=()=>{ faltan--; if(faltan===0 && !terminado){ terminado=true; resolve(); } };
+    const fallo=e=>{ console.error('LIVEpos nube (lectura):',e); if(!terminado){ terminado=true; reject(e); } else nubeError(e); };
+    ['clientes','facturas','live'].forEach(c=>tareas.push(()=>nubeEscucharCol(c,listo,fallo)));
+    ['stock','catalogo','inventario'].concat(gestor?['gastos']:[]).forEach(n=>tareas.push(()=>nubeEscucharCfg(n,listo,fallo)));
+    faltan=tareas.length;
+    tareas.forEach(t=>Nube.unsubs.push(t()));
+  });
+}
+function nubeDesconectar(){
+  Nube.unsubs.forEach(u=>{ try{u();}catch(e){} });
+  Nube.unsubs=[]; Nube.activo=false; Nube.t=null; Nube.ref=null;
+  Nube.sync={clientes:{},facturas:{},live:{}}; Nube.cfg={}; Nube.cargados=new Set(); Nube.creadas=new Set();
+  clientes=[]; facturas=[]; fc=1; stock={}; invStock=[]; CATS={}; GCOL={}; filasLive=[]; liveFiltro=''; cierreLive={};
+  DATOS_LOCALES.forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
+  nubeEstado();
+}
+
+// ── Pantalla de ingreso ──
+function loginEstado(modo, texto){
+  const ids=['login-form','login-cargando','login-crear','login-aviso'];
+  ids.forEach(i=>{ const el=document.getElementById(i); if(el) el.style.display='none'; });
+  document.getElementById('login-screen').style.display='flex';
+  if(modo==='form'){ document.getElementById('login-form').style.display='block'; }
+  else if(modo==='cargando'){ document.getElementById('login-cargando').style.display='block'; document.getElementById('login-cargando-txt').textContent=texto||'Conectando…'; }
+  else if(modo==='crear'){ document.getElementById('login-crear').style.display='block'; }
+  else if(modo==='aviso'){ document.getElementById('login-aviso').style.display='block'; document.getElementById('login-aviso-txt').textContent=texto||''; }
+}
+function loginMsg(texto, ok){
+  const el=document.getElementById('login-error');
+  el.textContent=texto; el.style.display=texto?'block':'none';
+  el.classList.toggle('ok', !!ok);
+}
+function nubeMsgAuth(e){
+  const c=(e&&e.code)||'';
+  if(/invalid-credential|wrong-password|user-not-found|invalid-login/.test(c)) return 'Correo o contraseña incorrectos.';
+  if(/too-many-requests/.test(c)) return 'Demasiados intentos. Espera unos minutos o usa "Olvidé mi contraseña".';
+  if(/network-request-failed/.test(c)) return 'No hay conexión a internet. Revisa el wifi e intenta de nuevo.';
+  if(/invalid-email/.test(c)) return 'Ese correo no es válido.';
+  if(/user-disabled/.test(c)) return 'Esta cuenta está bloqueada. Habla con el dueño.';
+  if(/email-already-in-use/.test(c)) return 'Ese correo ya tiene una cuenta.';
+  if(/weak-password/.test(c)) return 'La contraseña debe tener al menos 6 caracteres.';
+  return 'No se pudo completar ('+(c||(e&&e.message)||'error')+').';
+}
+async function intentarLogin(){
+  const email=document.getElementById('login-user').value.trim();
+  const pass=document.getElementById('login-pass').value;
+  if(!email || !pass){ loginMsg('Escribe tu correo y tu contraseña.'); return; }
+  if(!Nube.auth){ loginMsg('No se pudo conectar. Revisa el internet y recarga la página.'); return; }
+  const btn=document.getElementById('login-btn');
+  btn.disabled=true; btn.innerHTML='Ingresando…';
+  loginMsg('');
+  try{ await Nube.auth.signInWithEmailAndPassword(email, pass); }
+  catch(e){ loginMsg(nubeMsgAuth(e)); document.getElementById('login-pass').value=''; }
+  finally{ btn.disabled=false; btn.innerHTML='<i class="ti ti-login"></i> Ingresar'; }
+}
+async function olvideClave(){
+  const email=document.getElementById('login-user').value.trim();
+  if(!email){ loginMsg('Escribe tu correo arriba y vuelve a tocar "Olvidé mi contraseña".'); document.getElementById('login-user').focus(); return; }
+  try{ await Nube.auth.sendPasswordResetEmail(email); loginMsg('Te enviamos un correo a '+email+' para crear una contraseña nueva. Revisa también la carpeta de spam.', true); }
+  catch(e){ loginMsg(nubeMsgAuth(e)); }
+}
+
+async function nubeEntrar(user){
+  loginEstado('cargando','Cargando tu cuenta…');
+  try{
+    const ps=await Nube.db.collection('usuarios').doc(user.uid).get();
+    if(!ps.exists){
+      const ts=await Nube.db.collection('tiendas').doc(TIENDA_ID).get();
+      if(!ts.exists){
+        document.getElementById('crear-nombre').value=(user.email||'').split('@')[0];
+        loginEstado('crear'); return;
+      }
+      loginEstado('aviso','La cuenta '+user.email+' todavía no tiene acceso a la tienda. Pídele al dueño que te agregue en la sección Usuarios.');
+      return;
+    }
+    const p=ps.data();
+    if(p.activo===false){ loginEstado('aviso','Tu usuario ('+user.email+') está desactivado. Habla con el dueño de la tienda.'); return; }
+    const rol=ROLES[p.rol]?p.rol:'vendedor';
+    usuarioActual={nombre:p.nombre||user.email, rol, pages:ROLES[rol].pages.slice(), username:user.email, uid:user.uid, tienda:p.tienda||TIENDA_ID};
+    Nube.t=usuarioActual.tienda;
+    Nube.ref=Nube.db.collection('tiendas').doc(Nube.t);
+    loginEstado('cargando','Cargando los datos de la tienda…');
+    await nubeEscuchar();
+    Nube.activo=true;
+    nubeEstado();
+    aplicarUsuarioUI();
+  }catch(e){
+    console.error(e);
+    nubeDesconectar();
+    loginEstado('aviso','No se pudieron cargar los datos ('+((e&&e.code)||(e&&e.message)||'error')+'). Revisa la conexión y vuelve a intentar.');
+  }
+}
+async function crearTiendaDueno(){
+  const user=Nube.auth.currentUser; if(!user) return;
+  const nombre=document.getElementById('crear-nombre').value.trim()||user.email;
+  const btn=document.getElementById('crear-btn'); btn.disabled=true; btn.textContent='Creando…';
+  try{
+    await Nube.db.collection('tiendas').doc(TIENDA_ID).set({nombre:TIENDA_NOMBRE, owner:user.uid, creada:Date.now()});
+    await Nube.db.collection('usuarios').doc(user.uid).set({nombre, email:user.email, rol:'dueno', tienda:TIENDA_ID, activo:true, creado:Date.now()});
+    nubeEntrar(user);
+  }catch(e){
+    console.error(e);
+    loginEstado('aviso','No se pudo crear la tienda ('+((e&&e.code)||'error')+'). Revisa que las reglas de seguridad estén publicadas en Firebase.');
+  }finally{ btn.disabled=false; btn.textContent='Crear tienda y entrar'; }
+}
+
+function aplicarUsuarioUI(){
+  const u=usuarioActual;
+  document.getElementById('login-screen').style.display='none';
+  const av=document.getElementById('sidebar-avatar'), nm=document.getElementById('sidebar-username'),
+        rl=document.getElementById('sidebar-role'), ub=document.getElementById('sidebar-user-block');
+  if(ub) ub.style.display='block';
+  if(av) av.textContent=u.nombre.slice(0,2).toUpperCase();
+  if(nm) nm.textContent=u.nombre;
+  if(rl) rl.textContent=ROLES[u.rol].etiqueta;
+  document.querySelectorAll('.nav[data-roles]').forEach(btn=>{
+    btn.style.display=btn.getAttribute('data-roles').split(',').includes(u.rol)?'flex':'none';
+  });
+  actualizarNavLabels();
+  const resetBtn=document.getElementById('btn-reset');
+  if(resetBtn) resetBtn.style.display=u.rol==='dueno'?'flex':'none';
+  goInner(u.pages[0]||'nueva');
+}
+
+function actualizarNavLabels(){
+  document.querySelectorAll('.nav-label').forEach(label=>{
+    let next=label.nextElementSibling, allHidden=true;
+    while(next && !next.classList.contains('nav-label')){
+      if(next.classList.contains('nav') && next.style.display!=='none'){ allHidden=false; break; }
+      next=next.nextElementSibling;
+    }
+    label.style.display=allHidden?'none':'';
+  });
+}
+
+function nubeSalirUI(){
+  usuarioActual=null;
+  const ub=document.getElementById('sidebar-user-block'); if(ub) ub.style.display='none';
+  document.getElementById('login-pass').value='';
+  loginMsg('');
+  loginEstado('form');
+}
+function cerrarSesion(){
+  nubeDesconectar();
+  usuarioActual=null;
+  if(Nube.auth) Nube.auth.signOut(); else nubeSalirUI();
+}
+
+function tieneAcceso(page){
+  if(!usuarioActual) return false;
+  return usuarioActual.pages.includes(page);
+}
+function go(p){
+  if(usuarioActual && !tieneAcceso(p)){ alert('No tienes permisos para acceder a esta sección.'); return; }
+  goInner(p);
+}
+
+// ── Usuarios (solo dueño) ──
+let usrLista=[];
+async function renderUsuarios(){
+  const cont=document.getElementById('usr-lista'); if(!cont) return;
+  cont.innerHTML='<div style="color:var(--text3);font-size:13px;padding:8px 0">Cargando…</div>';
+  try{
+    const qs=await Nube.db.collection('usuarios').where('tienda','==',Nube.t).get();
+    usrLista=[]; qs.forEach(d=>usrLista.push(Object.assign({uid:d.id},d.data())));
+    const orden={dueno:0,admin:1,vendedor:2,bodega:3};
+    usrLista.sort((a,b)=>(orden[a.rol]??9)-(orden[b.rol]??9) || String(a.nombre).localeCompare(String(b.nombre),'es'));
+    cont.innerHTML=usrLista.map(u=>{
+      const yo=u.uid===usuarioActual.uid;
+      const activo=u.activo!==false;
+      const opts=Object.keys(ROLES).map(r=>'<option value="'+r+'"'+(r===u.rol?' selected':'')+'>'+ROLES[r].nombre+'</option>').join('');
+      return '<div class="usr-row'+(activo?'':' usr-off')+'">'
+        +'<div class="usr-av">'+lvEsc(String(u.nombre||'?').slice(0,2).toUpperCase())+'</div>'
+        +'<div style="min-width:0;flex:1"><div style="font-weight:600;font-size:13px">'+lvEsc(u.nombre||'')+(yo?' <span style="color:var(--text3);font-weight:400">(tú)</span>':'')+'</div>'
+        +'<div style="font-size:12px;color:var(--text3);overflow:hidden;text-overflow:ellipsis">'+lvEsc(u.email||'')+'</div></div>'
+        +(yo?'<span class="role-badge role-dueno">Dueño</span>'
+          :'<select data-uid="'+u.uid+'" onchange="usrCambiarRol(this.dataset.uid,this.value)" style="width:auto;font-size:12px;padding:5px 8px">'+opts+'</select>'
+          +'<button class="btn bs" data-uid="'+u.uid+'" onclick="usrActivar(this.dataset.uid,'+(activo?'false':'true')+')" title="'+(activo?'Quitar acceso':'Devolver acceso')+'">'
+            +(activo?'<i class="ti ti-user-off"></i> Desactivar':'<i class="ti ti-user-check"></i> Activar')+'</button>'
+          +'<button class="btn bs" data-email="'+lvEsc(u.email||'')+'" onclick="usrResetClave(this.dataset.email)" title="Le llega un correo para crear una contraseña nueva"><i class="ti ti-key"></i> Clave</button>')
+        +'</div>';
+    }).join('') || '<div style="color:var(--text3);font-size:13px">Aún no hay usuarios.</div>';
+  }catch(e){
+    console.error(e);
+    cont.innerHTML='<div style="color:var(--red);font-size:13px">No se pudo cargar la lista ('+((e&&e.code)||'error')+').</div>';
+  }
+}
+function usrMsg(t, ok){ const el=document.getElementById('usr-msg'); if(!el) return; el.textContent=t; el.style.color=ok?'var(--green)':'var(--red)'; }
+function usrNuevo(){
+  const c=document.getElementById('usr-form-card'); c.style.display='block';
+  ['usr-nombre','usr-email','usr-clave'].forEach(i=>{ document.getElementById(i).value=''; });
+  document.getElementById('usr-rol').value='vendedor'; usrMsg('');
+  document.getElementById('usr-nombre').focus();
+}
+function usrCancelar(){ document.getElementById('usr-form-card').style.display='none'; }
+async function usrCrear(){
+  const nombre=document.getElementById('usr-nombre').value.trim();
+  const email=document.getElementById('usr-email').value.trim().toLowerCase();
+  const clave=document.getElementById('usr-clave').value;
+  const rol=document.getElementById('usr-rol').value;
+  if(!nombre||!email||!clave){ usrMsg('Completa nombre, correo y contraseña.'); return; }
+  if(clave.length<6){ usrMsg('La contraseña debe tener al menos 6 caracteres.'); return; }
+  const btn=document.getElementById('usr-crear-btn'); btn.disabled=true; btn.textContent='Creando…';
+  try{
+    // Se crea con una conexión aparte para no cerrar la sesión del dueño
+    const sec=firebase.apps.find(a=>a.name==='crear-usuarios') || firebase.initializeApp(firebaseConfig,'crear-usuarios');
+    const secAuth=sec.auth();
+    try{ await secAuth.setPersistence(firebase.auth.Auth.Persistence.NONE); }catch(e){}
+    const cred=await secAuth.createUserWithEmailAndPassword(email, clave);
+    const uid=cred.user.uid;
+    await secAuth.signOut();
+    await Nube.db.collection('usuarios').doc(uid).set({nombre, email, rol, tienda:Nube.t, activo:true, creado:Date.now(), creadoPor:usuarioActual.uid});
+    usrMsg('Listo. '+nombre+' ya puede entrar con '+email+' y la contraseña que escribiste.', true);
+    ['usr-nombre','usr-email','usr-clave'].forEach(i=>{ document.getElementById(i).value=''; });
+    renderUsuarios();
+  }catch(e){
+    console.error(e);
+    usrMsg(e&&/email-already-in-use/.test(e.code||'')
+      ? 'Ese correo ya tiene cuenta. Si es alguien de la lista, actívalo. Si no aparece, bórralo en Firebase → Authentication y créalo de nuevo aquí.'
+      : nubeMsgAuth(e));
+  }finally{ btn.disabled=false; btn.textContent='Crear usuario'; }
+}
+async function usrCambiarRol(uid, rol){
+  try{ await Nube.db.collection('usuarios').doc(uid).update({rol}); renderUsuarios(); }
+  catch(e){ alert('No se pudo cambiar el rol ('+(e.code||'error')+').'); renderUsuarios(); }
+}
+async function usrActivar(uid, activo){
+  try{ await Nube.db.collection('usuarios').doc(uid).update({activo}); renderUsuarios(); }
+  catch(e){ alert('No se pudo cambiar el acceso ('+(e.code||'error')+').'); }
+}
+async function usrResetClave(email){
+  if(!email) return;
+  try{ await Nube.auth.sendPasswordResetEmail(email); alert('Le enviamos a '+email+' un correo para crear una contraseña nueva.'); }
+  catch(e){ alert(nubeMsgAuth(e)); }
+}
+
+// ── Arranque ──
+function nubeIniciar(){
+  if(typeof firebase==='undefined'){
+    loginEstado('aviso','No se pudo cargar LIVEpos porque no hay conexión a internet. Revisa el wifi y recarga la página.');
+    return;
+  }
+  firebase.initializeApp(firebaseConfig);
+  Nube.auth=firebase.auth();
+  Nube.db=firebase.firestore();
+  try{ Nube.db.enablePersistence({synchronizeTabs:true}).catch(()=>{}); }catch(e){}
+  loginEstado('cargando','Conectando…');
+  Nube.auth.onAuthStateChanged(u=>{ if(u) nubeEntrar(u); else nubeSalirUI(); });
+}
+nubeIniciar();
+
 </script>
 
 <!-- MODAL DETALLE FACTURA -->
