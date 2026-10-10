@@ -854,6 +854,7 @@ body.nav-min .sb-user{flex-direction:column;padding:8px 4px;gap:8px}
       <option>Santiago V.</option><option>Santiago U.</option><option>Camilo</option><option>Kevin</option><option>Maryi</option><option selected>Paula</option>
     </select>
     <button class="btn bs" id="btn-lv-hist" onclick="go('admin');finSetTab('lives')" title="Ver los lives guardados por fecha" style="display:none"><i class="ti ti-history"></i> Lives anteriores</button>
+    <label class="btn bs" id="btn-lv-excel" title="Cargar las prendas desde un Excel con Descripción, Código, Precio y Cliente" style="margin:0;cursor:pointer"><i class="ti ti-file-spreadsheet"></i> Cargar Excel<input type="file" accept=".xlsx,.xls,.csv" onchange="lvImportarArchivo(this)" style="display:none"></label>
     <button class="btn bs" onclick="limpiarLive()" title="Borrar todo lo anotado"><i class="ti ti-trash"></i> Borrar todo</button>
     <button class="btn bp lv-accent" id="btn-cerrar-live" onclick="cerrarLive()" disabled><i class="ti ti-checks"></i> Cerrar live</button>
   </div>
@@ -3399,6 +3400,7 @@ function lvBindOnce(){
   tabla.addEventListener('input', lvOnInput);
   tabla.addEventListener('focusout', lvOnBlur);
   tabla.addEventListener('keydown', lvOnKey);
+  tabla.addEventListener('paste', lvOnPaste);
   tabla.addEventListener('mousedown', ()=>{ lvTabStart=null; });
   // Filtro por nombre: se usa mousedown+mouseup porque el panel puede refrescarse entre ambos
   const res=document.getElementById('lv-resumen-clientes');
@@ -3409,6 +3411,104 @@ function lvBindOnce(){
   }
   const m=document.getElementById('modal-lv-foto');
   if(m) m.addEventListener('click', function(e){ if(e.target===this) cerrarFotoLive(); });
+}
+
+
+// ── Cargar prendas desde Excel (o pegar varias celdas copiadas de Excel) ──
+const LV_COLS=['ref','cod','pre','nombre'];
+function lvNormTxt(v){ return String(v==null?'':v).replace(/\s+/g,' ').trim(); }
+function lvEsMayus(t){ return /[A-ZÁÉÍÓÚÑ]/.test(t) && t===t.toUpperCase(); }
+function lvCapNombre(t){ return lvEsMayus(t) ? t.toLowerCase().replace(/(^|[\s\-'])(\p{L})/gu,(m,a,b)=>a+b.toUpperCase()) : t; }
+function lvCapFrase(t){ if(!lvEsMayus(t)) return t; const l=t.toLowerCase(); return l.charAt(0).toUpperCase()+l.slice(1); }
+function lvPrecioImport(v){ if(typeof v==='number') return v>0 && v<1000 ? Math.round(v*1000) : Math.round(v); return lvParsePrecio(v); }
+function lvFilaImport(c){
+  const ref=lvCapFrase(lvNormTxt(c.ref)), cod=lvNormTxt(c.cod), nombre=lvCapNombre(lvNormTxt(c.nombre));
+  const pre=lvPrecioImport(c.pre);
+  if(!ref && !cod && !pre && !nombre) return null;
+  return {ref, cod, pre, nombre};
+}
+function lvSinAcento(t){ return String(t||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim(); }
+// Encuentra la fila de títulos (Descripción, Código, Precio, Cliente) y lee lo que hay debajo
+function lvLeerMatriz(m){
+  let cab=-1, map=null;
+  for(let i=0;i<Math.min(m.length,25);i++){
+    const r=(m[i]||[]).map(lvSinAcento);
+    const ix=re=>r.findIndex(x=>re.test(x));
+    const d=ix(/descrip|prenda|referen|detalle/), cl=ix(/cliente|nombre|compr/);
+    if(d>=0 && cl>=0){ cab=i; map={ref:d, cod:ix(/^cod|codigo|^cod\.|n[uú]mero/), pre:ix(/precio|valor/), nombre:cl}; break; }
+  }
+  if(!map) map={ref:0,cod:1,pre:2,nombre:3};
+  const out=[];
+  m.slice(cab+1).forEach(r=>{
+    r=r||[];
+    const g=k=>map[k]>=0 ? r[map[k]] : '';
+    const f=lvFilaImport({ref:g('ref'), cod:g('cod'), pre:g('pre'), nombre:g('nombre')});
+    if(!f) return;
+    if(/^total/i.test(f.ref) && !f.nombre) return;
+    out.push(f);
+  });
+  return out;
+}
+function lvClaveFila(f){ return [f.ref,f.cod,f.pre,f.nombre].map(x=>lvSinAcento(String(x))).join('|'); }
+function lvAgregarFilas(nuevas){
+  nuevas.forEach(f=>filasLive.push({id:nubeUid(), nombre:f.nombre, cod:f.cod, pre:f.pre, ref:f.ref}));
+  saveLiveNow(); rLiveTabla();
+}
+function lvImportarFilas(filas, origen){
+  if(!filas.length){ alert('No encontré prendas en '+origen+'.\n\nEl Excel debe tener las columnas Descripción, Código, Precio y Cliente.'); return; }
+  const enHoja=new Set(filasLive.filter(f=>!filaVacia(f)).map(lvClaveFila));
+  const repetidas=filas.filter(f=>enHoja.has(lvClaveFila(f)));
+  let nuevas=filas.filter(f=>!enHoja.has(lvClaveFila(f)));
+  // ¿Ya facturadas hoy en un live a la misma clienta?
+  const hoy=hoyISO(), fact=new Set();
+  facturas.forEach(fa=>{ if(liveIdDe(fa)!==hoy) return; (fa.items||[]).forEach(it=>fact.add(lvSinAcento(it.ref||'')+'|'+(Number(it.pre)||0)+'|'+lvSinAcento(fa.clienteNombre))); });
+  const yaFact=nuevas.filter(f=>fact.has(lvSinAcento(f.ref)+'|'+f.pre+'|'+lvSinAcento(f.nombre)));
+  const sinPrecio=nuevas.filter(f=>!f.pre).length, sinNombre=nuevas.filter(f=>!f.nombre).length;
+  const clientas=new Set(nuevas.map(f=>lvKey(f.nombre)).filter(Boolean)).size;
+  const total=nuevas.reduce((s,f)=>s+f.pre,0);
+  let msg='Se van a cargar '+nuevas.length+' prenda'+(nuevas.length!==1?'s':'')+' de '+clientas+' cliente'+(clientas!==1?'s':'')+' por '+fmt(total)+'.';
+  if(repetidas.length) msg+='\n• '+repetidas.length+' ya estaban en la hoja: no se repiten.';
+  if(sinPrecio) msg+='\n• '+sinPrecio+' no tienen precio: quedan en blanco para completarlas.';
+  if(sinNombre) msg+='\n• '+sinNombre+' no tienen cliente.';
+  if(!nuevas.length){ alert('Todas las prendas de '+origen+' ya están en la hoja.'); return; }
+  if(!confirm(msg+'\n\n¿Cargar?')) return;
+  if(yaFact.length && !confirm(yaFact.length+' prenda(s) parecen ya facturadas hoy a la misma clienta (misma descripción y precio).\n\nAceptar = cargarlas igual · Cancelar = dejarlas por fuera')){
+    const fx=new Set(yaFact); nuevas=nuevas.filter(f=>!fx.has(f));
+  }
+  lvAgregarFilas(nuevas);
+}
+let lvXlsxP=null;
+function lvCargarXLSX(){
+  if(window.XLSX) return Promise.resolve();
+  if(!lvXlsxP) lvXlsxP=new Promise((ok,no)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'; s.onload=ok; s.onerror=()=>{ lvXlsxP=null; no(new Error('xlsx')); }; document.head.appendChild(s); });
+  return lvXlsxP;
+}
+async function lvImportarArchivo(input){
+  const file=input.files&&input.files[0]; input.value=''; if(!file) return;
+  try{
+    await lvCargarXLSX();
+    const wb=XLSX.read(await file.arrayBuffer(), {type:'array'});
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const m=XLSX.utils.sheet_to_json(ws, {header:1, raw:true, defval:''});
+    lvImportarFilas(lvLeerMatriz(m), '"'+file.name+'"');
+  }catch(e){
+    console.error(e);
+    alert('No se pudo leer el archivo. Revisa la conexión a internet y que sea un Excel (.xlsx) o .csv.');
+  }
+}
+// Pegar varias celdas copiadas de Excel: se agregan como filas nuevas desde la columna donde estás
+function lvOnPaste(e){
+  const inp=e.target; if(!inp.classList || !inp.classList.contains('lv-cell')) return;
+  const txt=(e.clipboardData||window.clipboardData).getData('text');
+  if(!txt || (!/\t/.test(txt) && !/\n./.test(txt.trim()))) return;   // una sola celda: pegado normal
+  e.preventDefault();
+  const desde=Math.max(0, LV_COLS.indexOf(inp.dataset.f));
+  const filas=txt.replace(/\r/g,'').split('\n').filter(l=>l.trim()).map(l=>{
+    const c=l.split('\t'), o={ref:'',cod:'',pre:'',nombre:''};
+    c.forEach((v,i)=>{ const k=LV_COLS[desde+i]; if(k) o[k]=v; });
+    return lvFilaImport(o);
+  }).filter(Boolean);
+  if(filas.length) lvImportarFilas(filas, 'lo que pegaste');
 }
 
 function rmFilaLive(id){
@@ -3507,7 +3607,7 @@ function cerrarLive(){
 // El live queda con la fecha en que empezó (si pasa de medianoche no cambia de día)
 function lvFechaSugerida(){
   let min=Infinity; const ahora=Date.now();
-  filasLive.forEach(f=>{ const n=Number(f.id); if(n>1.5e12 && n<ahora+864e5 && n<min) min=n; });
+  filasLive.forEach(f=>{ let n=Number(f.id); if(n>1e14) n=n/1000; if(n>1.5e12 && n<ahora+864e5 && n<min) min=n; });
   return isFinite(min)?isoDe(new Date(min)):hoyISO();
 }
 function lvFechaCierre(){ const v=document.getElementById('lv-fecha')?.value; return /^\d{4}-\d{2}-\d{2}$/.test(v||'')?v:hoyISO(); }
