@@ -425,6 +425,24 @@ button[style*="#25D366"]:hover{opacity:0.9;box-shadow:0 2px 12px rgba(37,211,102
 .et-entregado.et-chip{background:var(--green-bg);color:var(--green)}
 .et-debe{background:var(--red-bg);color:var(--red);margin-top:4px}
 body.dark .et-desp.et-chip{background:#0f2a44;color:#7db7ef}
+
+/* ── Celular: hoja del live completa en vertical ── */
+@media(max-width:768px){
+  .nav-label{display:none!important}
+  .sidebar-footer{display:none!important}
+  #tb-live{flex-wrap:wrap;gap:6px;height:auto;padding-top:8px;padding-bottom:8px}
+  #tb-live .topbar-actions{flex-wrap:wrap;gap:6px}
+  #tb-live .topbar-actions .btn,#tb-live select{padding:6px 9px;font-size:12px}
+  .lv-toolbar>span:first-child{display:none}
+  .lv-toolbar{padding:0;border-bottom:none}
+  .lv-row{grid-template-columns:22px minmax(0,1.5fr) 58px 76px minmax(0,1.15fr) 26px;min-width:0}
+  .lv-head>div{padding:6px 4px;font-size:9.5px;letter-spacing:0}
+  .lv-n{font-size:10px}
+  .lv-sheet input.lv-cell{padding:9px 5px;font-size:16px;min-height:42px}
+  .lv-del{font-size:13px}
+  .lv-sheet{max-height:none}
+  .page{padding-left:10px!important;padding-right:10px!important}
+}
 </style>
 </head>
 <body>
