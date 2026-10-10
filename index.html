@@ -581,6 +581,81 @@ body.dark .g-admin{--gc:#4ADE80;--gcl:#0F2A1A;--gcm:#7AE8A0;--gct:#06200F}
 .main[class*="g-"] .page .ab:not(.ab-pri):not(.ab-wa):not(.ab-ok):not(.ab-del):hover{border-color:var(--gc);color:var(--gc)}
 .main[class*="g-"] .desp-tab.on{background:var(--gc);border-color:var(--gc);color:var(--gct,#fff)}
 .main[class*="g-"] .fin-seg button.on{color:var(--gc)}
+
+/* ── Barra lateral oscura (estilo tarjeta con pestaña activa) ── */
+.g-ventas{--gcd:#B79AF0}.g-live{--gcd:#FF6B8A}.g-clientes{--gcd:#6CB0F5}.g-oper{--gcd:#F2B04E}.g-admin{--gcd:#6EDB8F}
+body.dark .g-ventas{--gcd:#FE2C55}body.dark .g-live{--gcd:#FF4F7B}body.dark .g-clientes{--gcd:#5BA3F0}body.dark .g-oper{--gcd:#EF9F27}body.dark .g-admin{--gcd:#4ADE80}
+.sidebar{--sb-bg:#1F1834;--sb-bg2:#2B2247;--sb-txt:#D6D0E8;--sb-mut:#958BB5;width:236px;background:linear-gradient(180deg,var(--sb-bg) 0%,var(--sb-bg2) 100%);border-right:none;color:var(--sb-txt);box-shadow:none;overflow:visible}
+body.dark .sidebar{--sb-bg:#120E1D;--sb-bg2:#1A1429;--sb-txt:#CFC9E0;--sb-mut:#7F7699}
+.main{margin-left:236px}
+.sb-toggle{position:absolute;top:18px;right:-13px;width:26px;height:26px;border-radius:50%;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:12;box-shadow:0 2px 6px rgba(0,0,0,.12);padding:0}
+.sb-toggle i{font-size:15px;transition:transform .2s}
+.sb-toggle:hover{color:var(--purple);border-color:var(--purple)}
+.sidebar .brand{border-bottom:none;padding:24px 18px 16px;text-align:center}
+.sidebar .brand-logo{color:#fff;font-size:22px;font-weight:800;letter-spacing:-1px}
+.sidebar .brand-logo span{color:#B79AF0}
+.sidebar .brand-sub{color:var(--sb-mut);font-size:11.5px;margin-top:3px}
+.sidebar .brand-row{flex-direction:column;gap:10px}
+.sidebar .brand-img{width:68px;height:68px;border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.35);border:2px solid rgba(255,255,255,.12)}
+.sidebar .brand-name{color:#fff;font-size:15px;text-align:center}
+.sidebar .brand-sub b{color:#B79AF0}
+.sidebar .nav-section{padding:6px 0 10px 14px;overflow-y:auto;overflow-x:visible;scrollbar-width:none}
+.sidebar .nav-section::-webkit-scrollbar{display:none}
+.sidebar .nav-label{color:var(--sb-mut);font-size:10px;font-weight:700;letter-spacing:1.4px;padding:14px 10px 6px}
+.sidebar .nav{position:relative;margin:3px 14px 3px 0;width:calc(100% - 14px);padding:10px 12px;border-radius:12px;color:var(--sb-txt);font-size:13.5px;font-weight:500;background:rgba(255,255,255,.045)}
+.sidebar .nav[class*="g-"]{background:linear-gradient(90deg,color-mix(in srgb,var(--gcd) 16%,transparent),color-mix(in srgb,var(--gcd) 4%,transparent))}
+.sidebar .nav i{font-size:18px;color:var(--gcd,var(--sb-txt))}
+.sidebar .nav:hover{background:rgba(255,255,255,.1);color:#fff}
+.sidebar .nav[class*="g-"]:hover{background:color-mix(in srgb,var(--gcd) 26%,transparent);color:#fff}
+.sidebar .nav.active,.sidebar .nav[class*="g-"].active{background:var(--bg);color:var(--gc);font-weight:700;margin-right:0;width:100%;border-radius:14px 0 0 14px}
+.sidebar .nav.active i{color:var(--gc)}
+.sidebar .nav.active::before,.sidebar .nav.active::after{content:'';position:absolute;right:0;width:18px;height:18px;background:transparent;pointer-events:none}
+.sidebar .nav.active::before{top:-18px;border-bottom-right-radius:18px;box-shadow:7px 7px 0 7px var(--bg)}
+.sidebar .nav.active::after{bottom:-18px;border-top-right-radius:18px;box-shadow:7px -7px 0 7px var(--bg)}
+.sidebar .sidebar-footer{border-top:1px solid rgba(255,255,255,.08);padding:12px 14px 14px;display:flex;flex-direction:column;gap:10px;color:var(--sb-mut)}
+.sb-tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:6px}
+.sb-tool{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:7px 4px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:var(--sb-mut);font-size:10.5px;cursor:pointer;font-family:inherit;margin:0}
+.sb-tool i{font-size:16px}
+.sb-tool:hover{background:rgba(255,255,255,.1);color:#fff}
+.sb-tool-del:hover{background:rgba(254,44,85,.18);color:#FF8FA5;border-color:rgba(254,44,85,.35)}
+.sidebar .nube-estado{color:var(--sb-mut)}
+.sidebar .nube-estado.ok .nube-dot{background:#4ADE80}
+.sb-user{align-items:center;gap:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:9px 10px}
+.sb-av{width:34px;height:34px;border-radius:10px;background:#6EDB8F;color:#0F2A1A;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-user-t{min-width:0;flex:1}
+#sidebar-username{color:#fff;font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#sidebar-role{color:var(--sb-mut);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.sb-salir{width:32px;height:32px;border-radius:9px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:var(--sb-txt);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;padding:0}
+.sb-salir i{font-size:16px}
+.sb-salir:hover{background:rgba(254,44,85,.2);color:#FF8FA5;border-color:rgba(254,44,85,.4)}
+/* Menú contraído */
+body.nav-min .sidebar{width:78px}
+body.nav-min .main{margin-left:78px}
+body.nav-min .sb-toggle i{transform:rotate(180deg)}
+body.nav-min .sidebar .brand{padding:22px 8px 12px}
+body.nav-min .sidebar .brand-txt,body.nav-min .sidebar .brand-sub{display:none}
+body.nav-min .sidebar .brand-logo{font-size:13px}
+body.nav-min .sidebar .brand-img{width:44px;height:44px;border-radius:12px}
+body.nav-min .sidebar .nav-label{font-size:0;padding:8px 0 4px;margin-right:14px;border-top:1px solid rgba(255,255,255,.07)}
+body.nav-min .sidebar .nav{justify-content:center;padding:11px 0}
+body.nav-min .sidebar .nav span{display:none}
+body.nav-min .sb-tools{grid-template-columns:1fr}
+body.nav-min .sb-tool span,body.nav-min .sb-user-t,body.nav-min .nube-estado{display:none!important}
+body.nav-min .sb-user{flex-direction:column;padding:8px 4px;gap:8px}
+/* Celular: barra inferior oscura con el mismo estilo */
+@media(max-width:768px){
+  .main,body.nav-min .main{margin-left:0!important}
+  .sb-toggle{display:none!important}
+  .sidebar,body.nav-min .sidebar{width:100%;background:var(--sb-bg);border-top:none;box-shadow:0 -4px 16px rgba(0,0,0,.18)}
+  .sidebar .nav-section{padding:6px 4px}
+  .sidebar .nav,.sidebar .nav[class*="g-"],.sidebar .nav.active,.sidebar .nav[class*="g-"].active{width:auto!important;margin:0 2px;border-radius:12px;background:none;padding:7px 6px!important;font-size:10.5px}
+  body.nav-min .sidebar .nav span{display:block!important}
+  .sidebar .nav i{font-size:21px}
+  .sidebar .nav.active,.sidebar .nav[class*="g-"].active{background:color-mix(in srgb,var(--gcd) 22%,transparent);color:#fff;border-radius:12px;margin:0 2px}
+  .sidebar .nav.active i{color:var(--gcd)}
+  .sidebar .nav.active::before,.sidebar .nav.active::after{display:none}
+  .sidebar .nav-salir i{color:var(--sb-mut)}
+}
 </style>
 </head>
 <body>
@@ -626,8 +701,9 @@ body.dark .g-admin{--gc:#4ADE80;--gcl:#0F2A1A;--gcm:#7AE8A0;--gct:#06200F}
 
 <!-- SIDEBAR -->
 <div class="sidebar">
+  <button class="sb-toggle" onclick="toggleNavMin()" title="Contraer o expandir el menú"><i class="ti ti-chevron-left"></i></button>
   <div class="brand" id="brand-box">
-    <div class="brand-logo" style="color:var(--purple);font-size:18px;font-weight:800;letter-spacing:-1px">LIVE<span style="color:var(--text3)">pos</span></div>
+    <div class="brand-logo">LIVE<span>pos</span></div>
     <div class="brand-sub">Sistema POS</div>
   </div>
   <div class="nav-section">
@@ -649,23 +725,18 @@ body.dark .g-admin{--gc:#4ADE80;--gcl:#0F2A1A;--gcm:#7AE8A0;--gct:#06200F}
     <button class="nav g-admin" onclick="go('usuarios')" id="nav-usuarios" data-roles="dueno"><i class="ti ti-building-store"></i><span>Mi tienda</span></button>
     <button class="nav nav-salir" onclick="cerrarSesion()"><i class="ti ti-logout"></i><span>Salir</span></button>
   </div>
-  <div class="sidebar-footer" style="display:flex;flex-direction:column;gap:6px">
-    <!-- Usuario logueado -->
-    <div id="sidebar-user-block" style="display:none;background:var(--bg3);border-radius:8px;padding:8px 10px;margin-bottom:2px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-        <div id="sidebar-avatar" style="width:28px;height:28px;border-radius:50%;background:var(--purple-light);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--purple);flex-shrink:0"></div>
-        <div>
-          <div id="sidebar-username" style="font-size:12px;font-weight:600;color:var(--text)"></div>
-          <div id="sidebar-role" style="font-size:10px;color:var(--text3)"></div>
-        </div>
-      </div>
-      <button class="btn bs" onclick="cerrarSesion()" style="width:100%;justify-content:center;font-size:11px;padding:5px;color:var(--red);border-color:var(--red-bg);background:var(--red-bg)"><i class="ti ti-logout"></i> Cerrar sesión</button>
+  <div class="sidebar-footer">
+    <div class="sb-tools">
+      <button class="sb-tool" id="btn-export" onclick="exportarDatos()" title="Descargar una copia de todos los datos"><i class="ti ti-download"></i><span>Exportar</span></button>
+      <label class="sb-tool" id="btn-import" title="Cargar una copia de datos (reemplaza todo)"><i class="ti ti-upload"></i><span>Importar</span><input type="file" accept=".json" onchange="importarDatos(this)" style="display:none"></label>
+      <button class="sb-tool sb-tool-del" id="btn-reset" onclick="abrirReset()" data-roles="dueno" style="display:none" title="Borrar todo y empezar de cero"><i class="ti ti-refresh-alert"></i><span>Reiniciar</span></button>
     </div>
-    <button class="btn bs" id="btn-export" onclick="exportarDatos()" style="width:100%;justify-content:center;font-size:11px;background:var(--purple-light);color:var(--purple);border-color:var(--border2)"><i class="ti ti-download"></i><span>Exportar datos</span></button>
-    <label class="btn bs" id="btn-import" style="width:100%;justify-content:center;cursor:pointer;font-size:11px;margin:0"><i class="ti ti-upload"></i><span>Importar datos</span><input type="file" accept=".json" onchange="importarDatos(this)" style="display:none"></label>
-    <button id="btn-reset" onclick="abrirReset()" data-roles="dueno" style="display:none;width:100%;padding:6px;background:none;border:0.5px solid var(--border2);border-radius:8px;font-size:11px;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:all 0.15s" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text3)'"><i class="ti ti-refresh-alert"></i> Restablecer sistema</button>
     <div id="nube-estado" class="nube-estado"></div>
-    <div style="font-size:10px;color:var(--text3);text-align:center">v2.0 · LIVEpos</div>
+    <div id="sidebar-user-block" class="sb-user" style="display:none">
+      <div id="sidebar-avatar" class="sb-av"></div>
+      <div class="sb-user-t"><div id="sidebar-username"></div><div id="sidebar-role"></div></div>
+      <button class="sb-salir" onclick="cerrarSesion()" title="Cerrar sesión"><i class="ti ti-logout"></i></button>
+    </div>
   </div>
 </div>
 
@@ -1423,6 +1494,16 @@ function getGrupoColor(g){
   return GCOL_PALETTE[idx % GCOL_PALETTE.length];
 }
 const GRUPO_PAG={"nueva": "ventas", "facturas": "ventas", "cartera": "ventas", "live": "live", "clientes": "clientes", "despachos": "oper", "inventario": "oper", "bultos": "oper", "catalogo": "oper", "dashboard": "oper", "admin": "admin", "usuarios": "admin"};
+// Menú contraído (solo íconos) en computador; se recuerda en este equipo
+function toggleNavMin(){
+  const on=!document.body.classList.contains('nav-min');
+  document.body.classList.toggle('nav-min',on);
+  try{ localStorage.setItem('ov_nav_min',on?'1':''); }catch(e){}
+}
+(function(){
+  try{ if(localStorage.getItem('ov_nav_min')) document.body.classList.add('nav-min'); }catch(e){}
+  document.querySelectorAll('.sidebar .nav').forEach(b=>{ const t=b.querySelector('span'); if(t && !b.title) b.title=t.textContent; });
+})();
 const PAGES=["nueva","live","facturas","cartera","clientes","inventario","bultos","catalogo","despachos","dashboard","admin","usuarios"];
 
 // PERSISTENCIA localStorage
@@ -4087,10 +4168,10 @@ function aplicarUsuarioUI(){
   document.getElementById('login-screen').style.display='none';
   const av=document.getElementById('sidebar-avatar'), nm=document.getElementById('sidebar-username'),
         rl=document.getElementById('sidebar-role'), ub=document.getElementById('sidebar-user-block');
-  if(ub) ub.style.display='block';
+  if(ub) ub.style.display='flex';
   if(av) av.textContent=u.nombre.slice(0,2).toUpperCase();
   if(nm) nm.textContent=u.nombre;
-  if(rl) rl.textContent=ROLES[u.rol].etiqueta;
+  if(rl) rl.textContent=ROLES[u.rol].nombre;
   // Solo se muestran las secciones a las que el rol tiene acceso
   document.querySelectorAll('.nav[id^="nav-"]').forEach(btn=>{
     const pg=btn.id.slice(4); if(pg==='catalogo') return;
@@ -4625,7 +4706,7 @@ function aplicarMarca(){
   if(b){
     b.innerHTML = MARCA.logo
       ? '<div class="brand-row"><img class="brand-img" src="'+MARCA.logo+'" alt="Logo"><div class="brand-txt"><div class="brand-name">'+lvEsc(MARCA.nombre||'Mi tienda')+'</div><div class="brand-sub">con LIVE<b>pos</b></div></div></div>'
-      : '<div class="brand-logo" style="color:var(--purple);font-size:18px;font-weight:800;letter-spacing:-1px">LIVE<span style="color:var(--text3)">pos</span></div><div class="brand-sub">'+(MARCA.nombre?lvEsc(MARCA.nombre):'Sistema POS')+'</div>';
+      : '<div class="brand-logo">LIVE<span>pos</span></div><div class="brand-sub">'+(MARCA.nombre?lvEsc(MARCA.nombre):'Sistema POS')+'</div>';
   }
   const lm=document.getElementById('login-marca');
   if(lm){
