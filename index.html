@@ -1068,6 +1068,9 @@ td .acc{flex-wrap:nowrap}
       <div class="marca-prev" id="marca-prev">Sin logo</div>
       <div style="flex:1;min-width:220px;display:flex;flex-direction:column;gap:10px">
         <div><label for="marca-nombre">Nombre de la tienda</label><input id="marca-nombre" placeholder="Ej: Otra Vida, Moda Circular"></div>
+        <div><label for="marca-cuentas">Cuentas para recibir pagos</label>
+          <textarea id="marca-cuentas" rows="3" placeholder="Ej:&#10;Nequi 300 123 4567 · María López&#10;Bancolombia ahorros 123-456789-00"></textarea>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px">Salen en el WhatsApp de cada factura y del resumen del live, para que la clienta sepa dónde pagar.</div></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
           <label class="btn bs" style="cursor:pointer;margin:0"><i class="ti ti-upload"></i> Subir logo<input type="file" id="marca-file" accept="image/*" onchange="marcaArchivo(this)" style="display:none"></label>
           <button class="btn bs" onclick="marcaQuitarLogo()"><i class="ti ti-trash"></i> Quitar logo</button>
@@ -3134,12 +3137,11 @@ function facturarTodosLive(){
 // ── Envío: WhatsApp y foto ──
 function lvTextoResumen(g){
   const L=(MARCA.nombre?['*'+MARCA.nombre+'*','']:[]).concat(['Hola '+g.nombre+'! Este es el resumen de tu compra en el live:','']);
-  g.items.forEach(it=>L.push('- '+(it.cod?'Cód '+it.cod+' - ':'')+(it.ref||'Prenda')+': '+fmt(it.pre||0)));
+  g.items.forEach(it=>L.push('- '+(it.ref||'Prenda')+': '+fmt(it.pre||0)));
   L.push('');
-  L.push('*Total: '+fmt(g.total)+'*');
-  if(g.fac) L.push('Factura '+g.fac.num);
-  L.push('');
-  L.push('¡Gracias por tu compra!');
+  L.push('💰 *Total: '+fmt(g.total)+'*');
+  const cu=textoCuentas();
+  if(cu) L.push(cu); else { L.push(''); L.push('¡Gracias por tu compra!'); }
   return L.join('\n');
 }
 
@@ -3405,34 +3407,41 @@ function liquidarFactura(id) {
 }
 
 // ── WHATSAPP INTEGRATION ──────────────────────────────────────────
+// Nombre de la prenda para la clienta, sin códigos internos
+function nombrePrenda(it){
+  if (it.grp || it.cat) return [it.cat, it.dsc].filter(Boolean).join(' · ') || 'Prenda';
+  return (it.ref || String(it.dsc||'').replace(/\s*\(Cód[^)]*\)\s*$/,'') || 'Prenda');
+}
+function lineasCompra(items){
+  return (items||[]).map(it=>{
+    const c=+it.can||1, pr=(+it.pre||0)*c;
+    return '- ' + (c>1 ? c+'x ' : '') + nombrePrenda(it) + ': ' + fmt(pr);
+  }).join('\n');
+}
+// Cuentas para pagar, configuradas en Mi tienda
+function textoCuentas(){
+  const c=String(MARCA.cuentas||'').trim();
+  if(!c) return '';
+  return '\n💳 *Puedes pagar a:*\n' + c + '\n\nCuando pagues, envíanos el comprobante por aquí 🙌';
+}
+
 function enviarWhatsApp(id) {
   const f = facturas.find(x => x.id === id);
   if (!f) return;
 
-  let itemsText = '';
-  f.items.forEach(it => {
-    const gc = [it.grp, it.cat].filter(Boolean).join(' - ');
-    itemsText += '- ' + it.can + 'x ' + (gc ? gc + (it.dsc ? ' (' + it.dsc + ')' : '') : (it.dsc || 'Item')) + ': *' + fmt(it.pre * it.can) + '*\n';
-  });
-
-  let text = `*${nombreTienda()} - Factura ${f.num}*\n\n`;
-  text += `¡Hola, *${f.clienteNombre}*! Muchas gracias por tu compra. Aquí tienes el detalle de tu factura:\n\n`;
-  text += `📅 *Fecha:* ${f.fecha}\n`;
-  text += `🛍️ *Canal:* ${f.canal}\n`;
-  text += `👤 *Vendedor:* ${f.vendedor}\n`;
-  text += `💳 *Modalidad:* ${f.modalidad === 'contado' ? 'Contado' : 'Crédito / Fiado'}\n\n`;
-  text += `📝 *Detalle de artículos:*\n${itemsText}\n`;
-  text += `💰 *Total:* *${fmt(f.total)}*\n`;
-
-  if (f.modalidad === 'credito') {
-    text += `🔴 *Saldo pendiente:* *${fmt(f.saldo)}*\n`;
+  // Mensaje para la clienta: solo lo que le sirve (nada interno)
+  const abonado = (f.abonos||[]).reduce((s,ab)=>s+(+ab.valor||0),0);
+  let text = '*' + nombreTienda() + '*\n\n';
+  text += '¡Hola, ' + f.clienteNombre + '! Gracias por tu compra 💜\n\n';
+  text += '📅 ' + f.fecha + '\n\n';
+  text += '🛍️ *Tu compra:*\n' + lineasCompra(f.items) + '\n\n';
+  text += '💰 *Total: ' + fmt(f.total) + '*\n';
+  if (f.estado === 'pagada' || f.saldo <= 0) {
+    text += '✅ *Pagada*\n\n¡Gracias! 😊';
+  } else {
+    if (abonado > 0) text += '✅ Abonado: ' + fmt(abonado) + '\n🔴 *Saldo por pagar: ' + fmt(f.saldo) + '*\n';
+    text += textoCuentas();
   }
-
-  if (f.obs) {
-    text += `\n💬 *Observaciones:* ${f.obs}\n`;
-  }
-
-  text += `\n¡Te esperamos de nuevo! 😊`;
 
   let phone = f.clienteTel || '';
   if (!phone) {
@@ -3554,7 +3563,7 @@ const NUBE_CFG = {
   inventario: { get:()=>invStock, set:v=>{ invStock=Array.isArray(v)?v:[]; } },
   ajustes:    { get:()=>AJUSTES, set:v=>setAjustes(v) },
   bultos:     { get:()=>bultos, set:v=>{ bultos=Array.isArray(v)?v:[]; } },
-  marca:      { get:()=>MARCA, set:v=>{ MARCA={nombre:(v&&v.nombre)||'', logo:(v&&v.logo)||''}; aplicarMarca(); } },
+  marca:      { get:()=>MARCA, set:v=>{ MARCA={nombre:(v&&v.nombre)||'', logo:(v&&v.logo)||'', cuentas:(v&&v.cuentas)||''}; aplicarMarca(); } },
   gastos:     { get:()=>loadAdmGastos(), set:v=>{ try{ localStorage.setItem('ov_gastos',JSON.stringify(v||{})); }catch(e){} } }
 };
 const DATOS_LOCALES = ['ov_clientes','ov_facturas','ov_stock','ov_fc','ov_gastos','ov_cats','ov_gcol','ov_inv_stock','ov_live','ov_sesion'];
@@ -4391,8 +4400,8 @@ let MARCA_IMG = null, MARCA_COLOR = '#E94560';
 let marcaBorrador = null;
 
 function cargarMarcaLocal(){
-  try{ const m=JSON.parse(localStorage.getItem('ov_marca')||'null'); if(m && typeof m==='object') return {nombre:m.nombre||'', logo:m.logo||''}; }catch(e){}
-  return {nombre:'', logo:''};
+  try{ const m=JSON.parse(localStorage.getItem('ov_marca')||'null'); if(m && typeof m==='object') return {nombre:m.nombre||'', logo:m.logo||'', cuentas:m.cuentas||''}; }catch(e){}
+  return {nombre:'', logo:'', cuentas:''};
 }
 function nombreTienda(){ return MARCA.nombre || 'LIVEpos'; }
 
@@ -4455,6 +4464,7 @@ function pintarMarcaForm(){
   const nom=document.getElementById('marca-nombre'); if(!nom) return;
   marcaBorrador={nombre:MARCA.nombre, logo:MARCA.logo};
   nom.value=MARCA.nombre||'';
+  const cu=document.getElementById('marca-cuentas'); if(cu) cu.value=MARCA.cuentas||'';
   pintarMarcaPrev();
   marcaMsg('');
 }
@@ -4497,7 +4507,8 @@ function marcaQuitarLogo(){
 }
 function marcaGuardar(){
   const nombre=(document.getElementById('marca-nombre').value||'').trim();
-  MARCA={nombre, logo:(marcaBorrador?marcaBorrador.logo:MARCA.logo)||''};
+  const cuentas=(document.getElementById('marca-cuentas')?.value||'').trim();
+  MARCA={nombre, logo:(marcaBorrador?marcaBorrador.logo:MARCA.logo)||'', cuentas};
   marcaBorrador=null;
   aplicarMarca();
   nubePushCfg('marca');
