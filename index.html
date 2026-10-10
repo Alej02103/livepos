@@ -668,6 +668,24 @@ body.nav-min .sb-user{flex-direction:column;padding:8px 4px;gap:8px}
 .pt-chip{display:inline-block;font-size:10.5px;font-weight:700;border-radius:10px;padding:1px 8px;vertical-align:middle}
 .pt-on{background:var(--green-bg);color:var(--green)}.pt-off{background:var(--red-bg);color:var(--red)}
 @media(max-width:768px){.pt-row{flex-wrap:wrap}.pt-row .acc{width:100%;justify-content:flex-start}.pt-form input,.pt-form select{font-size:16px}}
+
+/* ── Facturas (historial) y Cartera por clienta ── */
+.fx-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.fx-bar input{flex:1;min-width:200px}
+.car-card{background:var(--bg2);border:1px solid var(--border);border-left:4px solid #EF9F27;border-radius:12px;margin-bottom:10px;box-shadow:var(--shadow)}
+.car-card.car-vieja{border-left-color:var(--red)}
+.car-top{display:flex;align-items:center;gap:12px;padding:14px 16px 8px;cursor:pointer}
+.car-saldo{font-size:20px;font-weight:800;color:var(--red);white-space:nowrap}
+.car-acc{padding:0 16px 12px;justify-content:flex-start}
+.car-det{display:none;border-top:1px solid var(--border);padding:6px 16px 10px}
+.car-card.open .car-det{display:block}
+.car-fac{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--border);font-size:13px}
+.car-fac:last-child{border-bottom:none}
+.car-dias{display:inline-block;font-size:11px;font-weight:700;border-radius:10px;padding:2px 9px}
+.car-d1{background:var(--green-bg);color:var(--green)}
+.car-d2{background:var(--amber-bg);color:var(--amber)}
+.car-d3{background:var(--red-bg);color:var(--red)}
+@media(max-width:768px){.car-fac{grid-template-columns:1fr auto}.car-fac .acc{grid-column:1/-1;justify-content:flex-start}.car-saldo{font-size:17px}.fx-bar input,.fx-bar select{font-size:16px}}
 </style>
 </head>
 <body>
@@ -924,10 +942,18 @@ body.nav-min .sb-user{flex-direction:column;padding:8px 4px;gap:8px}
 <!-- PAGE FACTURAS -->
 <div class="page" id="page-facturas" style="padding-top:16px">
   <div class="cgrid">
-    <div class="met"><div class="ml">Total facturas</div><div class="mv pur" id="m0">0</div></div>
+    <div class="met"><div class="ml">Facturas</div><div class="mv pur" id="m0">0</div></div>
+    <div class="met"><div class="ml">Vendido</div><div class="mv pur" id="m3">$0</div></div>
     <div class="met"><div class="ml">Pagadas</div><div class="mv grn" id="m1">0</div></div>
-    <div class="met"><div class="ml">Pendientes</div><div class="mv amb" id="m2">0</div></div>
-    <div class="met"><div class="ml">Total cartera</div><div class="mv red" id="m3">$0</div></div>
+    <div class="met"><div class="ml">Con saldo</div><div class="mv amb" id="m2">0</div></div>
+  </div>
+  <div class="fx-bar">
+    <input id="fx-q" placeholder="Buscar por clienta o número de factura…" oninput="rFacturas()">
+    <div class="desp-tabs" style="margin:0">
+      <button class="desp-tab on" data-e="" onclick="fxEstado(this)">Todas</button>
+      <button class="desp-tab" data-e="pendiente" onclick="fxEstado(this)">Con saldo</button>
+      <button class="desp-tab" data-e="pagada" onclick="fxEstado(this)">Pagadas</button>
+    </div>
   </div>
   <div class="card">
     <table><thead><tr><th>#</th><th>Cliente</th><th>Canal</th><th>Vendedor</th><th>Fecha</th><th>Total / Pendiente</th><th>Estado</th><th></th></tr></thead>
@@ -936,17 +962,19 @@ body.nav-min .sb-user{flex-direction:column;padding:8px 4px;gap:8px}
 </div>
 
 <!-- CARTERA -->
-<div class="topbar" id="tb-cartera" style="display:none"><div class="topbar-title"><i class="ti ti-report-money" style="color:var(--purple)"></i> Cartera pendiente</div></div>
+<div class="topbar" id="tb-cartera" style="display:none"><div class="topbar-title"><i class="ti ti-report-money" style="color:var(--purple)"></i> Cartera · quién debe</div></div>
 <div class="page" id="page-cartera" style="padding-top:16px">
   <div class="cgrid">
     <div class="met"><div class="ml">Total por cobrar</div><div class="mv red" id="c0">$0</div></div>
-    <div class="met"><div class="ml">Clientes con deuda</div><div class="mv amb" id="c1">0</div></div>
-    <div class="met"><div class="ml">Facturas pendientes</div><div class="mv amb" id="c2">0</div></div>
+    <div class="met"><div class="ml">Clientas que deben</div><div class="mv amb" id="c1">0</div></div>
+    <div class="met"><div class="ml">Deuda de más de 15 días</div><div class="mv red" id="c2">$0</div><div class="fin-sub" id="c2s"></div></div>
+    <div class="met"><div class="ml">Cobrado hoy</div><div class="mv grn" id="c3">$0</div></div>
   </div>
-  <div class="card">
-    <table><thead><tr><th>#</th><th>Cliente</th><th>Teléfono</th><th>Fecha</th><th>Total original</th><th>Saldo Pendiente</th><th>Vendedor</th><th></th></tr></thead>
-    <tbody id="tcar"></tbody></table>
+  <div class="fx-bar">
+    <input id="car-q" placeholder="Buscar clienta…" oninput="rCartera()">
+    <select id="car-orden" onchange="rCartera()" style="width:auto"><option value="antigua">La deuda más vieja primero</option><option value="mayor">La que más debe primero</option><option value="nombre">Por nombre</option></select>
   </div>
+  <div id="car-lista"></div>
 </div>
 
 <!-- CLIENTES -->
@@ -2165,14 +2193,18 @@ function rFacturas(){
   const pag=facturas.filter(f=>f.estado==='pagada').length;
   const pen=facturas.filter(f=>f.estado==='pendiente').length;
   // Cartera sumando los saldos pendientes exactos de las facturas crédito
-  const car=facturas.filter(f=>f.estado==='pendiente').reduce((s,f)=>s+f.saldo,0);
+  const vend=facturas.reduce((s,f)=>s+(Number(f.total)||0),0);
   document.getElementById('m0').textContent=facturas.length;
   document.getElementById('m1').textContent=pag;
   document.getElementById('m2').textContent=pen;
-  document.getElementById('m3').textContent=fmt(car);
+  document.getElementById('m3').textContent=fmt(vend);
   const tb=document.getElementById('tf');
   if(!facturas.length){tb.innerHTML='<tr><td colspan="8" class="empty">Sin facturas aún. Crea la primera.</td></tr>';return;}
-  tb.innerHTML=facturas.map(f=>`<tr>
+  const q=lvSinAcento(document.getElementById('fx-q')?.value||'');
+  const lista=facturas.filter(f=>(!fxFiltroEstado || f.estado===fxFiltroEstado)
+    && (!q || lvSinAcento(f.clienteNombre).includes(q) || lvSinAcento(f.num).includes(q)));
+  if(!lista.length){tb.innerHTML='<tr><td colspan="8" class="empty">Ninguna factura coincide.</td></tr>';return;}
+  tb.innerHTML=lista.map(f=>`<tr>
     <td style="font-weight:600;color:var(--purple)">${f.num}</td>
     <td><div class="crow"><div class="av">${ini(f.clienteNombre)}</div>${f.clienteNombre}</div></td>
     <td style="font-size:12px;color:var(--text2)">${f.canal}</td>
@@ -2188,7 +2220,6 @@ function rFacturas(){
     <td><div class="acc">
       <button class="ab ab-pri" onclick="verFactura(${f.id})" title="Ver el detalle de la factura"><i class="ti ti-eye"></i> Ver</button>
       <button class="ab ab-wa" onclick="enviarWhatsApp(${f.id})" title="Enviar la factura por WhatsApp"><i class="ti ti-brand-whatsapp"></i> WhatsApp</button>
-      ${f.estado==='pendiente'?`<button class="ab ab-ok" onclick="pagada(${f.id})" title="Registrar el pago del saldo"><i class="ti ti-check"></i> Liquidar</button>`:''}
       <button class="ab ab-ico ab-del" onclick="delF(${f.id})" title="Eliminar factura" aria-label="Eliminar factura"><i class="ti ti-trash"></i></button>
     </div></td></tr>`).join('');
 }
@@ -2201,28 +2232,139 @@ function pagada(id){
 function delF(id){if(confirm('¿Eliminar esta factura?')){facturas=facturas.filter(f=>f.id!==id);save();rFacturas();}}
 
 // ── RENDER CARTERA ────────────────────────────────────────────────
+let fxFiltroEstado='';
+function fxEstado(btn){
+  fxFiltroEstado=btn.dataset.e||'';
+  btn.parentElement.querySelectorAll('.desp-tab').forEach(b=>b.classList.toggle('on',b===btn));
+  rFacturas();
+}
+let carAbierta=null;
+function diasDesde(f){ const i=facISO(f); if(!i) return 0; return Math.max(0,Math.round((dateDeISO(hoyISO())-dateDeISO(i))/864e5)); }
+function carGrupos(){
+  const g={};
+  facturas.filter(f=>f.estado==='pendiente' && (Number(f.saldo)||0)>0).forEach(f=>{
+    const k=String(f.clienteId||lvKey(f.clienteNombre));
+    const c=g[k]||(g[k]={k, nombre:f.clienteNombre, clienteId:f.clienteId, tel:f.clienteTel||'', facs:[], saldo:0, total:0, abonado:0, dias:0});
+    c.facs.push(f); c.saldo+=Number(f.saldo)||0; c.total+=Number(f.total)||0;
+    c.abonado+=(f.abonos||[]).reduce((s,a)=>s+(Number(a.valor)||0),0);
+    c.dias=Math.max(c.dias, diasDesde(f));
+    if(!c.tel){ const cli=clientes.find(x=>x.id==f.clienteId); if(cli&&cli.telefono) c.tel=cli.telefono; }
+  });
+  Object.values(g).forEach(c=>c.facs.sort((a,b)=>facISO(a).localeCompare(facISO(b))||(Number(a.id)-Number(b.id))));
+  return Object.values(g);
+}
+function carChipDias(d){
+  const cls=d>15?'car-d3':d>7?'car-d2':'car-d1';
+  return '<span class="car-dias '+cls+'">'+(d===0?'Hoy':d===1?'Hace 1 día':'Hace '+d+' días')+'</span>';
+}
 function rCartera(){
-  const pen=facturas.filter(f=>f.estado==='pendiente');
-  // Se suma el saldo exacto pendiente
-  document.getElementById('c0').textContent=fmt(pen.reduce((s,f)=>s+f.saldo,0));
-  document.getElementById('c1').textContent=new Set(pen.map(f=>f.clienteId)).size;
-  document.getElementById('c2').textContent=pen.length;
-  const tb=document.getElementById('tcar');
-  if(!pen.length){tb.innerHTML='<tr><td colspan="8" class="empty">Sin cartera pendiente.</td></tr>';return;}
-  tb.innerHTML=pen.map(f=>`<tr>
-    <td style="font-weight:600;color:var(--purple)">${f.num}</td>
-    <td><div class="crow"><div class="av">${ini(f.clienteNombre)}</div>${f.clienteNombre}</div></td>
-    <td style="font-size:12px">${f.clienteTel||'—'}</td>
-    <td style="font-size:12px;color:var(--text3)">${f.fecha}</td>
-    <td style="font-weight:500;color:var(--text2)">${fmt(f.total)}</td>
-    <td style="font-weight:600;color:var(--red)">${fmt(f.saldo)}</td>
-    <td style="font-size:12px">${f.vendedor}</td>
-    <td><div class="acc">
-      <button class="ab ab-pri" onclick="abrirAbonar(${f.id})" title="Registrar un abono"><i class="ti ti-coins"></i> Abonar</button>
-      <button class="ab ab-ok" onclick="liquidarFactura(${f.id})" title="Registrar el pago de todo el saldo"><i class="ti ti-check"></i> Liquidar</button>
-      <button class="ab ab-wa" onclick="enviarWhatsApp(${f.id})" title="Recordar el saldo por WhatsApp"><i class="ti ti-brand-whatsapp"></i> WhatsApp</button>
-    </div></td>
-  </tr>`).join('');
+  const gs=carGrupos();
+  const totalDeuda=gs.reduce((s,c)=>s+c.saldo,0);
+  const vieja=facturas.filter(f=>f.estado==='pendiente' && diasDesde(f)>15);
+  const hoyTxt=today();
+  const cobradoHoy=facturas.reduce((s,f)=>s+(f.abonos||[]).filter(a=>a.fecha===hoyTxt).reduce((t,a)=>t+(Number(a.valor)||0),0),0);
+  document.getElementById('c0').textContent=fmt(totalDeuda);
+  document.getElementById('c1').textContent=gs.length;
+  document.getElementById('c2').textContent=fmt(vieja.reduce((s,f)=>s+(Number(f.saldo)||0),0));
+  const nv=new Set(vieja.map(f=>String(f.clienteId||f.clienteNombre))).size;
+  document.getElementById('c2s').textContent=nv?nv+' clienta'+(nv!==1?'s':''):'';
+  document.getElementById('c3').textContent=fmt(cobradoHoy);
+  const cont=document.getElementById('car-lista');
+  if(!gs.length){ cont.innerHTML='<div class="card fin-vacio"><i class="ti ti-mood-happy" style="font-size:28px;display:block;margin-bottom:6px;color:var(--green)"></i>Nadie debe. ¡Todo cobrado!</div>'; return; }
+  const q=lvSinAcento(document.getElementById('car-q')?.value||'');
+  const orden=document.getElementById('car-orden')?.value||'antigua';
+  let lista=gs.filter(c=>!q || lvSinAcento(c.nombre).includes(q));
+  lista.sort(orden==='mayor'?(a,b)=>b.saldo-a.saldo : orden==='nombre'?(a,b)=>a.nombre.localeCompare(b.nombre,'es') : (a,b)=>b.dias-a.dias||b.saldo-a.saldo);
+  if(!lista.length){ cont.innerHTML='<div class="card fin-vacio">Ninguna clienta coincide.</div>'; return; }
+  cont.innerHTML=lista.map(c=>{
+    const n=c.facs.length, abierta=carAbierta===c.k;
+    const det=c.facs.map(f=>{
+      const ab=(f.abonos||[]).reduce((s,a)=>s+(Number(a.valor)||0),0);
+      return '<div class="car-fac"><div style="min-width:0"><b style="color:var(--purple)">'+lvEsc(f.num)+'</b> <span style="color:var(--text3)">· '+lvEsc(f.fecha)+(liveIdDe(f)?' · Live':'')+'</span>'
+        +'<div style="font-size:11.5px;color:var(--text3)">Total '+fmt(f.total)+(ab?' · abonó '+fmt(ab):'')+'</div></div>'
+        +'<b style="color:var(--red);white-space:nowrap">'+fmt(f.saldo)+'</b>'
+        +'<div class="acc"><button class="ab ab-ico" onclick="verFactura('+f.id+')" title="Ver factura"><i class="ti ti-eye"></i></button>'
+        +'<button class="ab" onclick="abrirAbonar('+f.id+')" title="Abono solo a esta factura"><i class="ti ti-coins"></i> Abonar</button></div></div>';
+    }).join('');
+    return '<div class="car-card'+(abierta?' open':'')+(c.dias>15?' car-vieja':'')+'">'
+      +'<div class="car-top" onclick="carToggle(\''+lvEsc(c.k)+'\')">'
+      +'<div class="av">'+ini(c.nombre)+'</div>'
+      +'<div style="min-width:0;flex:1"><div style="font-weight:700">'+lvEsc(c.nombre)+'</div>'
+      +'<div style="font-size:12px;color:var(--text3)">'+n+' factura'+(n!==1?'s':'')+(c.abonado?' · ya abonó '+fmt(c.abonado):'')+(c.tel?' · '+lvEsc(c.tel):'')+'</div>'
+      +'<div style="margin-top:4px">'+carChipDias(c.dias)+'</div></div>'
+      +'<div style="text-align:right"><div style="font-size:11px;color:var(--text3)">Debe</div><div class="car-saldo">'+fmt(c.saldo)+'</div></div></div>'
+      +'<div class="car-acc acc">'
+      +'<button class="ab ab-pri" onclick="abrirAbonarCliente(\''+lvEsc(c.k)+'\')" title="Registrar lo que pagó; se reparte entre sus facturas, de la más vieja a la más nueva"><i class="ti ti-coins"></i> Registrar pago</button>'
+      +'<button class="ab ab-wa" onclick="cobrarWhatsApp(\''+lvEsc(c.k)+'\')" title="Enviarle el saldo de todas sus facturas"><i class="ti ti-brand-whatsapp"></i> Cobrar</button>'
+      +'<button class="ab" onclick="carToggle(\''+lvEsc(c.k)+'\')"><i class="ti ti-chevron-'+(abierta?'up':'down')+'"></i> '+(abierta?'Ocultar':'Ver facturas')+'</button></div>'
+      +'<div class="car-det">'+det+'</div></div>';
+  }).join('');
+}
+function carToggle(k){ carAbierta=carAbierta===k?null:k; rCartera(); }
+function carGrupo(k){ return carGrupos().find(c=>c.k===k); }
+// Un solo pago para todas sus facturas: se abona de la más vieja a la más nueva
+function abrirAbonarCliente(k){
+  const c=carGrupo(k); if(!c) return;
+  if(c.facs.length===1) return abrirAbonar(c.facs[0].id);
+  abrirAbonar(c.facs[0].id);
+  document.getElementById('abono-ids').value=c.facs.map(f=>f.id).join(',');
+  document.getElementById('abono-fid').value='';
+  document.getElementById('abono-lbl-num').textContent='Facturas:';
+  document.getElementById('abono-txt-num').textContent=c.facs.length+' pendientes';
+  document.getElementById('abono-lbl-total').textContent='Total compras:';
+  document.getElementById('abono-txt-total').textContent=fmt(c.total);
+  document.getElementById('abono-txt-saldo').textContent=fmt(c.saldo);
+  const m=document.getElementById('abono-monto'); m.value=c.saldo; m.max=c.saldo;
+  document.getElementById('abono-titulo').textContent='Registrar pago de '+c.nombre;
+}
+function guardarAbonoCliente(){
+  const ids=document.getElementById('abono-ids').value.split(',');
+  const fs=ids.map(id=>facturas.find(f=>String(f.id)===id)).filter(f=>f && f.saldo>0)
+    .sort((a,b)=>facISO(a).localeCompare(facISO(b))||(Number(a.id)-Number(b.id)));
+  if(!fs.length){ cerrarAbono(); return; }
+  const deuda=fs.reduce((s,f)=>s+f.saldo,0);
+  const monto=parseFloat(document.getElementById('abono-monto').value||0);
+  if(isNaN(monto)||monto<=0){ alert('Ingresa un monto válido mayor a 0'); return; }
+  if(monto>deuda){ alert('El pago no puede superar lo que debe ('+fmt(deuda)+')'); return; }
+  const metodo=document.getElementById('abono-metodo').value;
+  if(!metodo){ document.getElementById('abono-err').textContent='Elige cómo pagó: efectivo o la transferencia.'; return; }
+  const fechaPago=document.getElementById('abono-fecha').value;
+  const notaUser=document.getElementById('abono-nota').value.trim();
+  let compId=null;
+  if(abonoComprobante && !esEfectivo(metodo)){
+    compId=guardarComprobanteNube({img:abonoComprobante, facturaId:fs[0].id, facturaNum:fs.map(f=>f.num).join(', '), cliente:fs[0].clienteNombre, valor:monto, metodo, fecha:fechaPago});
+  }
+  abonoComprobante=null;
+  let resto=monto;
+  fs.forEach(f=>{
+    if(resto<=0) return;
+    const v=Math.min(resto,f.saldo); resto-=v;
+    const ab={fecha:fechaPago, valor:v, metodo, nota:notaUser||(v>=f.saldo?'Pago del saldo':'Abono')+' (pago de '+fmt(monto)+')'};
+    if(compId) ab.comprobanteId=compId;
+    f.abonos=f.abonos||[]; f.abonos.push(ab);
+    f.saldo=Math.max(0,f.saldo-v); if(f.saldo===0) f.estado='pagada';
+  });
+  save(); cerrarAbono();
+  rCartera(); rFacturas(); rDashboard();
+}
+// Recordatorio por WhatsApp con todas sus facturas pendientes
+function cobrarWhatsApp(k){
+  const c=carGrupo(k); if(!c) return;
+  let L=['*'+nombreTienda()+'*','','¡Hola, '+c.nombre+'! 💜 Te compartimos tu saldo pendiente:',''];
+  c.facs.forEach(f=>{
+    const ab=(f.abonos||[]).reduce((s,a)=>s+(Number(a.valor)||0),0);
+    L.push('🧾 Compra del '+f.fecha+': '+fmt(f.saldo)+(ab?' (ya abonaste '+fmt(ab)+')':''));
+  });
+  L.push(''); L.push('💰 *Total por pagar: '+fmt(c.saldo)+'*');
+  let text=L.join('\n')+textoCuentas();
+  let phone=c.tel||'';
+  if(!phone){
+    phone=prompt('"'+c.nombre+'" no tiene teléfono registrado. Escribe su WhatsApp (ej: 3001234567):','');
+    if(phone===null) return; phone=phone.trim();
+    if(phone){ const cli=clientes.find(x=>x.id==c.clienteId); if(cli){ cli.telefono=phone; } c.facs.forEach(f=>{ f.clienteTel=phone; }); save(); }
+  }
+  phone=phone.replace(/\D/g,''); if(phone.length===10 && phone.startsWith('3')) phone='57'+phone;
+  window.open('https://api.whatsapp.com/send?phone='+phone+'&text='+encodeURIComponent(text),'_blank');
 }
 
 // ── RENDER CLIENTES ───────────────────────────────────────────────
@@ -3907,6 +4049,9 @@ function abrirAbonar(id, liquidar) {
   const f = facturas.find(x=>String(x.id)===String(id));
   if(!f) return;
   document.getElementById('abono-fid').value = id;
+  document.getElementById('abono-ids').value = '';
+  document.getElementById('abono-lbl-num').textContent = 'Factura:';
+  document.getElementById('abono-lbl-total').textContent = 'Total factura:';
   document.getElementById('abono-txt-num').textContent = f.num;
   document.getElementById('abono-txt-cliente').textContent = f.clienteNombre;
   document.getElementById('abono-txt-total').textContent = fmt(f.total);
@@ -3934,6 +4079,7 @@ function cerrarAbono() {
 }
 
 function guardarAbono() {
+  if (document.getElementById('abono-ids').value) return guardarAbonoCliente();
   const id = document.getElementById('abono-fid').value;
   const f = facturas.find(x=>String(x.id)===String(id));
   if(!f) return;
@@ -5184,9 +5330,10 @@ nubeIniciar();
     </div>
     <div class="modal-body">
       <input type="hidden" id="abono-fid">
+      <input type="hidden" id="abono-ids">
       <div style="background:var(--bg3);border-radius:10px;padding:12px;margin-bottom:14px;font-size:13px;border:1px solid var(--border)">
         <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-          <span style="color:var(--text2)">Factura:</span>
+          <span style="color:var(--text2)" id="abono-lbl-num">Factura:</span>
           <strong id="abono-txt-num" style="color:var(--purple)"></strong>
         </div>
         <div style="display:flex;justify-content:space-between;margin-bottom:4px">
@@ -5194,7 +5341,7 @@ nubeIniciar();
           <strong id="abono-txt-cliente"></strong>
         </div>
         <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-          <span style="color:var(--text2)">Total factura:</span>
+          <span style="color:var(--text2)" id="abono-lbl-total">Total factura:</span>
           <strong id="abono-txt-total"></strong>
         </div>
         <div style="display:flex;justify-content:space-between;border-top:1px dashed var(--border2);padding-top:6px;margin-top:6px">
