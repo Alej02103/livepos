@@ -395,6 +395,83 @@ body.dark .lv-wa{background:#0f2a1b!important;border-color:#1f5134!important;col
 .comp-info{font-size:12px;color:var(--text2);margin-bottom:10px}
 .comp-img{width:100%;max-height:70vh;object-fit:contain;border-radius:8px;border:1px solid var(--border);background:var(--bg3)}
 
+/* ── Finanzas: resumen, gastos y lives ── */
+.lv-fecha-w{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);margin-top:6px;font-weight:600}
+.lv-fecha-w input{width:auto;padding:4px 8px;font-size:13px}
+.fin-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.fin-seg{display:inline-flex;background:var(--bg3);border-radius:10px;padding:3px;gap:2px}
+.fin-seg button{border:none;background:none;color:var(--text2);font:inherit;font-size:13px;font-weight:500;padding:7px 14px;border-radius:8px;cursor:pointer}
+.fin-seg button.on{background:var(--bg2);color:var(--purple);box-shadow:var(--shadow);font-weight:600}
+.fin-nav{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.fin-lbl{font-weight:600;font-size:14px;min-width:150px;text-align:center}
+#fin-fecha{width:auto;padding:5px 8px;font-size:12.5px}
+.fin-kpis{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:14px}
+.fin-kpis .mv{font-size:21px}
+.fin-sub{font-size:11px;color:var(--text3);margin-top:3px}
+.fin-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fin-grid>.card{margin-bottom:14px}
+.fin-torta{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.fin-dona{width:150px;height:150px;border-radius:50%;position:relative;flex-shrink:0}
+.fin-dona::after{content:'';position:absolute;inset:28px;border-radius:50%;background:var(--bg2)}
+.fin-dona-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1;text-align:center;font-size:11px;color:var(--text3)}
+.fin-dona-c b{font-size:17px;color:var(--green)}
+.fin-ley{flex:1;min-width:170px;display:flex;flex-direction:column;gap:5px;font-size:12.5px}
+.fin-ley-r{display:flex;align-items:center;gap:8px}
+.fin-ley-r span:nth-child(2){flex:1;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fin-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.fin-barra{display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12.5px}
+.fin-barra-n{width:130px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fin-barra-t{flex:1;height:7px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.fin-barra-t div{height:100%;border-radius:4px}
+.fin-barra-v{width:92px;text-align:right;font-weight:600}
+.fin-vacio{color:var(--text3);font-size:13px;padding:14px 0;text-align:center}
+.fin-form{display:grid;grid-template-columns:150px 1fr 140px 1.4fr auto;gap:8px;align-items:end}
+.fin-form label{font-size:11px;color:var(--text2);font-weight:600;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:.3px}
+.fin-form-btn{height:38px;justify-content:center}
+.fin-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.fin-chip{display:inline-flex;align-items:center;gap:6px;background:var(--bg3);border-radius:20px;padding:4px 10px;font-size:12px;color:var(--text2)}
+.fin-chip b{color:var(--text)}
+.g-dia{border-top:1px solid var(--border);padding:10px 0 4px}
+.g-dia:first-child{border-top:none;padding-top:0}
+.g-dia-h{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:6px}
+.g-row{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:13px}
+.g-row-cat{display:flex;align-items:center;gap:7px;min-width:0;flex:1}
+.g-row-cat div{min-width:0}
+.g-row-nota{font-size:11.5px;color:var(--text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.g-row-v{font-weight:600;white-space:nowrap}
+.lvh-card{background:var(--bg2);border:1px solid var(--border);border-left:4px solid #E94560;border-radius:12px;margin-bottom:10px;overflow:hidden}
+.lvh-top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 16px;cursor:pointer}
+.lvh-top:hover{background:var(--bg3)}
+.lvh-fecha{font-weight:700;font-size:14px}
+.lvh-meta{font-size:12px;color:var(--text3);margin-top:2px}
+.lvh-tot{text-align:right;white-space:nowrap}
+.lvh-tot b{font-size:16px;color:var(--purple)}
+.lvh-bar{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:5px;width:120px;margin-left:auto}
+.lvh-bar div{height:100%;background:var(--green)}
+.lvh-det{border-top:1px solid var(--border);padding:8px 16px 12px;display:none}
+.lvh-card.open .lvh-det{display:block}
+.lvh-cli{display:grid;grid-template-columns:1fr auto auto auto;gap:10px;align-items:center;padding:7px 0;font-size:13px;border-bottom:1px dashed var(--border)}
+.lvh-cli:last-child{border-bottom:none}
+.lvh-mini{display:flex;justify-content:space-between;font-size:12.5px;padding:4px 0;border-bottom:1px dashed var(--border);cursor:pointer}
+.lvh-mini:last-child{border-bottom:none}
+.fin-aviso{background:var(--amber-bg);color:var(--amber);border-radius:10px;padding:10px 14px;font-size:12.5px;margin-bottom:12px;display:flex;gap:8px;align-items:flex-start}
+@media(max-width:768px){
+  .fin-grid{grid-template-columns:1fr;gap:0}
+  .fin-bar{flex-direction:column;align-items:stretch}
+  .fin-seg{display:flex}.fin-seg button{flex:1}
+  .fin-nav{justify-content:space-between}
+  .fin-lbl{flex:1;min-width:0;font-size:13px}
+  .fin-kpis{grid-template-columns:1fr 1fr;gap:8px}
+  .fin-kpis .mv{font-size:17px}
+  .fin-form{grid-template-columns:1fr 1fr}
+  .fin-form-nota,.fin-form-btn{grid-column:1/-1}
+  .fin-form input,.fin-form select{font-size:16px}
+  .fin-barra-n{width:96px}.fin-barra-v{width:82px}
+  .fin-dona{width:130px;height:130px}.fin-dona::after{inset:24px}
+  .lvh-cli{grid-template-columns:1fr auto auto;}
+  .lvh-cli .lvh-cli-n{display:none}
+}
+
 /* ── Despachos por etapas ── */
 .desp-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
 .desp-tab{border:1px solid var(--border2);background:var(--bg2);color:var(--text2);border-radius:20px;padding:7px 13px;font-size:12.5px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
@@ -547,7 +624,7 @@ td .acc{flex-wrap:nowrap}
     <button class="nav" onclick="go('catalogo')" id="nav-catalogo" style="display:none"><i class="ti ti-settings"></i><span>Catálogo</span></button>
     <button class="nav" onclick="go('dashboard')" id="nav-dashboard" data-roles="dueno,admin"><i class="ti ti-chart-bar"></i><span>Dashboard</span></button>
     <div class="nav-label">Administración</div>
-    <button class="nav" onclick="go('admin')" id="nav-admin" data-roles="dueno"><i class="ti ti-report-analytics"></i><span>Financiero</span></button>
+    <button class="nav" onclick="go('admin')" id="nav-admin" data-roles="dueno,admin"><i class="ti ti-report-analytics"></i><span>Finanzas</span></button>
     <button class="nav" onclick="go('usuarios')" id="nav-usuarios" data-roles="dueno"><i class="ti ti-building-store"></i><span>Mi tienda</span></button>
     <button class="nav nav-salir" onclick="cerrarSesion()"><i class="ti ti-logout"></i><span>Salir</span></button>
   </div>
@@ -671,6 +748,7 @@ td .acc{flex-wrap:nowrap}
     <select id="lv-vend-global" title="Vendedor del live" style="font-size:12px;width:auto;padding:6px 8px">
       <option>Santiago V.</option><option>Santiago U.</option><option>Camilo</option><option>Kevin</option><option>Maryi</option><option selected>Paula</option>
     </select>
+    <button class="btn bs" id="btn-lv-hist" onclick="go('admin');finSetTab('lives')" title="Ver los lives guardados por fecha" style="display:none"><i class="ti ti-history"></i> Lives anteriores</button>
     <button class="btn bs" onclick="limpiarLive()" title="Borrar todo lo anotado"><i class="ti ti-trash"></i> Borrar todo</button>
     <button class="btn bp lv-accent" id="btn-cerrar-live" onclick="cerrarLive()" disabled><i class="ti ti-checks"></i> Cerrar live</button>
   </div>
@@ -708,6 +786,7 @@ td .acc{flex-wrap:nowrap}
       <div>
         <div style="font-size:16px;font-weight:700">Cierre del live</div>
         <div id="lv-cierre-info" style="font-size:12px;color:var(--text3)"></div>
+        <label class="lv-fecha-w" title="Con esta fecha queda guardado el live en Finanzas → Lives">Fecha del live <input type="date" id="lv-fecha"></label>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn bs" onclick="volverCaptura()"><i class="ti ti-arrow-left"></i> Volver a la hoja</button>
@@ -1130,84 +1209,90 @@ td .acc{flex-wrap:nowrap}
 </div>
 
 <div class="topbar" id="tb-admin" style="display:none">
-  <div class="topbar-title"><i class="ti ti-report-analytics" style="color:var(--purple)"></i> Dashboard Financiero</div>
+  <div class="topbar-title"><i class="ti ti-report-analytics" style="color:var(--purple)"></i> Finanzas</div>
   <div class="topbar-actions">
-    <div style="display:flex;gap:4px;background:var(--bg3);border-radius:8px;padding:3px">
-      <button class="btn bs" id="adm-tab-semana" onclick="setAdmPeriod('semana')" style="background:var(--bg2)">Esta semana</button>
-      <button class="btn bs" id="adm-tab-mes" onclick="setAdmPeriod('mes')">Este mes</button>
-      <button class="btn bs" id="adm-tab-comp" onclick="setAdmPeriod('comparar')">Comparar</button>
-    </div>
+    <button class="btn bp" onclick="finIrGasto()"><i class="ti ti-plus"></i> Gasto</button>
   </div>
 </div>
 
-
 <div class="page" id="page-admin" style="padding-top:16px">
-
-  <!-- KPIs -->
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:16px" id="adm-kpis"></div>
-
-  <!-- Fila 1 -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-    <div class="card">
-      <div class="ct">Ventas por canal</div>
-      <div id="adm-canales"></div>
+  <div id="fin-aviso"></div>
+  <div class="fin-bar">
+    <div class="fin-seg" id="fin-seg">
+      <button data-p="dia" onclick="finSetPeriodo('dia')">Día</button>
+      <button data-p="semana" onclick="finSetPeriodo('semana')">Semana</button>
+      <button data-p="mes" onclick="finSetPeriodo('mes')">Mes</button>
     </div>
-    <div class="card">
-      <div class="ct">Resultado del período</div>
-      <div id="adm-resultado"></div>
-    </div>
-  </div>
-
-  <!-- Fila 2 -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-    <div class="card">
-      <div class="ct">Estructura de gastos</div>
-      <div id="adm-gastos"></div>
-    </div>
-    <div class="card">
-      <div class="ct">Ventas por vendedor</div>
-      <div id="adm-vendedores"></div>
+    <div class="fin-nav">
+      <button class="ab ab-ico" onclick="finMover(-1)" title="Anterior"><i class="ti ti-chevron-left"></i></button>
+      <div class="fin-lbl" id="fin-lbl"></div>
+      <button class="ab ab-ico" onclick="finMover(1)" title="Siguiente"><i class="ti ti-chevron-right"></i></button>
+      <input type="date" id="fin-fecha" onchange="if(this.value){finRef=this.value;renderAdmin();}" title="Elegir fecha">
+      <button class="ab" onclick="finRef=hoyISO();renderAdmin()">Hoy</button>
     </div>
   </div>
+  <div class="desp-tabs">
+    <button class="desp-tab" id="fin-tab-resumen" onclick="finSetTab('resumen')"><i class="ti ti-chart-pie"></i> Resumen</button>
+    <button class="desp-tab" id="fin-tab-gastos" onclick="finSetTab('gastos')"><i class="ti ti-receipt-2"></i> Gastos <span class="desp-n" id="fin-n-gastos">0</span></button>
+    <button class="desp-tab" id="fin-tab-lives" onclick="finSetTab('lives')"><i class="ti ti-brand-tiktok"></i> Lives <span class="desp-n" id="fin-n-lives">0</span></button>
+  </div>
 
-  <!-- Comparar -->
-  <div class="card" id="adm-comp-section" style="display:none;margin-bottom:12px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-      <div class="ct" style="margin:0">Comparar períodos</div>
-      <div style="display:flex;gap:8px;align-items:center;font-size:12px;color:var(--text2)">
-        <span>Comparar</span>
-        <select id="comp-a" onchange="renderAdmComp()" style="font-size:12px;padding:4px 8px;border-radius:8px;border:0.5px solid var(--border2);background:var(--bg2);color:var(--text)">
-          <option value="0">Semana 1</option><option value="1">Semana 2</option><option value="2">Semana 3</option><option value="3">Semana 4</option>
-        </select>
-        <span>vs</span>
-        <select id="comp-b" onchange="renderAdmComp()" style="font-size:12px;padding:4px 8px;border-radius:8px;border:0.5px solid var(--border2);background:var(--bg2);color:var(--text)">
-          <option value="0">Semana 1</option><option value="1" selected>Semana 2</option><option value="2">Semana 3</option><option value="3">Semana 4</option>
-        </select>
+  <!-- RESUMEN -->
+  <div id="fin-resumen">
+    <div class="cgrid fin-kpis" id="fin-kpis"></div>
+    <div class="fin-grid">
+      <div class="card">
+        <div class="ct">La torta: a dónde se fue lo vendido</div>
+        <div id="fin-torta"></div>
+      </div>
+      <div class="card">
+        <div class="ct">Gastos por categoría</div>
+        <div id="fin-cats"></div>
       </div>
     </div>
-    <div id="adm-comp-result"></div>
+    <div class="fin-grid">
+      <div class="card">
+        <div class="ct">Ventas por canal</div>
+        <div id="fin-canales"></div>
+      </div>
+      <div class="card">
+        <div class="ct">Lives del período</div>
+        <div id="fin-lives-res"></div>
+      </div>
+    </div>
+    <div class="card" id="fin-dias-card">
+      <div class="ct">Día a día</div>
+      <div id="fin-dias"></div>
+    </div>
   </div>
 
-  <!-- Registrar gastos -->
-  <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <div class="ct" style="margin:0">Registrar gastos del período</div>
-      <button class="btn bp bs" onclick="guardarAdmGastos()"><i class="ti ti-check"></i> Guardar</button>
+  <!-- GASTOS -->
+  <div id="fin-gastos" style="display:none">
+    <div class="card">
+      <div class="ct">Registrar gasto</div>
+      <div class="fin-form">
+        <div><label for="g-fecha">Fecha</label><input type="date" id="g-fecha"></div>
+        <div><label for="g-cat">Categoría</label><select id="g-cat" onchange="if(this.value==='__nueva__')gNuevaCat()"></select></div>
+        <div><label for="g-valor">Valor <span style="text-transform:none;font-weight:400;color:var(--text3)">(35 = $35.000)</span></label><input id="g-valor" inputmode="numeric" placeholder="$0" onkeydown="if(event.key==='Enter')gAgregar()" onblur="this.value=lvFmtNum(lvParsePrecio(this.value))"></div>
+        <div class="fin-form-nota"><label for="g-nota">Nota (opcional)</label><input id="g-nota" placeholder="Ej: bulto de Medellín, guía Servientrega…" onkeydown="if(event.key==='Enter')gAgregar()"></div>
+        <button class="btn bp fin-form-btn" onclick="gAgregar()"><i class="ti ti-plus"></i> Agregar</button>
+      </div>
+      <div id="g-msg" style="font-size:12px;min-height:16px;margin-top:6px"></div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
-      <div><label style="font-size:11px;color:var(--text2);font-weight:600;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.3px">Nómina ($)</label><input type="number" id="ag-nom" placeholder="0" oninput="prevAdmGastos()"></div>
-      <div><label style="font-size:11px;color:var(--text2);font-weight:600;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.3px">G. Administrativos ($)</label><input type="number" id="ag-adm" placeholder="0" oninput="prevAdmGastos()"></div>
-      <div><label style="font-size:11px;color:var(--text2);font-weight:600;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.3px">G. Locativos ($)</label><input type="number" id="ag-loc" placeholder="0" oninput="prevAdmGastos()"></div>
-      <div><label style="font-size:11px;color:var(--text2);font-weight:600;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.3px">Imprevistos ($)</label><input type="number" id="ag-imp" placeholder="0" oninput="prevAdmGastos()"></div>
-      <div><label style="font-size:11px;color:var(--text2);font-weight:600;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.3px">Comisiones ($)</label><input type="number" id="ag-com" placeholder="0" oninput="prevAdmGastos()"></div>
-      <div><label style="font-size:11px;color:var(--text2);font-weight:600;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.3px">Paula Hogar ($)</label><input type="number" id="ag-ph" placeholder="0" oninput="prevAdmGastos()"></div>
-      <div><label style="font-size:11px;color:var(--text2);font-weight:600;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.3px">Paula Personal ($)</label><input type="number" id="ag-pp" placeholder="0" oninput="prevAdmGastos()"></div>
-      <div><label style="font-size:11px;color:var(--text2);font-weight:600;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.3px">Otros ($)</label><input type="number" id="ag-ot" placeholder="0" oninput="prevAdmGastos()"></div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+        <div class="ct" style="margin:0" id="g-tit">Gastos del período</div>
+        <div style="font-weight:700;color:var(--red)" id="g-total">$0</div>
+      </div>
+      <div id="g-chips" class="fin-chips"></div>
+      <div id="g-lista"></div>
     </div>
-    <div style="background:var(--bg3);border-radius:8px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
-      <span style="font-size:13px;color:var(--text2)">Total gastos ingresados</span>
-      <span id="adm-prev-total" style="font-weight:600;font-size:15px;color:#A32D2D">$0</span>
-    </div>
+  </div>
+
+  <!-- LIVES -->
+  <div id="fin-lives" style="display:none">
+    <div style="font-size:12px;color:var(--text3);margin-bottom:10px">Cada live queda guardado con su fecha cuando lo facturas desde Modo Live. Toca uno para ver quién compró y quién ya pagó.</div>
+    <div id="fin-lives-lista"></div>
   </div>
 </div>
 
@@ -1375,7 +1460,7 @@ function updateThemeToggleIcon(isDark) {
 }
 initTheme();
 
-function fmt(n){return'$'+Math.round(n).toLocaleString('es-CO')}
+function fmt(n){n=Math.round(Number(n)||0);return(n<0?'-$':'$')+Math.abs(n).toLocaleString('es-CO')}
 function ini(n){return n.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase()}
 function today(){return new Date().toLocaleDateString('es-CO')}
 
@@ -1643,7 +1728,7 @@ function ejecutarReset(){
   // Borrar todos los datos
   const keysToRemove = [
     'ov_clientes','ov_facturas','ov_stock','ov_fc',
-    'ov_gastos','ov_cats','ov_gcol','ov_inv_stock','ov_live'
+    'ov_gastos','ov_gastos2','ov_gastos_pend','ov_cats','ov_gcol','ov_inv_stock','ov_live'
   ];
   keysToRemove.forEach(k => localStorage.removeItem(k));
 
@@ -1656,7 +1741,8 @@ function ejecutarReset(){
   stock = {};
   CATS = {}; GCOL = {};
   bultos = [];
-  save(); saveCats(); saveInvStock(); saveAdmGastos({}); saveLiveNow(); saveBultos();
+  gastos = []; gPend = {};
+  save(); saveCats(); saveInvStock(); saveAdmGastos({}); saveGastos(); saveLiveNow(); saveBultos();
 
   cerrarReset();
   if(usuarioActual) goInner(usuarioActual.pages[0]||'nueva');
@@ -2326,235 +2412,304 @@ document.getElementById('modal-nueva-cat')?.addEventListener('click', function(e
 
 
 // ═══════════════════════════════════════════════════════════
-// MÓDULO FINANCIERO / ADMIN
+// MÓDULO FINANZAS: gastos con fecha y categoría, lives guardados por fecha y resumen
 // ═══════════════════════════════════════════════════════════
-let admPeriod = 'semana';
-
-// Gastos registrados por semana (localStorage)
+// Registro anterior (gastos por "semana" sin fecha). Se conserva solo para poder traerlo al registro nuevo.
 function loadAdmGastos(){
   try{ return JSON.parse(localStorage.getItem('ov_gastos')||'{}'); }catch(e){return {};}
 }
 function saveAdmGastos(g){localStorage.setItem('ov_gastos',JSON.stringify(g)); nubePushCfg('gastos');}
 
-function getAdmData(){
-  const gastosDB = loadAdmGastos();
-  const defaultG = ()=>({nom:0,adm:0,loc:0,imp:0,com:0,ph:0,pp:0,ot:0});
+const CAT_GASTOS_BASE=['Compra de mercancía','Envíos y domicilios','Empaques','Arriendo','Servicios (luz, agua, internet)','Nómina y ayudantes','Comisiones','Publicidad','Transporte','Imprevistos','Otros gastos'];
+const FIN_COLORES=['#2F5D8A','#C9785B','#6E9BC5','#8C7AA9','#D4860A','#5E8C8A','#E3A98C','#A9C7E3','#B9B0CF','#9FC2BE','#7A6F5F','#E94560','#3E7CB1','#B5651D'];
+const FIN_VERDE='#2E9E5B';
+let gastos=loadGastos();
+let gPend=loadGPend();          // gastos creados aquí que la nube aún no ha confirmado
+let finPeriodo='mes', finRef=hoyISO(), finTab='resumen', finLiveAbierto=null;
 
-  // Agrupar facturas por semana del mes
-  const byWeek = [[],[],[],[]];
+function loadGastos(){ try{ const a=JSON.parse(localStorage.getItem('ov_gastos2')||'[]'); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
+function loadGPend(){ try{ const o=JSON.parse(localStorage.getItem('ov_gastos_pend')||'{}'); return (o&&typeof o==='object')?o:{}; }catch(e){ return {}; } }
+function saveGPend(){ try{ localStorage.setItem('ov_gastos_pend',JSON.stringify(gPend)); }catch(e){} }
+function ordenarGastos(){ gastos.sort((a,b)=>String(b.fecha).localeCompare(String(a.fecha)) || (Number(b.creado)||0)-(Number(a.creado)||0)); }
+function saveGastos(){ ordenarGastos(); try{ localStorage.setItem('ov_gastos2',JSON.stringify(gastos)); }catch(e){} nubePush('gastos'); }
+// Lo que llega de la nube + lo creado aquí que todavía no ha subido (no se pierde si falla la conexión)
+function gSetRemoto(arr){
+  const ids=new Set(arr.map(g=>String(g.id)));
+  gastos=arr.concat(Object.values(gPend).filter(g=>!ids.has(String(g.id))));
+  ordenarGastos();
+  try{ localStorage.setItem('ov_gastos2',JSON.stringify(gastos)); }catch(e){}
+}
+function gConfirmar(qs){
+  let cambio=false;
+  qs.forEach(d=>{ if(gPend[d.id] && !(d.metadata && d.metadata.hasPendingWrites)){ delete gPend[d.id]; cambio=true; } });
+  if(cambio) saveGPend();
+}
+
+// ── Fechas ──
+function isoDe(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function hoyISO(){ return isoDe(new Date()); }
+function dateDeISO(s){ const p=String(s||'').split('-').map(Number); return new Date(p[0],(p[1]||1)-1,p[2]||1); }
+function sumarDias(iso,n){ const d=dateDeISO(iso); d.setDate(d.getDate()+n); return isoDe(d); }
+function facISO(f){ const p=String(f.fecha||'').split('/'); if(p.length!==3) return ''; return p[2].trim().padStart(4,'0')+'-'+p[1].trim().padStart(2,'0')+'-'+p[0].trim().padStart(2,'0'); }
+function fechaLarga(iso, conAnio){
+  const d=dateDeISO(iso);
+  const o={weekday:'long',day:'numeric',month:'long'}; if(conAnio || d.getFullYear()!==new Date().getFullYear()) o.year='numeric';
+  return mayus(d.toLocaleDateString('es-CO',o));
+}
+function mayus(t){ return t.charAt(0).toUpperCase()+t.slice(1); }
+function fechaCorta(iso){ return mayus(dateDeISO(iso).toLocaleDateString('es-CO',{weekday:'short',day:'numeric',month:'short'}).replace(/\./g,'')); }
+function finRango(){
+  const r=finRef, d=dateDeISO(r);
+  if(finPeriodo==='dia') return {desde:r,hasta:r};
+  if(finPeriodo==='semana'){ const desde=sumarDias(r,-((d.getDay()+6)%7)); return {desde,hasta:sumarDias(desde,6)}; }
+  return {desde:r.slice(0,8)+'01', hasta:isoDe(new Date(d.getFullYear(),d.getMonth()+1,0))};
+}
+function finEtiqueta(rg){
+  if(finPeriodo==='dia') return (rg.desde===hoyISO()?'Hoy · ':'')+fechaLarga(rg.desde);
+  if(finPeriodo==='semana'){
+    const a=dateDeISO(rg.desde), b=dateDeISO(rg.hasta);
+    const m=x=>x.toLocaleDateString('es-CO',{month:'short'}).replace('.','');
+    return 'Semana del '+a.getDate()+(a.getMonth()!==b.getMonth()?' '+m(a):'')+' al '+b.getDate()+' '+m(b);
+  }
+  const t=dateDeISO(rg.desde).toLocaleDateString('es-CO',{month:'long',year:'numeric'}).replace(' de ',' ');
+  return t.charAt(0).toUpperCase()+t.slice(1);
+}
+function finSetPeriodo(p){ finPeriodo=p; renderAdmin(); }
+function finMover(n){
+  if(finPeriodo==='dia') finRef=sumarDias(finRef,n);
+  else if(finPeriodo==='semana') finRef=sumarDias(finRef,7*n);
+  else { const d=dateDeISO(finRef); finRef=isoDe(new Date(d.getFullYear(),d.getMonth()+n,1)); }
+  renderAdmin();
+}
+function finSetTab(t){ finTab=t; renderAdmin(); }
+function finIrGasto(){
+  finTab='gastos'; renderAdmin();
+  const v=document.getElementById('g-valor'); if(v){ v.scrollIntoView({block:'center'}); v.focus(); }
+}
+
+// ── Categorías de gasto (cada tienda puede agregar las suyas) ──
+function catsGasto(){
+  const c=(Array.isArray(AJUSTES.catGastos)&&AJUSTES.catGastos.length)?AJUSTES.catGastos.slice():CAT_GASTOS_BASE.slice();
+  gastos.forEach(g=>{ if(g.cat && !c.includes(g.cat)) c.push(g.cat); });
+  return c;
+}
+function colorCat(cat){ const i=catsGasto().indexOf(cat); return FIN_COLORES[(i<0?0:i)%FIN_COLORES.length]; }
+function pintarCatsGasto(sel){
+  const s=document.getElementById('g-cat'); if(!s) return;
+  const actual=sel||s.value;
+  s.innerHTML='<option value="">Elige…</option>'+catsGasto().map(c=>'<option'+(c===actual?' selected':'')+'>'+lvEsc(c)+'</option>').join('')
+    +'<option value="__nueva__">+ Nueva categoría…</option>';
+}
+function gNuevaCat(){
+  const n=(prompt('Nombre de la nueva categoría de gasto:')||'').trim().replace(/\s+/g,' ');
+  if(n){
+    const c=catsGasto();
+    if(!c.some(x=>x.toLowerCase()===n.toLowerCase())){ AJUSTES.catGastos=c.concat([n]); nubePushCfg('ajustes'); }
+    pintarCatsGasto(c.find(x=>x.toLowerCase()===n.toLowerCase())||n);
+    document.getElementById('g-valor').focus();
+  } else pintarCatsGasto('');
+}
+
+// ── Registrar y borrar gastos ──
+function gMsg(t, ok){ const m=document.getElementById('g-msg'); if(m){ m.textContent=t; m.style.color=ok?'var(--green)':'var(--red)'; } }
+function gAgregar(){
+  const fecha=document.getElementById('g-fecha').value||hoyISO();
+  const cat=document.getElementById('g-cat').value;
+  const vi=document.getElementById('g-valor'), ni=document.getElementById('g-nota');
+  const valor=lvParsePrecio(vi.value);
+  if(!cat || cat==='__nueva__'){ gMsg('Elige la categoría del gasto.'); document.getElementById('g-cat').focus(); return; }
+  if(!valor){ gMsg('Escribe el valor del gasto.'); vi.focus(); return; }
+  const g={id:nubeUid(), fecha, cat, valor, nota:ni.value.trim(), por:(usuarioActual&&usuarioActual.nombre)||'', creado:Date.now()};
+  gastos.push(g); gPend[String(g.id)]=g; saveGPend(); saveGastos();
+  vi.value=''; ni.value='';
+  const rg=finRango();
+  if(fecha<rg.desde || fecha>rg.hasta) finRef=fecha;   // que se vea donde quedó
+  renderAdmin();
+  gMsg('Guardado: '+cat+' '+fmt(valor)+' · '+fechaCorta(fecha), true);
+  document.getElementById('g-valor').focus();
+}
+function gBorrar(id){
+  const g=gastos.find(x=>String(x.id)===String(id)); if(!g) return;
+  if(!confirm('¿Borrar este gasto?\n\n'+g.cat+' · '+fmt(g.valor)+' · '+fechaCorta(g.fecha))) return;
+  gastos=gastos.filter(x=>String(x.id)!==String(id));
+  if(gPend[String(id)]){ delete gPend[String(id)]; saveGPend(); }
+  saveGastos(); renderAdmin();
+}
+
+// ── Lives guardados: cada factura que sale de Modo Live lleva la fecha del live ──
+function liveIdDe(f){ if(f.liveId) return String(f.liveId); if(f.obs==='Live TikTok') return facISO(f); return ''; }
+function livesTodos(){
+  const m={};
   facturas.forEach(f=>{
-    const day = parseInt((f.fecha||'').split('/')[0])||1;
-    const wi = day<=7?0:day<=14?1:day<=21?2:3;
-    byWeek[wi].push(f);
+    const id=liveIdDe(f); if(!id) return;
+    const L=m[id]||(m[id]={id, fecha:id.slice(0,10), facs:[], total:0, saldo:0, prendas:0, clientes:new Set(), vend:new Set()});
+    L.facs.push(f); L.total+=Number(f.total)||0; L.saldo+=Math.max(0,Number(f.saldo)||0);
+    L.prendas+=(f.items||[]).reduce((s,it)=>s+(Number(it.can)||1),0);
+    L.clientes.add(String(f.clienteId||f.clienteNombre)); if(f.vendedor) L.vend.add(f.vendedor);
   });
+  return Object.values(m).sort((a,b)=>b.id.localeCompare(a.id));
+}
 
-  const semanas = byWeek.map((fs,i)=>{
-    const ventas = {tiktok:0,bazar:0,mayor:0,tienda:0};
-    const vendedores = {};
-    fs.forEach(f=>{
-      const v = f.total||0;
-      if(f.canal==='TikTok Live') ventas.tiktok+=v;
-      else if(f.canal==='Bazar Fotográfico') ventas.bazar+=v;
-      else if(f.canal==='Mayorista') ventas.mayor+=v;
-      else ventas.tienda+=v;
-      vendedores[f.vendedor]=(vendedores[f.vendedor]||0)+v;
+// ── Datos del período ──
+function finDatos(rg){
+  const enR=i=>i && i>=rg.desde && i<=rg.hasta;
+  const fs=facturas.filter(f=>enR(facISO(f)));
+  const vendido=fs.reduce((s,f)=>s+(Number(f.total)||0),0);
+  const porCobrar=fs.reduce((s,f)=>s+Math.max(0,Number(f.saldo)||0),0);
+  const canales={}; fs.forEach(f=>{ const c=f.canal||'Sin canal'; canales[c]=(canales[c]||0)+(Number(f.total)||0); });
+  const gs=gastos.filter(g=>enR(g.fecha));
+  const porCat={}; gs.forEach(g=>{ porCat[g.cat]=(porCat[g.cat]||0)+(Number(g.valor)||0); });
+  const tg=gs.reduce((s,g)=>s+(Number(g.valor)||0),0);
+  const lives=livesTodos().filter(L=>enR(L.fecha));
+  const dias={};
+  fs.forEach(f=>{ const i=facISO(f); (dias[i]=dias[i]||{v:0,g:0}).v+=Number(f.total)||0; });
+  gs.forEach(g=>{ (dias[g.fecha]=dias[g.fecha]||{v:0,g:0}).g+=Number(g.valor)||0; });
+  return {fs, vendido, porCobrar, cobrado:vendido-porCobrar, canales, gs, porCat, tg, quedo:vendido-tg, lives, dias};
+}
+
+function finBarras(obj, colorDe, total){
+  const arr=Object.entries(obj).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]);
+  if(!arr.length) return null;
+  const max=arr[0][1]||1;
+  return arr.map(([n,v])=>'<div class="fin-barra"><span class="fin-barra-n" title="'+lvEsc(n)+'">'+lvEsc(n)+'</span>'
+    +'<div class="fin-barra-t"><div style="width:'+Math.max(2,Math.round(v/max*100))+'%;background:'+colorDe(n)+'"></div></div>'
+    +'<span class="fin-barra-v">'+fmt(v)+(total?' <span style="color:var(--text3);font-weight:400;font-size:11px">'+Math.round(v/total*100)+'%</span>':'')+'</span></div>').join('');
+}
+
+function finTortaHTML(d){
+  const base=Math.max(d.vendido, d.tg);
+  if(!base) return '<div class="fin-vacio">Sin ventas ni gastos en este período.</div>';
+  const seg=Object.entries(d.porCat).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).map(([n,v])=>({n,v,c:colorCat(n)}));
+  if(d.quedo>0) seg.push({n:'Te quedó',v:d.quedo,c:FIN_VERDE});
+  let acc=0;
+  const grad=seg.map(s=>{ const a=acc/base*360; acc+=s.v; return s.c+' '+a.toFixed(2)+'deg '+(acc/base*360).toFixed(2)+'deg'; }).join(',');
+  const centro=d.quedo>=0
+    ? '<span>Te quedó</span><b>'+fmt(d.quedo)+'</b>'+(d.vendido?'<span>'+Math.round(d.quedo/d.vendido*100)+'%</span>':'')
+    : '<span>Pérdida</span><b style="color:var(--red)">'+fmt(d.quedo)+'</b>';
+  const ley=seg.map(s=>'<div class="fin-ley-r"><span class="fin-dot" style="background:'+s.c+'"></span><span>'+lvEsc(s.n)+'</span>'
+    +'<b>'+(d.vendido?Math.round(s.v/d.vendido*100)+'%':fmt(s.v))+'</b></div>').join('');
+  return '<div class="fin-torta"><div class="fin-dona" style="background:conic-gradient('+(grad||'var(--bg3) 0deg 360deg')+')"><div class="fin-dona-c">'+centro+'</div></div>'
+    +'<div class="fin-ley">'+ley+(d.quedo<0?'<div style="color:var(--red);font-size:12px;margin-top:4px">Los gastos superaron lo vendido en '+fmt(-d.quedo)+'.</div>':'')
+    +(d.vendido?'<div style="font-size:11px;color:var(--text3);margin-top:4px">Porcentajes sobre lo vendido ('+fmt(d.vendido)+').</div>':'')+'</div></div>';
+}
+
+function lvhCardHTML(L){
+  const cob=L.total?Math.round((L.total-L.saldo)/L.total*100):0;
+  const porCli={};
+  L.facs.forEach(f=>{ const k=String(f.clienteId||f.clienteNombre); const c=porCli[k]||(porCli[k]={nombre:f.clienteNombre||'Cliente',facs:[],total:0,saldo:0,prendas:0});
+    c.facs.push(f); c.total+=Number(f.total)||0; c.saldo+=Math.max(0,Number(f.saldo)||0); c.prendas+=(f.items||[]).reduce((s,it)=>s+(Number(it.can)||1),0); });
+  const clis=Object.values(porCli).sort((a,b)=>a.nombre.localeCompare(b.nombre,'es'));
+  const det=clis.map(c=>'<div class="lvh-cli"><span style="font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+lvEsc(c.nombre)+'</span>'
+    +'<span class="lvh-cli-n" style="color:var(--text3);font-size:12px">'+c.prendas+' prenda'+(c.prendas!==1?'s':'')+'</span>'
+    +'<span style="text-align:right"><b>'+fmt(c.total)+'</b><br>'+(c.saldo>0?'<span style="color:var(--red);font-size:11.5px">Debe '+fmt(c.saldo)+'</span>':'<span style="color:var(--green);font-size:11.5px">Pagada</span>')+'</span>'
+    +'<button class="ab ab-ico" onclick="verFactura('+c.facs[0].id+')" title="Ver factura"><i class="ti ti-eye"></i></button></div>').join('');
+  const vend=[...L.vend].join(', ');
+  return '<div class="lvh-card'+(finLiveAbierto===L.id?' open':'')+'" data-live="'+lvEsc(L.id)+'">'
+    +'<div class="lvh-top" onclick="lvhToggle(\''+lvEsc(L.id)+'\')">'
+    +'<div style="min-width:0"><div class="lvh-fecha"><i class="ti ti-brand-tiktok" style="color:#E94560"></i> '+fechaLarga(L.fecha,true)+'</div>'
+    +'<div class="lvh-meta">'+L.prendas+' prenda'+(L.prendas!==1?'s':'')+' · '+L.clientes.size+' cliente'+(L.clientes.size!==1?'s':'')+(vend?' · '+lvEsc(vend):'')+'</div></div>'
+    +'<div class="lvh-tot"><b>'+fmt(L.total)+'</b><div style="font-size:11.5px;color:var(--text3)">Cobrado '+cob+'%</div><div class="lvh-bar"><div style="width:'+cob+'%"></div></div></div></div>'
+    +'<div class="lvh-det">'+det
+    +'<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:12.5px;margin-top:10px;color:var(--text2)">'
+    +'<span>Cobrado: <b style="color:var(--green)">'+fmt(L.total-L.saldo)+'</b></span><span>Por cobrar: <b style="color:var(--red)">'+fmt(L.saldo)+'</b></span></div></div></div>';
+}
+function lvhToggle(id){ finLiveAbierto=(finLiveAbierto===id)?null:id; renderAdmin(); }
+function lvhAbrir(id){ finTab='lives'; finLiveAbierto=id; renderAdmin(); const el=document.querySelector('.lvh-card[data-live="'+id+'"]'); if(el) el.scrollIntoView({block:'start'}); }
+
+// ── Avisos ──
+function finAvisos(){
+  const el=document.getElementById('fin-aviso'); if(!el) return;
+  let h='';
+  if(Nube.gastosSinPermiso) h+='<div class="fin-aviso"><i class="ti ti-alert-triangle"></i><div>Los gastos se están guardando solo en este equipo. Falta publicar las reglas nuevas en Firebase (Firestore → Reglas) para que se guarden en la nube.</div></div>';
+  const viejo=loadAdmGastos();
+  const hayViejo=Object.values(viejo||{}).some(s=>s && typeof s==='object' && Object.values(s).some(v=>Number(v)>0));
+  if(hayViejo && !AJUSTES.gastosViejosOk && usuarioActual && usuarioActual.rol==='dueno')
+    h+='<div class="fin-aviso"><i class="ti ti-info-circle"></i><div style="flex:1">Hay gastos del registro anterior (por semana, sin fecha). ¿Los traemos al registro nuevo? Quedan en este mes, en el primer día de cada semana.'
+      +'<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><button class="ab ab-pri" onclick="finTraerViejos()">Traerlos</button><button class="ab" onclick="finIgnorarViejos()">No, ignorarlos</button></div></div></div>';
+  el.innerHTML=h;
+}
+function finTraerViejos(){
+  const viejo=loadAdmGastos();
+  const mapa={nom:['Nómina y ayudantes',''],adm:['Gastos administrativos',''],loc:['Arriendo',''],imp:['Imprevistos',''],com:['Comisiones',''],ph:['Otros gastos','Paula Hogar'],pp:['Otros gastos','Paula Personal'],ot:['Otros gastos','']};
+  const base=hoyISO().slice(0,8); let n=0;
+  ['s0','s1','s2','s3'].forEach((k,i)=>{
+    const s=viejo[k]; if(!s) return;
+    Object.entries(mapa).forEach(([c,[cat,nota]])=>{
+      const v=Number(s[c])||0; if(v<=0) return;
+      const g={id:nubeUid(), fecha:base+String(1+i*7).padStart(2,'0'), cat, valor:Math.round(v), nota:(nota?nota+' · ':'')+'Registro anterior, semana '+(i+1), por:usuarioActual.nombre, creado:Date.now()+n};
+      gastos.push(g); gPend[String(g.id)]=g; n++;
     });
-    const gastos = gastosDB['s'+i]||defaultG();
-    // Auto-calcular comisiones desde facturas reales
-    if(!gastosDB['s'+i]) {
-      gastos.com = Object.entries(vendedores).reduce((sum,[vend,total])=>{
-        const rate = f => f.canal==='Mayorista'?0.05:0.10;
-        return sum + fs.filter(f=>f.vendedor===vend).reduce((s,f)=>s+f.total*(f.canal==='Mayorista'?0.05:0.10),0);
-      },0);
-    }
-    return {label:`Semana ${i+1}`, fecha:`Días ${i*7+1}-${Math.min((i+1)*7,31)}`, ventas, gastos, vendedores};
   });
-  return semanas;
+  saveGPend(); saveGastos();
+  AJUSTES.gastosViejosOk=true; nubePushCfg('ajustes');
+  renderAdmin(); alert(n+' gasto(s) traídos al registro nuevo.');
 }
+function finIgnorarViejos(){ AJUSTES.gastosViejosOk=true; nubePushCfg('ajustes'); renderAdmin(); }
 
-function admTotalVentas(d){return d.ventas.tiktok+d.ventas.bazar+d.ventas.mayor+d.ventas.tienda;}
-function admTotalGastos(d){return Object.values(d.gastos).reduce((a,b)=>a+b,0);}
-
-function setAdmPeriod(p){
-  admPeriod=p;
-  ['semana','mes','comp'].forEach(t=>{
-    const el=document.getElementById('adm-tab-'+t);
-    if(el) el.style.background=t===p?'var(--bg2)':'';
-  });
-  document.getElementById('adm-comp-section').style.display=p==='comparar'?'block':'none';
-  renderAdmin();
-}
-
+// ── Pintar la página ──
 function renderAdmin(){
-  const semanas = getAdmData();
-  let d;
-  if(admPeriod==='mes'){
-    const merged={label:'Este mes',ventas:{tiktok:0,bazar:0,mayor:0,tienda:0},gastos:{nom:0,adm:0,loc:0,imp:0,com:0,ph:0,pp:0,ot:0},vendedores:{}};
-    semanas.forEach(s=>{
-      Object.keys(s.ventas).forEach(k=>merged.ventas[k]+=s.ventas[k]);
-      Object.keys(s.gastos).forEach(k=>merged.gastos[k]+=s.gastos[k]);
-      Object.keys(s.vendedores).forEach(k=>merged.vendedores[k]=(merged.vendedores[k]||0)+s.vendedores[k]);
-    });
-    d=merged;
-  } else {
-    d=semanas[semanas.length-1];
-  }
-
-  const tv=admTotalVentas(d), tg=admTotalGastos(d), uti=tv-tg;
-  const mg=tv?Math.round((uti/tv)*100):0;
-  const prevD=semanas.length>1?semanas[semanas.length-2]:null;
-  const prevTv=prevD?admTotalVentas(prevD):0;
-  const diff=prevTv?Math.round(((tv-prevTv)/prevTv)*100):null;
-
-  const fmtN=n=>'$'+Math.round(n).toLocaleString('es-CO');
-  const pctN=(a,b)=>b?Math.round((a/b)*100):0;
-
-  // KPIs
-  document.getElementById('adm-kpis').innerHTML=[
-    {l:'Ingresos totales',v:fmtN(tv),d:diff!==null?(diff>=0?`+${diff}% vs sem. ant.`:`${diff}% vs sem. ant.`):null,dc:diff>=0?'#3B6D11':'#A32D2D'},
-    {l:'Total gastos',v:fmtN(tg),d:null,dc:'#A32D2D'},
-    {l:'Utilidad bruta',v:fmtN(uti),d:null,dc:uti>=0?'#3B6D11':'#A32D2D'},
-    {l:'Margen %',v:mg+'%',d:mg>=25?'Saludable':mg>=15?'Aceptable':'Revisar',dc:mg>=25?'#3B6D11':mg>=15?'#BA7517':'#A32D2D'},
-    {l:'TikTok Live',v:fmtN(d.ventas.tiktok),d:pctN(d.ventas.tiktok,tv)+'% del total',dc:'#E94560'},
-    {l:'Mayorista',v:fmtN(d.ventas.mayor),d:pctN(d.ventas.mayor,tv)+'% del total',dc:'#0F3460'},
-  ].map(k=>`<div style="background:var(--bg2);border:0.5px solid var(--border);border-radius:10px;padding:14px">
-    <div style="font-size:11px;color:var(--text2);font-weight:500;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:5px">${k.l}</div>
-    <div style="font-size:22px;font-weight:600;color:${k.dc||'var(--text)'}">${k.v}</div>
-    ${k.d?`<div style="font-size:11px;color:${k.dc||'var(--text2)'};margin-top:3px">${k.d}</div>`:''}
-  </div>`).join('');
-
-  // Canales
-  if(!tv){
-    document.getElementById('adm-kpis').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--text3)"><i class="ti ti-report-analytics" style="font-size:36px;display:block;margin-bottom:10px;color:var(--border2)"></i><div style="font-size:14px;font-weight:500;margin-bottom:6px">Sin datos aún</div><div style="font-size:12px">Registra facturas para ver los indicadores financieros aquí</div><div style="margin-top:12px;font-size:12px;color:var(--text3)">Puedes registrar gastos del período en la sección de abajo aunque no haya ventas</div></div>';
-    document.getElementById('adm-canales').innerHTML='<div style="color:var(--text3);font-size:13px;text-align:center;padding:20px">Sin ventas registradas</div>';
-    document.getElementById('adm-resultado').innerHTML='<div style="color:var(--text3);font-size:13px;text-align:center;padding:20px">Sin datos</div>';
-    document.getElementById('adm-gastos').innerHTML='<div style="color:var(--text3);font-size:13px;text-align:center;padding:20px">Registra los gastos del período abajo</div>';
-    document.getElementById('adm-vendedores').innerHTML='<div style="color:var(--text3);font-size:13px;text-align:center;padding:20px">Sin ventas registradas</div>';
-    return;
-  }
-  const canales=[
-    {name:'TikTok Live',v:d.ventas.tiktok,color:'#E94560'},
-    {name:'Bazar',v:d.ventas.bazar,color:'#D4860A'},
-    {name:'Mayorista',v:d.ventas.mayor,color:'#0F3460'},
-    {name:'Tienda Física',v:d.ventas.tienda,color:'#6D3B8E'},
-  ].sort((a,b)=>b.v-a.v);
-  const maxC=canales[0].v||1;
-  document.getElementById('adm-canales').innerHTML=canales.map(c=>`
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px">
-      <span style="width:80px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</span>
-      <div style="flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden">
-        <div style="width:${Math.round((c.v/maxC)*100)}%;height:100%;border-radius:3px;background:${c.color};transition:width 0.5s"></div>
-      </div>
-      <span style="width:80px;text-align:right;font-weight:500">${fmtN(c.v)}</span>
-    </div>`).join('');
-
-  // Resultado
-  document.getElementById('adm-resultado').innerHTML=`
-    <div style="display:flex;flex-direction:column;gap:8px">
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-radius:8px;background:#EAF3DE;font-size:13px">
-        <span>Ingresos totales</span><span style="font-weight:500;color:#3B6D11">${fmtN(tv)}</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-radius:8px;background:#FCEBEB;font-size:13px">
-        <span>Total gastos</span><span style="font-weight:500;color:#A32D2D">${fmtN(tg)}</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:8px;background:#EEEDFE;font-size:15px;font-weight:500">
-        <span>Utilidad bruta</span><span style="color:#534AB7">${fmtN(uti)}</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-radius:8px;background:var(--bg3);font-size:12px;color:var(--text2)">
-        <span>Margen sobre ventas</span><span>${mg}%</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-radius:8px;background:var(--bg3);font-size:12px;color:var(--text2)">
-        <span>Gastos / Ingresos</span><span>${tv?Math.round((tg/tv)*100):0}%</span>
-      </div>
-    </div>`;
-
-  // Gastos
-  const gLbls={nom:'Nómina',adm:'G. Administrativos',loc:'G. Locativos',imp:'Imprevistos',com:'Comisiones',ph:'Paula Hogar',pp:'Paula Personal',ot:'Otros'};
-  const gCols={nom:'#5C6BC0',adm:'#00838F',loc:'#558B2F',imp:'#6D4C41',com:'#AD1457',ph:'#1565C0',pp:'#6A1B9A',ot:'#888'};
-  const gArr=Object.entries(d.gastos).filter(([k,v])=>v>0).sort((a,b)=>b[1]-a[1]);
-  const maxG=gArr[0]?.[1]||1;
-  document.getElementById('adm-gastos').innerHTML=gArr.length?gArr.map(([k,v])=>`
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:0.5px solid var(--border);font-size:12px">
-      <span style="color:var(--text2);width:110px">${gLbls[k]}</span>
-      <div style="flex:1;margin:0 10px;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden">
-        <div style="width:${Math.round((v/maxG)*100)}%;height:100%;background:${gCols[k]};border-radius:3px"></div>
-      </div>
-      <span style="font-weight:500;white-space:nowrap">${fmtN(v)} <span style="color:var(--text3);font-size:11px">${pctN(v,tg)}%</span></span>
-    </div>`).join(''):'<div style="color:var(--text3);font-size:13px;text-align:center;padding:16px">Registra los gastos del período abajo</div>';
-
-  // Vendedores
-  const vArr=Object.entries(d.vendedores).sort((a,b)=>b[1]-a[1]);
-  const maxV=vArr[0]?.[1]||1;
-  const vCols=['#6B3FA0','#E94560','#0F3460','#558B2F','#D4860A','#AD1457'];
-  document.getElementById('adm-vendedores').innerHTML=vArr.length?vArr.map(([name,v],i)=>`
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px">
-      <span style="width:80px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${name.split(' ')[0]}</span>
-      <div style="flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden">
-        <div style="width:${Math.round((v/maxV)*100)}%;height:100%;background:${vCols[i%vCols.length]};border-radius:3px;transition:width 0.5s"></div>
-      </div>
-      <span style="width:80px;text-align:right;font-weight:500">${fmtN(v)}</span>
-    </div>`).join(''):`<div style="color:var(--text3);font-size:13px;text-align:center;padding:16px">
-      <i class="ti ti-chart-bar" style="font-size:28px;display:block;margin-bottom:8px;color:var(--border2)"></i>
-      Sin ventas aún — crea facturas para ver las métricas
-    </div>`;
-
-  if(admPeriod==='comparar') renderAdmComp();
-}
-
-function renderAdmComp(){
-  const semanas=getAdmData();
-  const ia=parseInt(document.getElementById('comp-a').value);
-  const ib=parseInt(document.getElementById('comp-b').value);
-  const a=semanas[ia],b=semanas[ib];
-  const fmtN=n=>'$'+Math.round(n).toLocaleString('es-CO');
-  const tva=admTotalVentas(a),tvb=admTotalVentas(b);
-  const tga=admTotalGastos(a),tgb=admTotalGastos(b);
-  const rows=[
-    {l:'Ingresos totales',a:fmtN(tva),b:fmtN(tvb),diff:tvb-tva},
-    {l:'Total gastos',a:fmtN(tga),b:fmtN(tgb),diff:tgb-tga},
-    {l:'Utilidad bruta',a:fmtN(tva-tga),b:fmtN(tvb-tgb),diff:(tvb-tgb)-(tva-tga)},
-    {l:'Margen %',a:(tva?Math.round(((tva-tga)/tva)*100):0)+'%',b:(tvb?Math.round(((tvb-tgb)/tvb)*100):0)+'%',diff:(tvb?Math.round(((tvb-tgb)/tvb)*100):0)-(tva?Math.round(((tva-tga)/tva)*100):0),isPct:true},
-    {l:'TikTok Live',a:fmtN(a.ventas.tiktok),b:fmtN(b.ventas.tiktok),diff:b.ventas.tiktok-a.ventas.tiktok},
-    {l:'Bazar',a:fmtN(a.ventas.bazar),b:fmtN(b.ventas.bazar),diff:b.ventas.bazar-a.ventas.bazar},
-    {l:'Mayorista',a:fmtN(a.ventas.mayor),b:fmtN(b.ventas.mayor),diff:b.ventas.mayor-a.ventas.mayor},
-    {l:'Tienda Física',a:fmtN(a.ventas.tienda),b:fmtN(b.ventas.tienda),diff:b.ventas.tienda-a.ventas.tienda},
-  ];
-  document.getElementById('adm-comp-result').innerHTML=`
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 80px;font-size:11px;font-weight:600;color:var(--text3);padding:6px 0;border-bottom:0.5px solid var(--border);text-transform:uppercase;letter-spacing:0.4px">
-      <span>Métrica</span><span style="text-align:right">${a.label}</span><span style="text-align:right">${b.label}</span><span style="text-align:right">Cambio</span>
-    </div>
-    ${rows.map(r=>`
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 80px;padding:8px 0;border-bottom:0.5px solid var(--border);font-size:13px;align-items:center">
-      <span style="color:var(--text2)">${r.l}</span>
-      <span style="text-align:right">${r.a}</span>
-      <span style="text-align:right">${r.b}</span>
-      <span style="text-align:right;font-weight:600;color:${r.diff>0?'#3B6D11':r.diff<0?'#A32D2D':'var(--text2)'}">
-        ${r.diff>0?'+':''}${r.isPct?r.diff+'%':('$'+Math.abs(Math.round(r.diff)).toLocaleString('es-CO')*(r.diff<0?-1:1))}
-      </span>
-    </div>`).join('')}`;
-}
-
-function prevAdmGastos(){
-  const ids=['ag-nom','ag-adm','ag-loc','ag-imp','ag-com','ag-ph','ag-pp','ag-ot'];
-  const total=ids.reduce((s,id)=>s+(parseFloat(document.getElementById(id)?.value)||0),0);
-  document.getElementById('adm-prev-total').textContent='$'+Math.round(total).toLocaleString('es-CO');
-}
-
-function guardarAdmGastos(){
-  const gastosDB=loadAdmGastos();
-  const semanas=getAdmData();
-  const wi=semanas.length-1;
-  const ids={nom:'ag-nom',adm:'ag-adm',loc:'ag-loc',imp:'ag-imp',com:'ag-com',ph:'ag-ph',pp:'ag-pp',ot:'ag-ot'};
-  const gastos={};
-  Object.entries(ids).forEach(([k,id])=>{
-    const v=parseFloat(document.getElementById(id)?.value);
-    gastos[k]=isNaN(v)?0:v;
+  const rg=finRango(), d=finDatos(rg);
+  finAvisos();
+  document.querySelectorAll('#fin-seg button').forEach(b=>b.classList.toggle('on', b.dataset.p===finPeriodo));
+  document.getElementById('fin-lbl').textContent=finEtiqueta(rg);
+  document.getElementById('fin-fecha').value=finRef;
+  ['resumen','gastos','lives'].forEach(t=>{
+    document.getElementById('fin-tab-'+t).classList.toggle('on', finTab===t);
+    document.getElementById('fin-'+t).style.display=finTab===t?'block':'none';
   });
-  gastosDB['s'+wi]=gastos;
-  saveAdmGastos(gastosDB);
-  Object.values(ids).forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('adm-prev-total').textContent='$0';
-  renderAdmin();
+  document.getElementById('fin-n-gastos').textContent=d.gs.length;
+  document.getElementById('fin-n-lives').textContent=d.lives.length;
+
+  if(finTab==='resumen'){
+    const k=(l,v,cls,sub)=>'<div class="met"><div class="ml">'+l+'</div><div class="mv '+cls+'">'+v+'</div>'+(sub?'<div class="fin-sub">'+sub+'</div>':'')+'</div>';
+    document.getElementById('fin-kpis').innerHTML=
+      k('Vendido',fmt(d.vendido),'pur',d.fs.length+' factura'+(d.fs.length!==1?'s':''))
+      +k('Cobrado',fmt(d.cobrado),'grn',d.porCobrar?'Falta cobrar '+fmt(d.porCobrar):(d.vendido?'Todo cobrado':''))
+      +k('Gastos',fmt(d.tg),'red',d.gs.length+' gasto'+(d.gs.length!==1?'s':''))
+      +k('Te quedó',fmt(d.quedo),d.quedo<0?'red':'grn',d.vendido?'Margen '+Math.round(d.quedo/d.vendido*100)+'%':'');
+    document.getElementById('fin-torta').innerHTML=finTortaHTML(d);
+    document.getElementById('fin-cats').innerHTML=finBarras(d.porCat,colorCat,d.tg)
+      ||'<div class="fin-vacio">Sin gastos en este período.<br><button class="ab" style="margin-top:8px" onclick="finIrGasto()"><i class="ti ti-plus"></i> Registrar gasto</button></div>';
+    const cc={'TikTok Live':'#E94560','Mayorista':'#0F3460','Bazar Fotográfico':'#D4860A','Tienda Física':'#6D3B8E'};
+    document.getElementById('fin-canales').innerHTML=finBarras(d.canales,n=>cc[n]||'#6E9BC5',d.vendido)||'<div class="fin-vacio">Sin ventas en este período.</div>';
+    document.getElementById('fin-lives-res').innerHTML=d.lives.length
+      ? d.lives.map(L=>'<div class="lvh-mini" onclick="lvhAbrir(\''+lvEsc(L.id)+'\')"><span>'+fechaCorta(L.fecha)+' <span style="color:var(--text3)">· '+L.prendas+' prendas · '+L.clientes.size+' clientes</span></span><b>'+fmt(L.total)+'</b></div>').join('')
+        +(d.lives.length>1?'<div style="display:flex;justify-content:space-between;font-size:12.5px;padding-top:8px;font-weight:700"><span>'+d.lives.length+' lives</span><span>'+fmt(d.lives.reduce((s,L)=>s+L.total,0))+'</span></div>':'')
+      : '<div class="fin-vacio">Sin lives en este período.</div>';
+    const dc=document.getElementById('fin-dias-card');
+    const dias=Object.keys(d.dias).sort();
+    dc.style.display=(finPeriodo==='dia'||!dias.length)?'none':'';
+    if(finPeriodo!=='dia' && dias.length){
+      document.getElementById('fin-dias').innerHTML='<table><thead><tr><th>Día</th><th style="text-align:right">Vendido</th><th style="text-align:right">Gastos</th><th style="text-align:right">Te quedó</th></tr></thead><tbody>'
+        +dias.map(i=>{ const x=d.dias[i], q=x.v-x.g; return '<tr style="cursor:pointer" onclick="finRef=\''+i+'\';finPeriodo=\'dia\';renderAdmin()"><td>'+fechaCorta(i)+'</td><td style="text-align:right">'+fmt(x.v)+'</td><td style="text-align:right">'+fmt(x.g)+'</td><td style="text-align:right;font-weight:600;color:'+(q<0?'var(--red)':'var(--green)')+'">'+fmt(q)+'</td></tr>'; }).join('')
+        +'<tr style="font-weight:700"><td>Total</td><td style="text-align:right">'+fmt(d.vendido)+'</td><td style="text-align:right">'+fmt(d.tg)+'</td><td style="text-align:right;color:'+(d.quedo<0?'var(--red)':'var(--green)')+'">'+fmt(d.quedo)+'</td></tr></tbody></table>';
+    }
+  }
+
+  if(finTab==='gastos'){
+    pintarCatsGasto();
+    const gf=document.getElementById('g-fecha');
+    if(!gf.value || document.activeElement!==gf) gf.value=(hoyISO()>=rg.desde && hoyISO()<=rg.hasta)?hoyISO():(gf.value&&gf.value>=rg.desde&&gf.value<=rg.hasta?gf.value:rg.desde);
+    document.getElementById('g-tit').textContent='Gastos · '+finEtiqueta(rg);
+    document.getElementById('g-total').textContent=fmt(d.tg);
+    document.getElementById('g-chips').innerHTML=Object.entries(d.porCat).sort((a,b)=>b[1]-a[1])
+      .map(([n,v])=>'<span class="fin-chip"><span class="fin-dot" style="background:'+colorCat(n)+'"></span>'+lvEsc(n)+' <b>'+fmt(v)+'</b></span>').join('');
+    const porDia={}; d.gs.forEach(g=>{ (porDia[g.fecha]=porDia[g.fecha]||[]).push(g); });
+    const fechas=Object.keys(porDia).sort().reverse();
+    document.getElementById('g-lista').innerHTML=fechas.length ? fechas.map(f=>{
+      const arr=porDia[f]; const t=arr.reduce((s,g)=>s+(Number(g.valor)||0),0);
+      return '<div class="g-dia"><div class="g-dia-h"><span>'+fechaLarga(f)+'</span><span>'+fmt(t)+'</span></div>'
+        +arr.map(g=>'<div class="g-row"><div class="g-row-cat"><span class="fin-dot" style="background:'+colorCat(g.cat)+'"></span><div><div>'+lvEsc(g.cat)+'</div>'
+          +((g.nota||g.por)?'<div class="g-row-nota">'+lvEsc(g.nota||'')+(g.nota&&g.por?' · ':'')+(g.por?'por '+lvEsc(g.por):'')+'</div>':'')+'</div></div>'
+          +'<span class="g-row-v">'+fmt(g.valor)+'</span>'
+          +'<button class="ab ab-ico ab-del" onclick="gBorrar(\''+g.id+'\')" title="Borrar gasto"><i class="ti ti-trash"></i></button></div>').join('')+'</div>';
+    }).join('') : '<div class="fin-vacio">No hay gastos registrados en este período.</div>';
+  }
+
+  if(finTab==='lives'){
+    document.getElementById('fin-lives-lista').innerHTML=d.lives.length ? d.lives.map(lvhCardHTML).join('')
+      : '<div class="card fin-vacio">No hay lives guardados en este período.<br><span style="font-size:12px">Usa las flechas de arriba para ver otros meses.</span></div>';
+  }
 }
 
 // ── RESTORATION OF MISSING FUNCTIONS ──
@@ -2736,7 +2891,7 @@ function exportarDatos(){
     version:'1.1',
     fecha:new Date().toISOString(),
     clientes,facturas,stock,fc,
-    cats:CATS, gcol:GCOL, inventario:invStock, gastos:loadAdmGastos(), bultos, ajustes:AJUSTES
+    cats:CATS, gcol:GCOL, inventario:invStock, gastos:loadAdmGastos(), gastosLista:gastos, bultos, ajustes:AJUSTES
   };
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob);
@@ -2770,6 +2925,7 @@ function importarDatos(input){
       if(data.cats){ CATS=data.cats; GCOL=data.gcol||{}; saveCats(); }
       if(Array.isArray(data.inventario)){ invStock=data.inventario; saveInvStock(); }
       if(data.gastos && typeof data.gastos==='object') saveAdmGastos(data.gastos);
+      if(Array.isArray(data.gastosLista)){ gastos=data.gastosLista; saveGastos(); }
       if(Array.isArray(data.bultos)){ bultos=data.bultos; saveBultos(); }
       if(data.ajustes){ setAjustes(data.ajustes); nubePushCfg('ajustes'); }
       save();
@@ -3057,10 +3213,19 @@ function cerrarLive(){
   conNombre.sort((a,b)=>a.nombre.localeCompare(b.nombre,'es')).forEach(g=>{
     cierreLive[g.key]={key:g.key,nombre:g.nombre,items:g.items.map(x=>Object.assign({},x)),total:g.total,fac:null};
   });
+  const lf=document.getElementById('lv-fecha'); if(lf) lf.value=lvFechaSugerida();
   document.getElementById('live-captura').style.display='none';
   document.getElementById('live-cierre').style.display='block';
   rLiveCierre();
 }
+
+// El live queda con la fecha en que empezó (si pasa de medianoche no cambia de día)
+function lvFechaSugerida(){
+  let min=Infinity; const ahora=Date.now();
+  filasLive.forEach(f=>{ const n=Number(f.id); if(n>1.5e12 && n<ahora+864e5 && n<min) min=n; });
+  return isFinite(min)?isoDe(new Date(min)):hoyISO();
+}
+function lvFechaCierre(){ const v=document.getElementById('lv-fecha')?.value; return /^\d{4}-\d{2}-\d{2}$/.test(v||'')?v:hoyISO(); }
 
 function volverCaptura(){
   document.getElementById('live-captura').style.display='block';
@@ -3123,8 +3288,8 @@ function facturarLive(key){
     id:lvUid(), num:'F-'+String(fc++).padStart(4,'0'),
     clienteId:cli.id, clienteNombre:cli.nombre, clienteTel:cli.telefono||'',
     canal:'TikTok Live', vendedor:document.getElementById('lv-vend-global')?.value||'',
-    modalidad:'credito', fecha:today(), items, total,
-    estado:'pendiente', saldo:total, abonos:[], obs:'Live TikTok'
+    modalidad:'credito', fecha:dateDeISO(lvFechaCierre()).toLocaleDateString('es-CO'), items, total,
+    estado:'pendiente', saldo:total, abonos:[], obs:'Live TikTok', liveId:lvFechaCierre()
   };
   facturas.unshift(fac);
   const ids=new Set(g.items.map(x=>x.id));
@@ -3299,6 +3464,7 @@ function compartirFotoLive(){
 
 function rLive(){
   lvBindOnce();
+  const bh=document.getElementById('btn-lv-hist'); if(bh) bh.style.display=(usuarioActual && tieneAcceso('admin'))?'':'none';
   const sel=document.getElementById('lv-vend-global');
   if(sel && usuarioActual && !sel.dataset.set){
     const o=Array.from(sel.options).find(o=>o.text.toLowerCase()===String(usuarioActual.nombre||'').toLowerCase());
@@ -3552,7 +3718,7 @@ const TIENDA_NOMBRE = 'Otra Vida, Moda Circular';
 
 const ROLES = {
   dueno:    {etiqueta:'👑 Dueño',    nombre:'Dueño',    pages:['nueva','live','facturas','cartera','clientes','inventario','bultos','catalogo','despachos','dashboard','admin','usuarios']},
-  admin:    {etiqueta:'⚙️ Admin',    nombre:'Admin',    pages:['nueva','live','facturas','cartera','clientes','inventario','bultos','despachos','dashboard']},
+  admin:    {etiqueta:'⚙️ Admin',    nombre:'Admin',    pages:['nueva','live','facturas','cartera','clientes','inventario','bultos','despachos','dashboard','admin']},
   vendedor: {etiqueta:'🛍️ Vendedor', nombre:'Vendedor', pages:['nueva','live','facturas']},
   bodega:   {etiqueta:'📦 Bodega',   nombre:'Bodega',   pages:['despachos']}
 };
@@ -3561,7 +3727,7 @@ let usuarioActual = null;
 const Nube = {
   auth:null, db:null, t:null, ref:null,
   activo:false,                         // datos de la nube cargados y escuchando cambios
-  sync:{clientes:{}, facturas:{}, live:{}},
+  sync:{clientes:{}, facturas:{}, live:{}, gastos:{}}, gastosSinPermiso:false,
   cfg:{}, unsubs:[], pendientes:0, creadas:new Set(), cargados:new Set(), error:''
 };
 
@@ -3571,7 +3737,8 @@ const NUBE_COLS = {
     a.forEach(f=>{ if(f.abonos===undefined) f.abonos=[]; if(f.saldo===undefined) f.saldo=f.estado==='pagada'?0:f.total; });
     facturas=a.sort((x,y)=>(Number(y.id)||0)-(Number(x.id)||0));
   } },
-  live:{ get:()=>filasLive, set:null }
+  live:{ get:()=>filasLive, set:null },
+  gastos:{ get:()=>gastos, set:a=>gSetRemoto(a) }
 };
 const NUBE_CFG = {
   stock:      { get:()=>stock, set:v=>{ stock=(v&&typeof v==='object')?v:{}; } },
@@ -3582,7 +3749,7 @@ const NUBE_CFG = {
   marca:      { get:()=>MARCA, set:v=>{ MARCA={nombre:(v&&v.nombre)||'', logo:(v&&v.logo)||'', cuentas:(v&&v.cuentas)||''}; aplicarMarca(); } },
   gastos:     { get:()=>loadAdmGastos(), set:v=>{ try{ localStorage.setItem('ov_gastos',JSON.stringify(v||{})); }catch(e){} } }
 };
-const DATOS_LOCALES = ['ov_clientes','ov_facturas','ov_stock','ov_fc','ov_gastos','ov_cats','ov_gcol','ov_inv_stock','ov_live','ov_sesion'];
+const DATOS_LOCALES = ['ov_clientes','ov_facturas','ov_stock','ov_fc','ov_gastos','ov_gastos2','ov_gastos_pend','ov_cats','ov_gcol','ov_inv_stock','ov_live','ov_sesion'];
 
 let nubeUltimoId = 0;
 function nubeUid(){ let t=Date.now()*1000+Math.floor(Math.random()*1000); if(t<=nubeUltimoId) t=nubeUltimoId+1; nubeUltimoId=t; return t; }
@@ -3658,6 +3825,7 @@ window.addEventListener('offline', nubeEstado);
 // ── Recibir cambios ──
 function nubeEscucharCol(col, listo, fallo){
   return Nube.ref.collection(col).onSnapshot(qs=>{
+    if(col==='gastos'){ Nube.gastosSinPermiso=false; gConfirmar(qs); }
     const prev=Nube.sync[col]; const remoto={}; const mapa={};
     qs.forEach(d=>{ const data=d.data(); remoto[d.id]=data; mapa[d.id]=nubeStable(data); });
     const primera=!Nube.cargados.has(col);
@@ -3671,6 +3839,8 @@ function nubeEscucharCol(col, listo, fallo){
     Object.keys(prev).forEach(k=>{ delete prev[k]; });
     Object.assign(prev, mapa);
     if(col==='facturas'){ nubeRecalcFc(); nubeResolverDuplicados(); }
+    // Gastos hechos aquí que no alcanzaron a subir: se suben ahora
+    if(col==='gastos' && primera && Object.keys(gPend).some(id=>!(id in mapa))) setTimeout(()=>nubePush('gastos'),0);
     if(primera){ Nube.cargados.add(col); listo(); }
     else if(cambio && col!=='live') nubeRefrescar();
   }, fallo);
@@ -3781,6 +3951,11 @@ function nubeEscuchar(){
     const listo=()=>{ faltan--; if(faltan===0 && !terminado){ terminado=true; resolve(); } };
     const fallo=e=>{ console.error('LIVEpos nube (lectura):',e); if(!terminado){ terminado=true; reject(e); } else nubeError(e); };
     ['clientes','facturas','live'].forEach(c=>tareas.push(()=>nubeEscucharCol(c,listo,fallo)));
+    // Gastos: si las reglas de Firebase aún no los permiten, la app abre igual y avisa en Finanzas
+    if(gestor) tareas.push(()=>nubeEscucharCol('gastos',listo,e=>{
+      console.warn('LIVEpos gastos:',e); Nube.gastosSinPermiso=true;
+      if(!Nube.cargados.has('gastos')){ Nube.cargados.add('gastos'); listo(); }
+    }));
     ['stock','catalogo','inventario','marca','ajustes','bultos'].concat(gestor?['gastos']:[]).forEach(n=>tareas.push(()=>nubeEscucharCfg(n,listo,fallo)));
     faltan=tareas.length;
     tareas.forEach(t=>Nube.unsubs.push(t()));
@@ -3789,8 +3964,8 @@ function nubeEscuchar(){
 function nubeDesconectar(){
   Nube.unsubs.forEach(u=>{ try{u();}catch(e){} });
   Nube.unsubs=[]; Nube.activo=false; Nube.t=null; Nube.ref=null;
-  Nube.sync={clientes:{},facturas:{},live:{}}; Nube.cfg={}; Nube.cargados=new Set(); Nube.creadas=new Set();
-  clientes=[]; facturas=[]; fc=1; stock={}; invStock=[]; CATS={}; GCOL={}; filasLive=[]; liveFiltro=''; cierreLive={}; bultos=[]; AJUSTES={modoInv:'ventas',alertaMin:5,inicioBultos:0};
+  Nube.sync={clientes:{},facturas:{},live:{},gastos:{}}; Nube.gastosSinPermiso=false; Nube.cfg={}; Nube.cargados=new Set(); Nube.creadas=new Set();
+  clientes=[]; facturas=[]; fc=1; stock={}; invStock=[]; CATS={}; GCOL={}; filasLive=[]; liveFiltro=''; cierreLive={}; bultos=[]; gastos=[]; gPend={}; AJUSTES={modoInv:'ventas',alertaMin:5,inicioBultos:0};
   DATOS_LOCALES.forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
   nubeEstado();
 }

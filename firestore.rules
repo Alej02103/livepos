@@ -51,6 +51,10 @@ service cloud.firestore {
         allow read, create: if miembro(t);
         allow update, delete: if rolEn(t, ['dueno', 'admin']);
       }
+      // Gastos con fecha y categoría: solo dueño y admin
+      match /gastos/{id} {
+        allow read, write: if rolEn(t, ['dueno', 'admin']);
+      }
       // stock, catálogo, inventario: todo el equipo. Gastos: solo dueño y admin.
       match /config/{doc} {
         allow read, write: if miembro(t) && (doc != 'gastos' || rolEn(t, ['dueno', 'admin']));
