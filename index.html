@@ -2932,6 +2932,22 @@ function lvOnKey(e){
     e.preventDefault(); lvTabStart=null;
     const row=inp.closest('.lv-row');
     lvFocusCelda(e.key==='ArrowDown'?row.nextElementSibling:row.previousElementSibling, inp.dataset.f);
+    return;
+  }
+  // → / ← pasan a la celda vecina, como en Excel. Si estás escribiendo en medio del texto,
+  // la flecha mueve el cursor; al llegar al final (o con todo seleccionado) salta de celda.
+  if((e.key==='ArrowRight'||e.key==='ArrowLeft') && !e.shiftKey){
+    const orden=['ref','cod','pre','nombre'];
+    const i=orden.indexOf(inp.dataset.f); if(i<0) return;
+    const der=e.key==='ArrowRight';
+    let s=null, f=null; try{ s=inp.selectionStart; f=inp.selectionEnd; }catch(_){}
+    const len=(inp.value||'').length;
+    const todo=s!==null && s===0 && f===len && len>0;
+    const enBorde=s===null || todo || (s===f && (der ? s===len : s===0));
+    if(!enBorde) return;
+    const sig=orden[i+(der?1:-1)]; if(!sig) return;
+    e.preventDefault(); lvTabStart=null;
+    lvFocusCelda(inp.closest('.lv-row'), sig);
   }
 }
 
