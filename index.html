@@ -3456,6 +3456,10 @@ function lvAgregarFilas(nuevas){
 }
 function lvImportarFilas(filas, origen){
   if(!filas.length){ alert('No encontré prendas en '+origen+'.\n\nEl Excel debe tener las columnas Descripción, Código, Precio y Cliente.'); return; }
+  // Sin precio = nadie la pidió: no se carga
+  const noVendidas=filas.filter(f=>!f.pre).length;
+  filas=filas.filter(f=>f.pre);
+  if(!filas.length){ alert('Ninguna prenda de '+origen+' tiene precio, así que no hay ventas para cargar.'); return; }
   const enHoja=new Set(filasLive.filter(f=>!filaVacia(f)).map(lvClaveFila));
   const repetidas=filas.filter(f=>enHoja.has(lvClaveFila(f)));
   let nuevas=filas.filter(f=>!enHoja.has(lvClaveFila(f)));
@@ -3463,12 +3467,12 @@ function lvImportarFilas(filas, origen){
   const hoy=hoyISO(), fact=new Set();
   facturas.forEach(fa=>{ if(liveIdDe(fa)!==hoy) return; (fa.items||[]).forEach(it=>fact.add(lvSinAcento(it.ref||'')+'|'+(Number(it.pre)||0)+'|'+lvSinAcento(fa.clienteNombre))); });
   const yaFact=nuevas.filter(f=>fact.has(lvSinAcento(f.ref)+'|'+f.pre+'|'+lvSinAcento(f.nombre)));
-  const sinPrecio=nuevas.filter(f=>!f.pre).length, sinNombre=nuevas.filter(f=>!f.nombre).length;
+  const sinNombre=nuevas.filter(f=>!f.nombre).length;
   const clientas=new Set(nuevas.map(f=>lvKey(f.nombre)).filter(Boolean)).size;
   const total=nuevas.reduce((s,f)=>s+f.pre,0);
   let msg='Se van a cargar '+nuevas.length+' prenda'+(nuevas.length!==1?'s':'')+' de '+clientas+' cliente'+(clientas!==1?'s':'')+' por '+fmt(total)+'.';
   if(repetidas.length) msg+='\n• '+repetidas.length+' ya estaban en la hoja: no se repiten.';
-  if(sinPrecio) msg+='\n• '+sinPrecio+' no tienen precio: quedan en blanco para completarlas.';
+  if(noVendidas) msg+='\n• '+noVendidas+' sin precio no se cargan (no se vendieron).';
   if(sinNombre) msg+='\n• '+sinNombre+' no tienen cliente.';
   if(!nuevas.length){ alert('Todas las prendas de '+origen+' ya están en la hoja.'); return; }
   if(!confirm(msg+'\n\n¿Cargar?')) return;
@@ -3537,10 +3541,11 @@ function lvActualizarDatalist(){
 }
 
 // ── Resumen por cliente ──
-function lvGrupos(){
+function lvGrupos(soloConPrecio){
   const g={}; const orden=[];
   filasLive.forEach(f=>{
     if(filaVacia(f)) return;
+    if(soloConPrecio && !f.pre) return;
     const k=lvKey(f.nombre)||'__sin__';
     if(!g[k]){ g[k]={key:k,nombre:k==='__sin__'?'Sin nombre':String(f.nombre).trim().replace(/\s+/g,' '),items:[],total:0}; orden.push(k); }
     g[k].items.push(f); g[k].total+=(f.pre||0);
@@ -3589,11 +3594,13 @@ function cerrarLive(){
   if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
   filasLive=filasLive.filter(f=>!filaVacia(f));
   saveLiveNow();
-  const grupos=lvGrupos();
+  const sinPrecio=filasLive.filter(f=>!f.pre && String(f.nombre||'').trim()).length;
+  const grupos=lvGrupos(true);
   const sin=grupos.find(g=>g.key==='__sin__');
   const conNombre=grupos.filter(g=>g.key!=='__sin__');
   if(!conNombre.length){ alert('Ninguna prenda tiene nombre todavía.\nEscribe el nombre de cada cliente antes de cerrar.'); return; }
   if(sin && !confirm(sin.items.length+' prenda(s) no tienen nombre. Se quedan en la hoja para asignarlas después.\n\n¿Continuar con el cierre?')) return;
+  if(sinPrecio && !confirm(sinPrecio+' prenda(s) no tienen precio. No se facturan: se quedan en la hoja.\n\n¿Continuar con el cierre?')) return;
   cierreLive={};
   conNombre.sort((a,b)=>a.nombre.localeCompare(b.nombre,'es')).forEach(g=>{
     cierreLive[g.key]={key:g.key,nombre:g.nombre,items:g.items.map(x=>Object.assign({},x)),total:g.total,fac:null};
