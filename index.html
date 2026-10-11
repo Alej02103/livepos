@@ -852,7 +852,7 @@ body.dark .crm-vip{background:#3a2c0b;color:#F5C451}body.dark .crm-dorm{backgrou
             </div>
           </div>
           <div><label>Canal de venta</label>
-            <select id="f1"><option>TikTok Live</option><option>Bazar Fotográfico</option><option>Mayorista</option><option>Tienda Física</option></select>
+            <select id="f1"><option>Tienda Física</option><option>Mayorista</option></select>
           </div>
         </div>
         <div class="fg">
@@ -1018,7 +1018,7 @@ body.dark .crm-vip{background:#3a2c0b;color:#F5C451}body.dark .crm-dorm{backgrou
   <div class="card" id="scf" style="display:none">
     <div class="ct">Nuevo cliente</div>
     <div class="fg"><div><label>Nombre completo *</label><input id="sc0" placeholder="Nombre y apellido"></div><div><label>Cédula</label><input id="sc1" placeholder="Número de cédula"></div></div>
-    <div class="fg"><div><label>Teléfono</label><input id="sc2" placeholder="Celular"></div><div><label>Canal principal</label><select id="sc3"><option>TikTok Live</option><option>Bazar Fotográfico</option><option>Mayorista</option><option>Tienda Física</option></select></div></div>
+    <div class="fg"><div><label>Teléfono</label><input id="sc2" placeholder="Celular"></div><div><label>Canal principal</label><select id="sc3"><option>Tienda Física</option><option>Mayorista</option></select></div></div>
     <div class="fg"><div><label>Usuario de TikTok</label><input id="sc5" placeholder="@usuario"></div><div><label>Ciudad</label><input id="sc6" placeholder="Ej: Medellín"></div></div>
     <div class="fg f1"><div><label>Dirección</label><input id="sc4" placeholder="Dirección de entrega"></div></div>
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
@@ -1719,8 +1719,9 @@ const ETAPAS = {
   despachado: {txt:'Despachado',         icon:'ti-truck-delivery',     cls:'et-desp'},
   entregado:  {txt:'Entregado',          icon:'ti-home-check',         cls:'et-entregado'}
 };
-function etapaDe(f){ return f.etapa || (f.despachado ? 'despachado' : 'bodega'); }
+function etapaDe(f){ return f.etapa || (f.despachado ? 'despachado' : (f.canal==='Tienda Física' ? 'entregado' : 'bodega')); }
 function chipEtapa(f){
+  if(f.canal==='Tienda Física') return '<span class="et-chip et-entregado"><i class="ti ti-shopping-bag-check"></i> Se lo llevó</span>';
   if(f.estado!=='pagada' && !f.etapa) return '';
   const e=ETAPAS[etapaDe(f)];
   return '<span class="et-chip '+e.cls+'"><i class="ti '+e.icon+'"></i> '+e.txt+'</span>';
@@ -1733,7 +1734,8 @@ function setDespTab(tab){ despTab=tab; renderDespachos(); }
 
 // Pedidos agrupados: en bodega por cliente (junta todas sus compras); después, por envío
 function gruposDesp(etapa){
-  const lista=facturas.filter(f=>etapaDe(f)===etapa && (etapa!=='bodega' || f.estado==='pagada' || despIncluirPend));
+  // Las ventas en tienda física no se despachan: la clienta se lleva la ropa
+  const lista=facturas.filter(f=>f.canal!=='Tienda Física' && etapaDe(f)===etapa && (etapa!=='bodega' || f.estado==='pagada' || despIncluirPend));
   const g=new Map();
   lista.forEach(f=>{
     const k = etapa==='bodega' ? 'c'+f.clienteId : 'e'+(f.envioId||f.id);
@@ -1753,7 +1755,7 @@ function renderDespachos(){
   set('desp-k-bodega', conteo.bodega);
   set('desp-k-listo', conteo.listo);
   set('desp-k-camino', conteo.despachado);
-  set('desp-k-hoy', new Set(facturas.filter(f=>f.fechaDespacho===hoy && (etapaDe(f)==='despachado'||etapaDe(f)==='entregado')).map(f=>f.envioId||f.id)).size);
+  set('desp-k-hoy', new Set(facturas.filter(f=>f.canal!=='Tienda Física' && f.fechaDespacho===hoy && (etapaDe(f)==='despachado'||etapaDe(f)==='entregado')).map(f=>f.envioId||f.id)).size);
   set('desp-badge', conteo.bodega+conteo.listo);
   Object.keys(ETAPAS).forEach(e=>{
     const b=document.getElementById('desp-tab-'+e); if(!b) return;
@@ -2236,6 +2238,7 @@ function crearFactura(){
     canal:document.getElementById('f1').value,
     vendedor:document.getElementById('f2').value,
     modalidad:mod,fecha:today(),
+    ...(document.getElementById('f1').value==='Tienda Física' ? {etapa:'entregado', entregaTienda:true, fechaDespacho:today()} : {}),
     items,total,
     estado,
     saldo,
