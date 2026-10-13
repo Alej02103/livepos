@@ -277,7 +277,7 @@ button[style*="#25D366"]:hover{opacity:0.9;box-shadow:0 2px 12px rgba(37,211,102
 @media(max-width:900px){.lv-layout{grid-template-columns:1fr}}
 .lv-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 12px;font-size:12px;color:var(--text3);border-bottom:1px solid var(--border)}
 .lv-sheet{max-height:calc(100vh - 250px);min-height:240px;overflow:auto}
-.lv-row{display:grid;grid-template-columns:42px minmax(150px,1.7fr) 100px 120px minmax(130px,1.3fr) 38px;border-bottom:1px solid var(--border);min-width:600px}
+.lv-row{display:grid;grid-template-columns:42px minmax(150px,1.7fr) 96px 112px minmax(130px,1.3fr) minmax(105px,.9fr) 38px;border-bottom:1px solid var(--border);min-width:700px}
 .lv-row>div{border-right:1px solid var(--border);min-width:0}
 .lv-row>div:last-child{border-right:none}
 .lv-head{background:var(--bg3);font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;position:sticky;top:0;z-index:2}
@@ -513,7 +513,7 @@ body.dark .et-desp.et-chip{background:#0f2a44;color:#7db7ef}
   #tb-live .topbar-actions .btn,#tb-live select{padding:6px 9px;font-size:12px}
   .lv-toolbar>span:first-child{display:none}
   .lv-toolbar{padding:0;border-bottom:none}
-  .lv-row{grid-template-columns:22px minmax(0,1.5fr) 58px 76px minmax(0,1.15fr) 26px;min-width:0}
+  .lv-row{grid-template-columns:20px minmax(0,1.45fr) 46px 64px minmax(0,1.05fr) minmax(0,.85fr) 24px;min-width:0}
   .lv-head>div{padding:6px 4px;font-size:9.5px;letter-spacing:0}
   .lv-n{font-size:10px}
   .lv-sheet input.lv-cell{padding:9px 5px;font-size:16px;min-height:42px}
@@ -730,11 +730,14 @@ body.dark .crm-vip{background:#3a2c0b;color:#F5C451}body.dark .crm-dorm{backgrou
 /* ── Bazar: misma hoja del live, sin código, color ámbar ── */
 .g-bazar{--gc:#B86E00;--gcl:#FDF0DC;--gcm:#D98B2B;--gcd:#F2B04E}
 body.dark .g-bazar{--gc:#F2A93B;--gcl:#2D2010;--gcm:#F5B65A;--gcd:#F2A93B;--gct:#1A1206}
-.modo-bazar .lv-row{grid-template-columns:42px minmax(150px,2fr) 120px minmax(130px,1.4fr) 38px}
+.modo-bazar .lv-row{grid-template-columns:42px minmax(150px,2fr) 112px minmax(130px,1.4fr) minmax(105px,1fr) 38px}
 .modo-bazar .lv-row>div:nth-child(3){display:none}
 .modo-bazar .lv-pill,.main.g-bazar .lv-accent{background:#C77700!important;border-color:#C77700!important;color:#fff!important}
 .lvh-card.lvh-bazar{border-left-color:#C77700}
-@media(max-width:768px){ .modo-bazar .lv-row{grid-template-columns:22px minmax(0,1.9fr) 80px minmax(0,1.3fr) 26px} }
+@media(max-width:768px){ .modo-bazar .lv-row{grid-template-columns:20px minmax(0,1.7fr) 68px minmax(0,1.15fr) minmax(0,.95fr) 24px} }
+
+.lv-c-alt input{color:var(--text2);font-style:italic}
+.alt-row{font-size:11px;color:var(--amber);margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -938,7 +941,7 @@ body.dark .g-bazar{--gc:#F2A93B;--gcl:#2D2010;--gcm:#F5B65A;--gcd:#F2A93B;--gct:
           <span id="lv-filtro-chip"></span>
         </div>
         <div class="lv-sheet" id="lv-sheet">
-          <div class="lv-row lv-head"><div>#</div><div>Descripción</div><div>Código</div><div style="text-align:right">Precio</div><div>Cliente</div><div></div></div>
+          <div class="lv-row lv-head"><div>#</div><div>Descripción</div><div>Código</div><div style="text-align:right">Precio</div><div>Cliente</div><div title="Si la primera no la paga, pasa a esta clienta">2ª opción</div><div></div></div>
           <div id="lv-tabla"></div>
         </div>
         <div class="lv-foot">
@@ -2389,7 +2392,7 @@ function rCartera(){
     const det=c.facs.map(f=>{
       const ab=(f.abonos||[]).reduce((s,a)=>s+(Number(a.valor)||0),0);
       return '<div class="car-fac"><div style="min-width:0"><b style="color:var(--purple)">'+lvEsc(f.num)+'</b> <span style="color:var(--text3)">· '+lvEsc(f.fecha)+(liveIdDe(f)?(/-bazar$/.test(liveIdDe(f))?' · Bazar':' · Live'):'')+'</span>'
-        +'<div style="font-size:11.5px;color:var(--text3)">Total '+fmt(f.total)+(ab?' · abonó '+fmt(ab):'')+'</div></div>'
+        +'<div style="font-size:11.5px;color:var(--text3)">Total '+fmt(f.total)+(ab?' · abonó '+fmt(ab):'')+((f.items||[]).some(it=>it.alt)?' · <span style="color:var(--amber)">2ª opción: '+lvEsc([...new Set(f.items.filter(it=>it.alt).map(it=>it.alt))].join(', '))+'</span>':'')+'</div></div>'
         +'<b style="color:var(--red);white-space:nowrap">'+fmt(f.saldo)+'</b>'
         +'<div class="acc"><button class="ab ab-ico" onclick="verFactura('+f.id+')" title="Ver factura"><i class="ti ti-eye"></i></button>'
         +'<button class="ab" onclick="abrirAbonar('+f.id+')" title="Abono solo a esta factura"><i class="ti ti-coins"></i> Abonar</button></div></div>';
@@ -3529,9 +3532,13 @@ function rDashboard(){
 // Tabla de artículos del detalle de factura: con grupo/categoría solo si la factura los tiene
 function itemsDetHTML(f){
   const items=f.items||[];
+  const precioTxt=it=>(it.obsequio||!(+it.pre))?'<span style="color:var(--green);font-weight:600">🎁 Obsequio</span>':fmt(it.pre);
+  const altTxt=(it,i)=>String(it.alt||'').trim()
+    ? '<div class="alt-row"><i class="ti ti-arrow-forward-up"></i> 2ª opción: <b>'+lvEsc(it.alt)+'</b>'
+      +(f.estado==='pendiente'?' <button class="ab" style="height:26px;font-size:11.5px" onclick="pasarASegunda('+f.id+','+i+')" title="La primera clienta no la pagó: pasar la prenda a la 2ª opción">Pasar a '+lvEsc(String(it.alt).split(' ')[0])+'</button>':'')+'</div>' : '';
   const conGrupo=items.some(it=>it.grp||it.cat);
   const td=(v,st)=>'<td style="'+(st||'font-size:12px')+'">'+v+'</td>';
-  const cola=it=>td(fmt(it.pre),'text-align:right;font-size:12px')+td(it.can,'text-align:center;font-size:12px')+td(fmt(it.sub),'text-align:right;font-weight:600');
+  const cola=it=>td(precioTxt(it),'text-align:right;font-size:12px')+td(it.can,'text-align:center;font-size:12px')+td(fmt(it.sub),'text-align:right;font-weight:600');
   const colaH='<th style="text-align:right">Precio</th><th style="text-align:center">Cant.</th><th style="text-align:right">Subtotal</th>';
   if(conGrupo){
     return '<table><thead><tr><th>Grupo</th><th>Categoría</th><th>Descripción</th>'+colaH+'</tr></thead><tbody>'
@@ -3540,9 +3547,44 @@ function itemsDetHTML(f){
       +'</tbody></table>';
   }
   return '<table><thead><tr><th>Código</th><th>Referencia</th>'+colaH+'</tr></thead><tbody>'
-    +items.map(it=>'<tr>'+td(lvEsc(it.cod||'—'),'font-size:12px;font-weight:600')
-      +td(lvEsc(it.ref||it.dsc||'—'),'font-size:12px;color:var(--text2)')+cola(it)+'</tr>').join('')
+    +items.map((it,i)=>'<tr>'+td(lvEsc(it.cod||'—'),'font-size:12px;font-weight:600')
+      +td(lvEsc(it.ref||it.dsc||'—')+altTxt(it,i),'font-size:12px;color:var(--text2)')+cola(it)+'</tr>').join('')
     +'</tbody></table>';
+}
+
+
+// La primera clienta no pagó: la prenda pasa a la 2ª opción (a su factura de ese mismo live, o a una nueva)
+function pasarASegunda(fid, idx){
+  const f=facturas.find(x=>String(x.id)===String(fid)); if(!f) return;
+  const it=(f.items||[])[idx]; if(!it || !String(it.alt||'').trim()) return;
+  const alt=String(it.alt).trim().replace(/\s+/g,' ');
+  const abonado=(Number(f.total)||0)-Math.max(0,Number(f.saldo)||0);
+  if((Number(f.total)||0)-(Number(it.sub)||0) < abonado){ alert(f.clienteNombre+' ya abonó '+fmt(abonado)+'. Si se quita esta prenda, el abono quedaría mayor que la factura. Ajusta el abono antes de pasarla.'); return; }
+  if(!confirm('¿Pasar "'+nombrePrenda(it)+'" ('+((it.obsequio||!it.pre)?'obsequio':fmt(it.sub))+') de '+f.clienteNombre+' a '+alt+'?')) return;
+  // quitarla de la primera
+  f.items.splice(idx,1);
+  f.total=(Number(f.total)||0)-(Number(it.sub)||0);
+  f.saldo=Math.max(0,f.total-abonado);
+  f.cambios=(f.cambios||[]).concat([{fecha:today(), txt:'"'+nombrePrenda(it)+'" pasó a '+alt+' (2ª opción)'}]);
+  let borrada=false;
+  if(!f.items.length && !abonado){ facturas=facturas.filter(x=>x!==f); borrada=true; }
+  else if(f.saldo===0) f.estado='pagada';
+  // clienta de la 2ª opción
+  let cli=lvBuscarCliente(alt);
+  if(!cli){ cli={id:lvUid(), nombre:alt, telefono:'', cedula:'', direccion:'', canal:f.canal||'TikTok Live', origen:/bazar/i.test(f.canal||'')?'Bazar':'TikTok', creado:Date.now()}; clientes.push(cli); }
+  const nuevo=Object.assign({}, it, {desde:f.clienteNombre}); delete nuevo.alt;
+  let g=f.liveId ? facturas.find(x=>x!==f && x.clienteId==cli.id && x.liveId===f.liveId && x.estado==='pendiente') : null;
+  if(g){ g.items.push(nuevo); g.total=(Number(g.total)||0)+(Number(it.sub)||0); g.saldo=(Number(g.saldo)||0)+(Number(it.sub)||0); }
+  else{
+    g={id:lvUid(), num:'F-'+String(fc++).padStart(4,'0'), clienteId:cli.id, clienteNombre:cli.nombre, clienteTel:cli.telefono||'',
+      canal:f.canal, vendedor:f.vendedor, modalidad:'credito', fecha:f.fecha, items:[nuevo], total:Number(it.sub)||0,
+      estado:(Number(it.sub)||0)>0?'pendiente':'pagada', saldo:Number(it.sub)||0, abonos:[], obs:f.obs||'', liveId:f.liveId||''};
+    facturas.unshift(g);
+  }
+  save();
+  if(borrada) cerrarModal(); else verFactura(f.id);
+  try{ rFacturas(); rCartera(); }catch(e){}
+  if(confirm('Listo: la prenda quedó en la factura '+g.num+' de '+cli.nombre+'.\n\n¿Enviarle la factura por WhatsApp?')) enviarWhatsApp(g.id);
 }
 
 function verFactura(id){
@@ -3723,7 +3765,7 @@ let lvModo='live';
 function lvDeModo(f){ return (f.src||'live')===lvModo; }
 function lvFilas(){ return filasLive.filter(lvDeModo); }
 function lvEsBazar(){ return lvModo==='bazar'; }
-function lvCols(){ return lvEsBazar() ? ['ref','pre','nombre'] : ['ref','cod','pre','nombre']; }
+function lvCols(){ return lvEsBazar() ? ['ref','pre','nombre','alt'] : ['ref','cod','pre','nombre','alt']; }
 function lvSetModo(m){
   const cambio=lvModo!==m; lvModo=m;
   const bz=lvEsBazar();
@@ -3772,15 +3814,16 @@ function lvDesc(it){ return (it.ref||'Prenda')+(it.cod?' (Cód '+it.cod+')':'');
 // ── Hoja de captura ──
 function lvRowHTML(f, n){
   const isNew=!f;
-  const d=f||{nombre:'',cod:'',pre:0,ref:''};
+  const d=f||{nombre:'',cod:'',pre:0,ref:'',alt:''};
   const sin=!isNew && !String(d.nombre||'').trim();
   const ph=(t)=>isNew?' placeholder="'+t+'"':'';
   return '<div class="lv-row'+(isNew?' lv-new':'')+(sin?' lv-sin-nombre':'')+'" data-id="'+(isNew?'new':d.id)+'">'
     +'<div class="lv-n">'+(isNew?'+':n)+'</div>'
     +'<div><input class="lv-cell" data-f="ref" autocomplete="off" value="'+lvEsc(d.ref)+'"'+ph('Descripción')+'></div>'
     +'<div><input class="lv-cell" data-f="cod" autocomplete="off" value="'+lvEsc(d.cod)+'"'+ph('Código')+'></div>'
-    +'<div><input class="lv-cell lv-pre" data-f="pre" inputmode="numeric" autocomplete="off" value="'+lvFmtNum(d.pre)+'"'+ph('$0')+'></div>'
+    +'<div><input class="lv-cell lv-pre" data-f="pre" inputmode="numeric" autocomplete="off" value="'+lvFmtNum(d.pre)+'"'+(isNew?ph('$0'):' placeholder="🎁 Obsequio"')+'></div>'
     +'<div class="lv-c-nom"><input class="lv-cell" data-f="nombre" list="lv-nombres" autocomplete="off" value="'+lvEsc(d.nombre)+'"'+ph('Cliente')+'></div>'
+    +'<div class="lv-c-alt"><input class="lv-cell" data-f="alt" list="lv-nombres" autocomplete="off" value="'+lvEsc(d.alt||'')+'"'+ph('2ª opción')+'></div>'
     +'<div>'+(isNew?'':'<button class="lv-del" tabindex="-1" title="Eliminar fila" onclick="rmFilaLive('+d.id+')"><i class="ti ti-trash"></i></button>')+'</div>'
     +'</div>';
 }
@@ -3821,7 +3864,7 @@ function lvOnInput(e){
   let f;
   if(row.dataset.id==='new'){
     if(!inp.value.trim()) return;
-    f={id:nubeUid(),nombre:'',cod:'',pre:0,ref:'',src:lvModo};
+    f={id:nubeUid(),nombre:'',cod:'',pre:0,ref:'',alt:'',src:lvModo};
     filasLive.push(f);
     row.dataset.id=f.id;
     row.classList.remove('lv-new');
@@ -3875,7 +3918,7 @@ function lvOnKey(e){
     lvFocusCelda(inp.closest('.lv-row').nextElementSibling, fld);
     return;
   }
-  if((e.key==='ArrowDown'||e.key==='ArrowUp') && inp.dataset.f!=='nombre'){
+  if((e.key==='ArrowDown'||e.key==='ArrowUp') && inp.dataset.f!=='nombre' && inp.dataset.f!=='alt'){
     e.preventDefault(); lvTabStart=null;
     const row=inp.closest('.lv-row');
     lvFocusCelda(e.key==='ArrowDown'?row.nextElementSibling:row.previousElementSibling, inp.dataset.f);
@@ -3927,10 +3970,10 @@ function lvCapNombre(t){ return lvEsMayus(t) ? t.toLowerCase().replace(/(^|[\s\-
 function lvCapFrase(t){ if(!lvEsMayus(t)) return t; const l=t.toLowerCase(); return l.charAt(0).toUpperCase()+l.slice(1); }
 function lvPrecioImport(v){ if(typeof v==='number') return v>0 && v<1000 ? Math.round(v*1000) : Math.round(v); return lvParsePrecio(v); }
 function lvFilaImport(c){
-  const ref=lvCapFrase(lvNormTxt(c.ref)), cod=lvNormTxt(c.cod), nombre=lvCapNombre(lvNormTxt(c.nombre));
+  const ref=lvCapFrase(lvNormTxt(c.ref)), cod=lvNormTxt(c.cod), nombre=lvCapNombre(lvNormTxt(c.nombre)), alt=lvCapNombre(lvNormTxt(c.alt));
   const pre=lvPrecioImport(c.pre);
   if(!ref && !cod && !pre && !nombre) return null;
-  return {ref, cod, pre, nombre};
+  return {ref, cod, pre, nombre, alt};
 }
 function lvSinAcento(t){ return String(t||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim(); }
 // Encuentra la fila de títulos (Descripción, Código, Precio, Cliente) y lee lo que hay debajo
@@ -3940,14 +3983,14 @@ function lvLeerMatriz(m){
     const r=(m[i]||[]).map(lvSinAcento);
     const ix=re=>r.findIndex(x=>re.test(x));
     const d=ix(/descrip|prenda|referen|detalle/), cl=ix(/cliente|nombre|compr/);
-    if(d>=0 && cl>=0){ cab=i; map={ref:d, cod:ix(/^cod|codigo|^cod\.|n[uú]mero/), pre:ix(/precio|valor/), nombre:cl}; break; }
+    if(d>=0 && cl>=0){ cab=i; map={ref:d, cod:ix(/^cod|codigo|^cod\.|n[uú]mero/), pre:ix(/precio|valor/), nombre:cl, alt:ix(/segund|2a|2da|opcion|altern/)}; break; }
   }
-  if(!map) map={ref:0,cod:1,pre:2,nombre:3};
+  if(!map) map={ref:0,cod:1,pre:2,nombre:3,alt:4};
   const out=[];
   m.slice(cab+1).forEach(r=>{
     r=r||[];
     const g=k=>map[k]>=0 ? r[map[k]] : '';
-    const f=lvFilaImport({ref:g('ref'), cod:g('cod'), pre:g('pre'), nombre:g('nombre')});
+    const f=lvFilaImport({ref:g('ref'), cod:g('cod'), pre:g('pre'), nombre:g('nombre'), alt:g('alt')});
     if(!f) return;
     if(/^total/i.test(f.ref) && !f.nombre) return;
     out.push(f);
@@ -3956,15 +3999,16 @@ function lvLeerMatriz(m){
 }
 function lvClaveFila(f){ return [f.ref,f.cod,f.pre,f.nombre].map(x=>lvSinAcento(String(x))).join('|'); }
 function lvAgregarFilas(nuevas){
-  nuevas.forEach(f=>filasLive.push({id:nubeUid(), nombre:f.nombre, cod:lvEsBazar()?'':f.cod, pre:f.pre, ref:f.ref, src:lvModo}));
+  nuevas.forEach(f=>filasLive.push({id:nubeUid(), nombre:f.nombre, cod:lvEsBazar()?'':f.cod, pre:f.pre, ref:f.ref, alt:f.alt||'', src:lvModo}));
   saveLiveNow(); rLiveTabla();
 }
 function lvImportarFilas(filas, origen){
   if(!filas.length){ alert('No encontré prendas en '+origen+'.\n\nEl Excel debe tener las columnas Descripción, Código, Precio y Cliente.'); return; }
-  // Sin precio = nadie la pidió: no se carga
-  const noVendidas=filas.filter(f=>!f.pre).length;
-  filas=filas.filter(f=>f.pre);
-  if(!filas.length){ alert('Ninguna prenda de '+origen+' tiene precio, así que no hay ventas para cargar.'); return; }
+  // Sin precio y con clienta = obsequio (se factura en $0). Sin precio ni clienta = no se carga.
+  const noVendidas=filas.filter(f=>!f.pre && !f.nombre).length;
+  filas=filas.filter(f=>f.pre || f.nombre);
+  const obsequios=filas.filter(f=>!f.pre).length;
+  if(!filas.length){ alert('No encontré prendas con precio o con clienta en '+origen+'.'); return; }
   if(lvEsBazar()) filas.forEach(f=>{ f.cod=''; });
   const enHoja=new Set(lvFilas().filter(f=>!filaVacia(f)).map(lvClaveFila));
   const repetidas=filas.filter(f=>enHoja.has(lvClaveFila(f)));
@@ -3978,7 +4022,8 @@ function lvImportarFilas(filas, origen){
   const total=nuevas.reduce((s,f)=>s+f.pre,0);
   let msg='Se van a cargar '+nuevas.length+' prenda'+(nuevas.length!==1?'s':'')+' de '+clientas+' cliente'+(clientas!==1?'s':'')+' por '+fmt(total)+'.';
   if(repetidas.length) msg+='\n• '+repetidas.length+' ya estaban en la hoja: no se repiten.';
-  if(noVendidas) msg+='\n• '+noVendidas+' sin precio no se cargan (no se vendieron).';
+  if(obsequios) msg+='\n• '+obsequios+' sin precio van como obsequio ($0).';
+  if(noVendidas) msg+='\n• '+noVendidas+' sin precio ni clienta no se cargan.';
   if(sinNombre) msg+='\n• '+sinNombre+' no tienen cliente.';
   if(!nuevas.length){ alert('Todas las prendas de '+origen+' ya están en la hoja.'); return; }
   if(!confirm(msg+'\n\n¿Cargar?')) return;
@@ -4014,7 +4059,7 @@ function lvOnPaste(e){
   e.preventDefault();
   const cols=lvCols(); const desde=Math.max(0, cols.indexOf(inp.dataset.f));
   const filas=txt.replace(/\r/g,'').split('\n').filter(l=>l.trim()).map(l=>{
-    const c=l.split('\t'), o={ref:'',cod:'',pre:'',nombre:''};
+    const c=l.split('\t'), o={ref:'',cod:'',pre:'',nombre:'',alt:''};
     c.forEach((v,i)=>{ const k=cols[desde+i]; if(k) o[k]=v; });
     return lvFilaImport(o);
   }).filter(Boolean);
@@ -4100,13 +4145,13 @@ function cerrarLive(){
   if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
   filasLive=filasLive.filter(f=>!filaVacia(f));
   saveLiveNow();
-  const sinPrecio=lvFilas().filter(f=>!f.pre && String(f.nombre||'').trim()).length;
-  const grupos=lvGrupos(true);
+  const obsequios=lvFilas().filter(f=>!f.pre && String(f.nombre||'').trim()).length;
+  const grupos=lvGrupos();
   const sin=grupos.find(g=>g.key==='__sin__');
   const conNombre=grupos.filter(g=>g.key!=='__sin__');
   if(!conNombre.length){ alert('Ninguna prenda tiene nombre todavía.\nEscribe el nombre de cada cliente antes de cerrar.'); return; }
   if(sin && !confirm(sin.items.length+' prenda(s) no tienen nombre. Se quedan en la hoja para asignarlas después.\n\n¿Continuar con el cierre?')) return;
-  if(sinPrecio && !confirm(sinPrecio+' prenda(s) no tienen precio. No se facturan: se quedan en la hoja.\n\n¿Continuar con el cierre?')) return;
+  if(obsequios && !confirm(obsequios+' prenda(s) no tienen precio: se facturan como 🎁 obsequio ($0).\n\nSi alguna sí tiene precio, dale Cancelar y escríbelo.')) return;
   cierreLive={};
   conNombre.sort((a,b)=>a.nombre.localeCompare(b.nombre,'es')).forEach(g=>{
     cierreLive[g.key]={key:g.key,nombre:g.nombre,items:g.items.map(x=>Object.assign({},x)),total:g.total,fac:null};
@@ -4139,7 +4184,7 @@ function lvCardHTML(g){
     : (cli ? '<span class="lv-badge" style="background:var(--bg3);color:var(--text2)">Cliente registrado</span>'
            : '<span class="lv-badge" style="background:var(--amber-bg);color:var(--amber)">Cliente nuevo</span>');
   const filas=g.items.map(it=>'<tr><td>'+lvEsc(it.ref||'-')+'</td><td style="font-weight:600">'+lvEsc(it.cod||'-')+'</td>'
-    +'<td style="text-align:right;font-weight:600'+(it.pre?'':';color:var(--red)')+'">'+(it.pre?fmt(it.pre):'Sin precio')+'</td></tr>').join('');
+    +'<td style="text-align:right;font-weight:600'+(it.pre?'':';color:var(--green)')+'">'+(it.pre?fmt(it.pre):'🎁 Obsequio')+(String(it.alt||'').trim()?'<div style="font-size:11px;font-weight:400;color:var(--text3)">2ª: '+lvEsc(it.alt)+'</div>':'')+'</td></tr>').join('');
   return '<div class="card lv-card'+(g.fac?' lv-done':'')+'">'
     +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px">'
       +'<div style="min-width:0"><div style="font-size:15px;font-weight:700">'+lvEsc(g.nombre)+'</div>'
@@ -4180,14 +4225,15 @@ function facturarLive(key){
     cli={id:lvUid(),nombre:g.nombre,telefono:'',cedula:'',direccion:'',canal:lvEsBazar()?'Bazar Fotográfico':'TikTok Live',origen:lvEsBazar()?'Bazar':'TikTok',creado:Date.now()};
     clientes.push(cli);
   }
-  const items=g.items.map(it=>({cod:it.cod||'',ref:it.ref||'',dsc:lvDesc(it),grp:'',cat:'',pre:it.pre||0,can:1,sub:it.pre||0}));
+  const items=g.items.map(it=>Object.assign({cod:it.cod||'',ref:it.ref||'',dsc:lvDesc(it),grp:'',cat:'',pre:it.pre||0,can:1,sub:it.pre||0},
+    it.pre?{}:{obsequio:true}, String(it.alt||'').trim()?{alt:String(it.alt).trim()}:{}));
   const total=items.reduce((s,it)=>s+it.sub,0);
   const fac={
     id:lvUid(), num:'F-'+String(fc++).padStart(4,'0'),
     clienteId:cli.id, clienteNombre:cli.nombre, clienteTel:cli.telefono||'',
     canal:lvEsBazar()?'Bazar Fotográfico':'TikTok Live', vendedor:document.getElementById('lv-vend-global')?.value||'',
     modalidad:'credito', fecha:dateDeISO(lvFechaCierre()).toLocaleDateString('es-CO'), items, total,
-    estado:'pendiente', saldo:total, abonos:[], obs:lvEsBazar()?'Bazar':'Live TikTok', liveId:lvFechaCierre()+(lvEsBazar()?'-bazar':'')
+    estado:total>0?'pendiente':'pagada', saldo:total, abonos:[], obs:lvEsBazar()?'Bazar':'Live TikTok', liveId:lvFechaCierre()+(lvEsBazar()?'-bazar':'')
   };
   facturas.unshift(fac);
   const ids=new Set(g.items.map(x=>x.id));
@@ -4216,7 +4262,7 @@ function facturarTodosLive(){
 // ── Envío: WhatsApp y foto ──
 function lvTextoResumen(g){
   const L=(MARCA.nombre?['*'+MARCA.nombre+'*','']:[]).concat(['Hola '+g.nombre+'! Este es el resumen de tu compra en el '+(lvEsBazar()?'bazar':'live')+':','']);
-  g.items.forEach(it=>L.push('- '+(it.ref||'Prenda')+': '+fmt(it.pre||0)));
+  g.items.forEach(it=>L.push('- '+(it.ref||'Prenda')+': '+(it.pre?fmt(it.pre):'🎁 Obsequio')));
   L.push('');
   L.push('💰 *Total: '+fmt(g.total)+'*');
   const cu=textoCuentas();
@@ -4275,7 +4321,7 @@ function fotoLive(key){
   g.items.forEach(it=>{
     x.fillStyle='#1a1a1a'; x.font='600 17px '+F; x.fillText(lvClip(x,it.cod||'-',115),pad,y+30);
     x.font='400 17px '+F; x.fillText(lvClip(x,it.ref||'-',W-2*pad-130-140),pad+130,y+30);
-    x.textAlign='right'; x.font='600 17px '+F; x.fillText(fmt(it.pre||0),W-pad,y+30); x.textAlign='left';
+    x.textAlign='right'; x.font='600 17px '+F; x.fillText(it.pre?fmt(it.pre):'Obsequio',W-pad,y+30); x.textAlign='left';
     y+=rowH;
     x.strokeStyle='#ececec'; x.lineWidth=1; x.beginPath(); x.moveTo(pad-12,y); x.lineTo(W-pad+12,y); x.stroke();
   });
@@ -4519,7 +4565,7 @@ function nombrePrenda(it){
 function lineasCompra(items){
   return (items||[]).map(it=>{
     const c=+it.can||1, pr=(+it.pre||0)*c;
-    return '- ' + (c>1 ? c+'x ' : '') + nombrePrenda(it) + ': ' + fmt(pr);
+    return '- ' + (c>1 ? c+'x ' : '') + nombrePrenda(it) + ': ' + (it.obsequio||!pr ? '🎁 Obsequio' : fmt(pr));
   }).join('\n');
 }
 // Cuentas para pagar, configuradas en Mi tienda
@@ -4814,7 +4860,7 @@ function nubeRefrescar(){
 
 // Hoja del live: mezcla lo que llega de otros equipos sin borrar lo que se está escribiendo aquí
 function lvAplicarRemoto(remoto, prev, mapa, primera){
-  const norm=r=>({id:Number(r.id), nombre:r.nombre||'', cod:r.cod||'', pre:Number(r.pre)||0, ref:r.ref||'', src:r.src||'live'});
+  const norm=r=>({id:Number(r.id), nombre:r.nombre||'', cod:r.cod||'', pre:Number(r.pre)||0, ref:r.ref||'', alt:r.alt||'', src:r.src||'live'});
   if(primera){
     filasLive=Object.values(remoto).map(norm).sort((a,b)=>a.id-b.id);
     return;
@@ -4825,7 +4871,7 @@ function lvAplicarRemoto(remoto, prev, mapa, primera){
   Object.keys(mapa).forEach(id=>{
     if(prev[id]===mapa[id]) return;
     const r=norm(remoto[id]); const loc=porId.get(id);
-    if(loc){ loc.src=r.src; ['nombre','cod','pre','ref'].forEach(k=>{ if(!(foco && foco.id===id && foco.f===k)) loc[k]=r[k]; }); }
+    if(loc){ loc.src=r.src; ['nombre','cod','pre','ref','alt'].forEach(k=>{ if(!(foco && foco.id===id && foco.f===k)) loc[k]=r[k]; }); }
     else filasLive.push(r);
   });
   Object.keys(prev).forEach(id=>{
